@@ -1,0 +1,2 @@
+Town:9
+Mafia:3
