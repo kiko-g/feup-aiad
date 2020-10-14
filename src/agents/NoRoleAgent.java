@@ -8,6 +8,7 @@ import jade.domain.FIPAException;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
+import protocols.RoleRequester;
 
 public class NoRoleAgent extends Agent {
     DFAgentDescription game_master_desc;
@@ -47,42 +48,6 @@ public class NoRoleAgent extends Agent {
         msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
         msg.setContent("I need a role and a name!");
 
-        this.logMessage("Setting handlers");
-
-        setHandlers(msg);
-    }
-
-    private void setHandlers(ACLMessage msg) {
-        addBehaviour(new AchieveREInitiator(this, msg) {
-
-            @Override
-            protected void handleRefuse(ACLMessage refuse) {
-                System.out.println("Agent "+refuse.getSender().getName()+" refused to perform the requested action");
-            }
-
-            @Override
-            protected void handleAgree(ACLMessage agree) {
-                System.out.println("Agent "+agree.getSender().getName()+" agreed to perform the requested action");
-                System.out.println("Agreed content: " + agree.getContent());
-            }
-
-            @Override
-            protected void handleFailure(ACLMessage failure) {
-                if (failure.getSender().equals(myAgent.getAMS())) {
-                    // FAILURE notification from the JADE runtime: the receiver
-                    // does not exist
-                    System.out.println("Responder does not exist");
-                }
-                else {
-                    System.out.println("Agent "+failure.getSender().getName()+" failed to perform the requested action");
-                }
-            }
-
-            @Override
-            protected void handleInform(ACLMessage inform) {
-                System.out.println("Agent "+inform.getSender().getName()+" successfully performed the requested action");
-            }
-
-        });
+        this.addBehaviour(new RoleRequester(this, msg));
     }
 }

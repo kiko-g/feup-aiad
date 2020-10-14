@@ -7,7 +7,7 @@ import jade.domain.FIPAException;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.proto.AchieveREResponder;
+import protocols.RoleDistributor;
 
 import java.util.*;
 
@@ -51,41 +51,7 @@ public class GameMaster extends Agent {
                 MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );
 
-        setHandlers(template, this);
-    }
-
-    private void setHandlers(MessageTemplate template, GameMaster gm) {
-        this.addBehaviour(new AchieveREResponder(this, template) {
-            @Override
-            protected ACLMessage handleRequest(ACLMessage request) throws RefuseException {
-                if (request.getContent().equals("I need a role and a name!")) {
-                    ACLMessage agree = request.createReply();
-                    agree.setPerformative(ACLMessage.AGREE);
-                    agree.setContent(gm.remainingNames.poll() + ", the " + gm.remainingRoles.poll());
-
-                    return agree;
-                } else {
-                    throw new RefuseException("Request not valid!");
-                }
-            }
-
-            @Override
-            protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) throws FailureException {
-//                if (performAction()) {
-//                    System.out.println("Agent "+getLocalName()+": Action successfully performed");
-//                    ACLMessage inform = request.createReply();
-//                    inform.setPerformative(ACLMessage.INFORM);
-//                    return inform;
-//                }
-//                else {
-//                    System.out.println("Agent "+getLocalName()+": Action failed");
-//                    throw new FailureException("unexpected-error");
-//                }
-                ACLMessage inform = request.createReply();
-                inform.setPerformative(ACLMessage.INFORM);
-                return inform;
-            }
-        });
+        this.addBehaviour(new RoleDistributor(this, template));
     }
 
     @Override
@@ -95,5 +61,13 @@ public class GameMaster extends Agent {
         } catch (FIPAException e) {
             e.printStackTrace();
         }
+    }
+
+    public Queue<String> getRemainingRoles() {
+        return remainingRoles;
+    }
+
+    public Queue<String> getRemainingNames() {
+        return remainingNames;
     }
 }
