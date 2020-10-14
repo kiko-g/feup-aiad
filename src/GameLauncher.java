@@ -27,7 +27,7 @@ public class GameLauncher {
         // Loads roles
         List<String> roles;
         try {
-            roles = ConfigReader.importRoles("src/resources/roles.txt");
+            roles = ConfigReader.importRoles("src/resources/gamemodes/normal.txt");
             System.out.println("Number roles imported: " + roles.size());
         } catch (IOException e) {
             System.out.println("An Error occurred while importing roles from config. Aborting");
