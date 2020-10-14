@@ -1,6 +1,0 @@
-Villager:1
-Healer:1
-Detective:1
-Jester:1
-Killing:1
-Leader:1
