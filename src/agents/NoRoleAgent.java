@@ -63,6 +63,7 @@ public class NoRoleAgent extends Agent {
             @Override
             protected void handleAgree(ACLMessage agree) {
                 System.out.println("Agent "+agree.getSender().getName()+" agreed to perform the requested action");
+                System.out.println("Agreed content: " + agree.getContent());
             }
 
             @Override

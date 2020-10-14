@@ -9,7 +9,27 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 
-public class GameMaster  extends Agent {
+import java.util.*;
+
+public class GameMaster extends Agent {
+    int MAX_AGENTS;
+
+    private Queue<String> remainingRoles;
+    private Queue<String> remainingNames;
+
+    public GameMaster(List<String> roles, List<String> names) {
+        MAX_AGENTS = roles.size();
+
+        // Role handling
+        List<String> tempRoles = new ArrayList<>(roles);
+        Collections.shuffle(tempRoles);
+        this.remainingRoles = new LinkedList<>(tempRoles);
+
+        // Name handling
+        List<String> tempNames = new ArrayList<>(names);
+        Collections.shuffle(tempNames);
+        this.remainingNames = new LinkedList<>(tempNames);
+    }
 
     @Override
     protected void setup() {
@@ -30,18 +50,18 @@ public class GameMaster  extends Agent {
         MessageTemplate template = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );
-        setHandlers(template);
+
+        setHandlers(template, this);
     }
 
-    private void setHandlers(MessageTemplate template) {
-        this.addBehaviour(new AchieveREResponder(this, template){
+    private void setHandlers(MessageTemplate template, GameMaster gm) {
+        this.addBehaviour(new AchieveREResponder(this, template) {
             @Override
             protected ACLMessage handleRequest(ACLMessage request) throws RefuseException {
                 if (request.getContent().equals("I need a role and a name!")) {
                     ACLMessage agree = request.createReply();
                     agree.setPerformative(ACLMessage.AGREE);
-
-                    System.out.println("Request received!");
+                    agree.setContent(gm.remainingNames.poll() + ", the " + gm.remainingRoles.poll());
 
                     return agree;
                 } else {

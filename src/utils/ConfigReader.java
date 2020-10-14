@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 public class ConfigReader {
     public static List<String> importNames(String file_path) throws IOException {
@@ -23,9 +22,9 @@ public class ConfigReader {
         return available_names;
     }
 
-    public static Queue<String> importRoles(String file_path) throws IOException {
+    public static List<String> importRoles(String file_path) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(file_path));
-        Queue<String> roles = new LinkedList<>();
+        List<String> roles = new LinkedList<>();
 
         String line = br.readLine();
         while (line != null) {
@@ -33,11 +32,11 @@ public class ConfigReader {
             if(colon_index != -1) {
                 String[] line_words = line.split(":");
 
-                String role = line_words[0];
+                String sub_faction = line_words[0];
                 int n_players_role = Integer.parseInt(line_words[1]);
 
                 while (n_players_role != 0) {
-                    roles.add(role);
+                    roles.add(sub_faction);
                     n_players_role--;
                 }
                 line = br.readLine();
