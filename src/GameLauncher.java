@@ -1,4 +1,5 @@
-import agents.TestAgent;
+import agents.GameMaster;
+import agents.NoRoleAgent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
@@ -41,15 +42,24 @@ public class GameLauncher {
         ContainerController container = rt.createAgentContainer(p2);
 
         try {
-
             // Gui Agent
             AgentController gui =
                     mainController.createNewAgent("GUI", "jade.tools.rma.rma", null);
             gui.start();
 
-            // Launch agent
-            AgentController ac1 = container.acceptNewAgent("name1", new TestAgent());
-            ac1.start();
+            // Launch GameMaster
+            AgentController gm_c = container.acceptNewAgent("GameMaster", new GameMaster());
+            gm_c.start();
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            //Launch Player 1
+            AgentController ac_1 = container.acceptNewAgent("Player 1", new NoRoleAgent());
+            ac_1.start();
 
         } catch (StaleProxyException e) {
             e.printStackTrace();
