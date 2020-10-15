@@ -1,32 +1,48 @@
 package protocols;
 
 import agents.GameMaster;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 
-public class RoleDistributor extends AchieveREResponder {
+public class PlayerWaiter extends AchieveREResponder {
 
-    GameMaster gm;
+    GameMaster gameMaster;
 
-    public RoleDistributor(GameMaster a, MessageTemplate mt) {
-        super(a, mt);
-        this.gm = a;
+    public PlayerWaiter(GameMaster gameMaster, MessageTemplate mt) {
+        super(gameMaster, mt);
+        this.gameMaster = gameMaster;
     }
 
     @Override
     protected ACLMessage handleRequest(ACLMessage request) throws RefuseException {
-        if (request.getContent().equals("I need a role and a name!")) {
-            ACLMessage agree = request.createReply();
-            agree.setPerformative(ACLMessage.AGREE);
-            agree.setContent(gm.getRemainingNames().poll() + ", the " + gm.getRemainingRoles().poll());
-
-            return agree;
-        } else {
+        if (request.getContent() == null)
             throw new RefuseException("Request not valid!");
-        }
+
+        // Parsing request
+        // Message format: Hi! I am <NAME>, the <ROLE>.
+        String [] splitMessage = request.getContent().split(" ");
+        //String name = splitMessage[3].substring(0, splitMessage[3].length() - 1);
+        String role = splitMessage[5].substring(0, splitMessage[5].length() - 1);
+
+        // Sender Info
+        String playerGameName = request.getSender().getLocalName();
+
+        if (this.gameMaster.getGameState() != GameMaster.GameStates.WAITING_FOR_PLAYERS)
+            throw new RefuseException("Lobby already full!");
+
+        this.gameMaster.getGameLobby().addPlayer(playerGameName, role, null);
+
+        if (this.gameMaster.getGameLobby().isFull())
+            this.gameMaster.setGameState(GameMaster.GameStates.READY);
+
+        ACLMessage agree = request.createReply();
+        agree.setPerformative(ACLMessage.AGREE);
+
+        return agree;
     }
 
     @Override

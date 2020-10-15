@@ -7,28 +7,25 @@ import jade.domain.FIPAException;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import protocols.RoleDistributor;
-
-import java.util.*;
+import protocols.PlayerWaiter;
+import utils.GameLobby;
 
 public class GameMaster extends Agent {
-    int MAX_AGENTS;
 
-    private Queue<String> remainingRoles;
-    private Queue<String> remainingNames;
+    public enum GameStates {
+        WAITING_FOR_PLAYERS,
+        READY,
+        DAY,
+        NIGHT,
+        END
+    }
 
-    public GameMaster(List<String> roles, List<String> names) {
-        MAX_AGENTS = roles.size();
+    private GameStates gameState;
+    private GameLobby gameLobby;
 
-        // Role handling
-        List<String> tempRoles = new ArrayList<>(roles);
-        Collections.shuffle(tempRoles);
-        this.remainingRoles = new LinkedList<>(tempRoles);
-
-        // Name handling
-        List<String> tempNames = new ArrayList<>(names);
-        Collections.shuffle(tempNames);
-        this.remainingNames = new LinkedList<>(tempNames);
+    public GameMaster(int numberPlayers) {
+        this.gameLobby = new GameLobby(numberPlayers);
+        this.gameState = GameStates.WAITING_FOR_PLAYERS;
     }
 
     @Override
@@ -51,7 +48,7 @@ public class GameMaster extends Agent {
                 MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );
 
-        this.addBehaviour(new RoleDistributor(this, template));
+        this.addBehaviour(new PlayerWaiter(this, template));
     }
 
     @Override
@@ -63,11 +60,15 @@ public class GameMaster extends Agent {
         }
     }
 
-    public Queue<String> getRemainingRoles() {
-        return remainingRoles;
+    public GameLobby getGameLobby() {
+        return gameLobby;
     }
 
-    public Queue<String> getRemainingNames() {
-        return remainingNames;
+    public GameStates getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameStates gameState) {
+        this.gameState = gameState;
     }
 }

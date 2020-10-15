@@ -1,5 +1,6 @@
 import agents.GameMaster;
-import agents.NoRoleAgent;
+import agents.mafia.Killing;
+import agents.town.Villager;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
@@ -9,9 +10,52 @@ import jade.wrapper.StaleProxyException;
 import utils.ConfigReader;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 public class GameLauncher {
+
+    public static void launchAgent(String role, String name, ContainerController container) throws StaleProxyException {
+        AgentController ac;
+
+        switch (role) {
+            case "Villager": {
+                ac = container.acceptNewAgent(name, new Villager());
+                ac.start();
+                break;
+            }
+            case "Killing": {
+                ac = container.acceptNewAgent(name, new Killing());
+                ac.start();
+                break;
+            }
+            // TODO: Other roles
+            default: {
+                System.out.println(role + " is still not implemented! Skipping...");
+            }
+        }
+    }
+
+    public static void launchAgents(List<String> roles, List<String> names, ContainerController container) throws StaleProxyException {
+        // Role handling
+        List<String> tempRoles = new ArrayList<>(roles);
+        Collections.shuffle(tempRoles);
+        Queue<String> remainingRoles = new LinkedList<>(tempRoles);
+
+        // Name handling
+        List<String> tempNames = new ArrayList<>(names);
+        Collections.shuffle(tempNames);
+        Queue<String> remainingNames = new LinkedList<>(tempNames);
+
+        // Launches Agents
+        for (int i = 0; i < roles.size(); i++) {
+            String role = remainingRoles.poll();
+            String name = remainingNames.poll();
+
+            if (role != null && name != null) {
+                launchAgent(role, name, container);
+            }
+        }
+    }
 
     public static void main(String[] args) {
 
@@ -27,7 +71,7 @@ public class GameLauncher {
         // Loads roles
         List<String> roles;
         try {
-            roles = ConfigReader.importRoles("src/resources/gamemodes/normal.txt");
+            roles = ConfigReader.importRoles("src/resources/gamemodes/test.txt");
             System.out.println("Number roles imported: " + roles.size());
         } catch (IOException e) {
             System.out.println("An Error occurred while importing roles from config. Aborting");
@@ -52,7 +96,7 @@ public class GameLauncher {
             gui.start();
 
             // Launch GameMaster
-            AgentController gm_c = container.acceptNewAgent("GameMaster", new GameMaster(roles, names));
+            AgentController gm_c = container.acceptNewAgent("GameMaster", new GameMaster(roles.size()));
             gm_c.start();
 
             try {
@@ -61,12 +105,7 @@ public class GameLauncher {
                 e.printStackTrace();
             }
 
-            // DEV ONLY
-            for (int i = 0; i < 1; i++) {
-                //Launch Player 1
-                AgentController ac_1 = container.acceptNewAgent("Player" + (i + 1), new NoRoleAgent());
-                ac_1.start();
-            }
+            launchAgents(roles, names, container);
 
         } catch (StaleProxyException e) {
             e.printStackTrace();
