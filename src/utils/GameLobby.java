@@ -49,4 +49,14 @@ public class GameLobby {
     public int getCapacity() {
         return capacity;
     }
+
+    public AgentInfo getAgentInfo(String name) {
+        return this.lobby.get(name);
+    }
+
+    public void setDescriptions(DFAgentDescription[] descriptions) {
+        for (DFAgentDescription desc: descriptions) {
+           this.getAgentInfo(desc.getName().getLocalName()).setAgentDesc(desc);
+        }
+    }
 }

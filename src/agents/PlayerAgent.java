@@ -54,7 +54,7 @@ public abstract class PlayerAgent extends Agent {
         return "Hi! I am " + this.getLocalName() + ", the " + role + ".";
     }
 
-    public ACLMessage buildJoinMessage(String role) {
+    protected ACLMessage buildJoinMessage(String role) {
         // Role Information Message AKA attempt to join
         ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
         msg.addReceiver(this.game_master_desc.getName());
@@ -64,7 +64,7 @@ public abstract class PlayerAgent extends Agent {
         return msg;
     }
 
-    public void registerAgent(String role) throws FIPAException {
+    protected void registerAgent(String role) throws FIPAException {
         DFAgentDescription dfad = new DFAgentDescription();
         dfad.setName(getAID());
 
@@ -79,6 +79,14 @@ public abstract class PlayerAgent extends Agent {
         dfad.addServices(sd2);
 
         DFService.register(this, dfad);
+    }
+
+    protected void deregisterAgent() {
+        try {
+            DFService.deregister(this);
+        } catch (FIPAException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

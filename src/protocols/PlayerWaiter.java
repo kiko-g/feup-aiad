@@ -25,7 +25,6 @@ public class PlayerWaiter extends AchieveREResponder {
         // Parsing request
         // Message format: Hi! I am <NAME>, the <ROLE>.
         String [] splitMessage = request.getContent().split(" ");
-        //String name = splitMessage[3].substring(0, splitMessage[3].length() - 1);
         String role = splitMessage[5].substring(0, splitMessage[5].length() - 1);
 
         // Sender Info
