@@ -3,6 +3,8 @@ package agents.mafia;
 import agents.PlayerAgent;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import protocols.DecisionInformer;
 import protocols.PlayerInformer;
 
 public class Killing extends PlayerAgent {
@@ -28,6 +30,11 @@ public class Killing extends PlayerAgent {
 
         // Handlers here
         this.addBehaviour(new PlayerInformer(this, msg));
+
+        MessageTemplate tmp = MessageTemplate.and(
+                MessageTemplate.MatchProtocol("TargetKilling"),
+                MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+        this.addBehaviour(new DecisionInformer(this, tmp));
     }
 
     @Override

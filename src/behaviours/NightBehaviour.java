@@ -22,9 +22,7 @@ public class NightBehaviour extends SequentialBehaviour {
 
         ACLMessage msg2 = new ACLMessage(ACLMessage.REQUEST);
 
-        AID temp = gameMaster.getGameLobby().getFirstRole("Killing");
-
-        msg2.addReceiver(temp);
+        msg2.addReceiver(gameMaster.getGameLobby().getFirstRole("Killing"));
         msg2.setProtocol("TargetKilling");
         msg2.setContent("Handle night content Killing");
 
@@ -34,6 +32,7 @@ public class NightBehaviour extends SequentialBehaviour {
     @Override
     public int onEnd() {
         // Apply requests
+        System.out.println("Night is over!");
         this.gameMaster.setGameState(GameMaster.GameStates.DAY);
         return 1;
     }
