@@ -33,7 +33,7 @@ public class Villager extends PlayerAgent {
         this.addBehaviour(new PlayerInformer(this, msg));
 
         MessageTemplate tmp = MessageTemplate.and(
-            MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
+            MessageTemplate.MatchProtocol("Target"),
             MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
         this.addBehaviour(new DecisionInformer(this, tmp));
     }

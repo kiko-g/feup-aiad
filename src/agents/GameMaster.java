@@ -46,7 +46,7 @@ public class GameMaster extends Agent {
         }
 
         MessageTemplate template = MessageTemplate.and(
-                MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
+                MessageTemplate.MatchProtocol("Join"),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );
 
         this.addBehaviour(new PlayerWaiter(this, template));

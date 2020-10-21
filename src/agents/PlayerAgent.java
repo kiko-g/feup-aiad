@@ -58,7 +58,7 @@ public abstract class PlayerAgent extends Agent {
         // Role Information Message AKA attempt to join
         ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
         msg.addReceiver(this.game_master_desc.getName());
-        msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+        msg.setProtocol("Join");
         msg.setContent(this.buildPresentationString(role));
 
         return msg;
