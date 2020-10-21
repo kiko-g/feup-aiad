@@ -3,6 +3,9 @@ package behaviours;
 import agents.GameMaster;
 import jade.core.behaviours.Behaviour;
 import jade.domain.FIPAException;
+import jade.domain.FIPANames;
+import jade.lang.acl.ACLMessage;
+import protocols.DecisionRequester;
 
 public class GameLoop extends Behaviour {
     GameMaster gameMaster;
@@ -56,7 +59,14 @@ public class GameLoop extends Behaviour {
     }
 
     private void handleNight() {
-        // Something
+        // Town Detective -> Mafia -> Town Healer
+        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+        msg.addReceiver(this.gameMaster.getGameLobby().getFirstRole("Villager"));
+        msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+        msg.setContent("Handle night content");
+
+        this.gameMaster.addBehaviour(new DecisionRequester(this.gameMaster, msg));
+
     }
 
     private void handleEnd() {

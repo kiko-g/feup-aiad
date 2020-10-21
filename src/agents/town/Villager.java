@@ -2,8 +2,11 @@ package agents.town;
 
 import agents.PlayerAgent;
 import jade.domain.FIPAException;
+import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
-import protocols.RoleInformer;
+import jade.lang.acl.MessageTemplate;
+import protocols.DecisionInformer;
+import protocols.PlayerInformer;
 
 public class Villager extends PlayerAgent {
 
@@ -27,7 +30,12 @@ public class Villager extends PlayerAgent {
         ACLMessage msg = this.buildJoinMessage(this.getRole());
 
         // Handlers here
-        this.addBehaviour(new RoleInformer(this, msg));
+        this.addBehaviour(new PlayerInformer(this, msg));
+
+        MessageTemplate tmp = MessageTemplate.and(
+            MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
+            MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+        this.addBehaviour(new DecisionInformer(this, tmp));
     }
 
     @Override

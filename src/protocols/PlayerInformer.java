@@ -4,11 +4,11 @@ import agents.PlayerAgent;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
 
-public class RoleInformer extends AchieveREInitiator {
+public class PlayerInformer extends AchieveREInitiator {
 
     private final PlayerAgent agent;
 
-    public RoleInformer(PlayerAgent pa, ACLMessage msg) {
+    public PlayerInformer(PlayerAgent pa, ACLMessage msg) {
         super(pa, msg);
         this.agent = pa;
     }

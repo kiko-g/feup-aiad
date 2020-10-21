@@ -1,9 +1,11 @@
 package utils;
 
 
+import jade.core.AID;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class GameLobby {
 
@@ -58,5 +60,14 @@ public class GameLobby {
         for (DFAgentDescription desc: descriptions) {
            this.getAgentInfo(desc.getName().getLocalName()).setAgentDesc(desc);
         }
+    }
+
+    public AID getFirstRole(String role) {
+        for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet()) {
+            if(currentPlayer.getValue().getRole().equals(role))
+                return currentPlayer.getValue().getAgentDesc().getName();
+        }
+
+        return null;
     }
 }

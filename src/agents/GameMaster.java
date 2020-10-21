@@ -20,7 +20,7 @@ public class GameMaster extends Agent {
         NIGHT,
         END
     }
-
+    //waker behavior
     private GameStates gameState;
     private GameLobby gameLobby;
 

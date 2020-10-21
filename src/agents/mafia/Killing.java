@@ -3,7 +3,7 @@ package agents.mafia;
 import agents.PlayerAgent;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
-import protocols.RoleInformer;
+import protocols.PlayerInformer;
 
 public class Killing extends PlayerAgent {
 
@@ -27,7 +27,7 @@ public class Killing extends PlayerAgent {
         ACLMessage msg = this.buildJoinMessage(this.getRole());
 
         // Handlers here
-        this.addBehaviour(new RoleInformer(this, msg));
+        this.addBehaviour(new PlayerInformer(this, msg));
     }
 
     @Override

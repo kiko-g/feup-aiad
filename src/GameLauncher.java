@@ -91,8 +91,7 @@ public class GameLauncher {
 
         try {
             // Gui Agent
-            AgentController gui =
-                    mainController.createNewAgent("GUI", "jade.tools.rma.rma", null);
+            AgentController gui = mainController.createNewAgent("GUI", "jade.tools.rma.rma", null);
             gui.start();
 
             // Launch GameMaster
