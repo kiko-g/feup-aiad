@@ -3,11 +3,20 @@ package behaviours;
 import agents.GameMaster;
 import jade.core.behaviours.Behaviour;
 import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
+import protocols.ContextInformer;
+import utils.ProtocolNames;
+import utils.Util;
+
+import java.util.List;
 
 public class GameLoop extends Behaviour {
     GameMaster gameMaster;
     boolean endLoop = false;
-    boolean nightDone = false;
+
+    boolean nightBehaviourAdded = false;
+    private boolean dayBehaviourAdded = false;
+    private boolean readyBehaviourAdded = false;
 
     public GameLoop(GameMaster gameMaster) {
         this.gameMaster = gameMaster;
@@ -21,15 +30,17 @@ public class GameLoop extends Behaviour {
                 return;
             }
             case READY: {
-                handleReady();
+                if(!readyBehaviourAdded)
+                    handleReady();
                 break;
             }
             case DAY: {
-                handleDay();
+                if(!dayBehaviourAdded)
+                    handleDay();
                 break;
             }
             case NIGHT: {
-                if(!nightDone)
+                if(!nightBehaviourAdded)
                     handleNight();
                 break;
             }
@@ -46,7 +57,26 @@ public class GameLoop extends Behaviour {
             this.gameMaster.updateAgentInfo();
             System.out.println("Information successfully updated!");
 
-            this.gameMaster.setGameState(GameMaster.GameStates.NIGHT);
+            List<String> players = this.gameMaster.getGameLobby().getAlivePlayerNames();
+            StringBuilder messageContent = new StringBuilder();
+            for(String currName : players) {
+                messageContent.append(currName).append("\n");
+            }
+
+            ACLMessage msg = Util.buildMessage(ACLMessage.INFORM,
+                    ProtocolNames.PlayerNames,
+                    messageContent.toString()
+            );
+
+            // Adds every alive player as receiver
+            msg = this.gameMaster.addReceiversMessage(msg, true);
+
+            // Once this behaviour finishes, gameloop state is updated
+            this.gameMaster.addBehaviour(new ContextInformer(this.gameMaster, msg));
+
+            System.out.println("======> Just sent Player names");
+
+            this.readyBehaviourAdded = true;
         } catch (FIPAException e) {
             System.out.println("Error finding and updating all players desc");
             this.gameMaster.takeDown();
@@ -54,13 +84,17 @@ public class GameLoop extends Behaviour {
     }
 
     private void handleDay() {
-        // Something
+        // Informs Alive agents about who died last night
+        this.gameMaster.addBehaviour(new GameStateInformer(this.gameMaster, ProtocolNames.PlayerDeath));
+
+        //TODO: Handle voting...
+
+        this.dayBehaviourAdded = true;
     }
 
     private void handleNight() {
-        // Town Detective -> Mafia -> Town Healer
         this.gameMaster.addBehaviour(new NightBehaviour(this.gameMaster));
-        this.nightDone = true;
+        this.nightBehaviourAdded = true;
     }
 
     private void handleEnd() {

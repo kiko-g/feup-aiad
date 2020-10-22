@@ -1,15 +1,17 @@
 package agents;
 
 import behaviours.GameLoop;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.*;
 import jade.domain.FIPAException;
-import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import protocols.PlayerWaiter;
 import utils.GameLobby;
+
+import java.util.List;
 
 public class GameMaster extends Agent {
 
@@ -89,5 +91,26 @@ public class GameMaster extends Agent {
     public void updateAgentInfo() throws FIPAException {
         DFAgentDescription[] allDesc = this.findAllPLayerDescriptions();
         this.gameLobby.setDescriptions(allDesc);
+    }
+
+    public void multicastMessage(ACLMessage message, AID[] receivers) {
+        for(AID cur : receivers) {
+            message.addReceiver(cur);
+        }
+        send(message);
+    }
+
+    public void sendMessageAlivePlayers(ACLMessage message) {
+        send(addReceiversMessage(message, true));
+    }
+
+    public ACLMessage addReceiversMessage(ACLMessage message, boolean alive) {
+        List<DFAgentDescription> players = (alive) ? this.gameLobby.getAlivePlayers() : this.gameLobby.getDeadPlayers();
+
+        for(DFAgentDescription curr : players) {
+            message.addReceiver(curr.getName());
+        }
+
+        return message;
     }
 }

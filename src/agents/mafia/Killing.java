@@ -1,11 +1,14 @@
 package agents.mafia;
 
 import agents.PlayerAgent;
+import behaviours.GameStateListener;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import protocols.ContextWaiter;
 import protocols.DecisionInformer;
 import protocols.PlayerInformer;
+import utils.ProtocolNames;
 
 public class Killing extends PlayerAgent {
 
@@ -28,18 +31,35 @@ public class Killing extends PlayerAgent {
         // Agent tries to join the game's lobby
         ACLMessage msg = this.buildJoinMessage(this.getRole());
 
-        // Handlers here
+        // Behaviours here
+
+        // Reports role to gameMaster
         this.addBehaviour(new PlayerInformer(this, msg));
+
+
+        MessageTemplate playerNamesTemplate = MessageTemplate.and(
+                MessageTemplate.MatchProtocol(ProtocolNames.PlayerNames),
+                MessageTemplate.MatchPerformative(ACLMessage.INFORM)
+        );
+
+        // Builds context
+        this.addBehaviour(new ContextWaiter(this, playerNamesTemplate));
+
+        // Listens to gameState changes
+        this.addBehaviour(new GameStateListener(this));
+
 
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol("TargetKilling"),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+
+        // Handles ability target requests
         this.addBehaviour(new DecisionInformer(this, tmp));
     }
 
     @Override
     public void takeDown() {
         this.deregisterAgent();
-        System.out.println("Killing shutdown!");
+//        System.out.println("Killing shutdown!");
     }
 }

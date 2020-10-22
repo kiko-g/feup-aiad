@@ -1,6 +1,6 @@
 package protocols;
 
-import jade.core.Agent;
+import agents.PlayerAgent;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
@@ -8,10 +8,16 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 
+import java.util.List;
+import java.util.Random;
+
 public class DecisionInformer extends AchieveREResponder {
 
-    public DecisionInformer(Agent a, MessageTemplate mt) {
-        super(a, mt);
+    PlayerAgent playerAgent;
+
+    public DecisionInformer(PlayerAgent playerAgent, MessageTemplate mt) {
+        super(playerAgent, mt);
+        this.playerAgent = playerAgent;
     }
 
     @Override
@@ -36,9 +42,16 @@ public class DecisionInformer extends AchieveREResponder {
 //                    System.out.println("Agent "+getLocalName()+": Action failed");
 //                    throw new FailureException("unexpected-error");
 //                }
+        //Decides the person to kill during night
+        List<String> killablePlayers = this.playerAgent.getGameContext().getAlivePlayers();
+
+        Random r = new Random();
+        int playerIndex = r.nextInt(killablePlayers.size());
+
+        String playerToKill = killablePlayers.get(playerIndex);
 
         ACLMessage inform = request.createReply();
-        inform.setContent("Ola");
+        inform.setContent(playerToKill);
         inform.setPerformative(ACLMessage.INFORM);
 
         return inform;

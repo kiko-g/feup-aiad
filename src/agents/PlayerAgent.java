@@ -5,11 +5,15 @@ import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
-import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
+import utils.GameContext;
 
 public abstract class PlayerAgent extends Agent {
+    // GameMaster Description
     protected DFAgentDescription game_master_desc;
+
+    // Other player states (Alive / Dead)
+    protected GameContext gameContext;
 
     @Override
     protected void setup() {
@@ -93,4 +97,16 @@ public abstract class PlayerAgent extends Agent {
     public abstract void takeDown();
 
     public abstract String getRole();
+
+    public void buryPlayer(String playerName) {
+        this.gameContext.playerWasKilled(playerName);
+    }
+
+    public GameContext getGameContext() {
+        return this.gameContext;
+    }
+
+    public void setGameContext(GameContext gc) {
+        this.gameContext = gc;
+    }
 }

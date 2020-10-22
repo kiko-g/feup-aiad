@@ -1,2 +1,2 @@
-Villager:4
-Killing:2
+Villager:2
+Killing:1

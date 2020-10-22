@@ -20,9 +20,7 @@ public class DecisionRequester extends AchieveREInitiator {
 
     @Override
     protected void handleInform(ACLMessage inform) {
-        System.out.println("Agent "+inform.getSender().getName()+" has now answered");
-//        this.gameMaster.setGameState(GameMaster.GameStates.DAY);
+        System.out.println("Agent "+inform.getSender().getName()+" has decided to kill " + inform.getContent());
+        this.gameMaster.getGameLobby().killPlayer(inform.getContent());
     }
-
-
 }

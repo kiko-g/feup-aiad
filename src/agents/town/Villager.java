@@ -1,12 +1,13 @@
 package agents.town;
 
 import agents.PlayerAgent;
+import behaviours.GameStateListener;
 import jade.domain.FIPAException;
-import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import protocols.DecisionInformer;
+import protocols.ContextWaiter;
 import protocols.PlayerInformer;
+import utils.ProtocolNames;
 
 public class Villager extends PlayerAgent {
 
@@ -31,16 +32,20 @@ public class Villager extends PlayerAgent {
 
         // Handlers here
         this.addBehaviour(new PlayerInformer(this, msg));
+        this.addBehaviour(new GameStateListener(this));
 
-        MessageTemplate tmp = MessageTemplate.and(
-            MessageTemplate.MatchProtocol("Target"),
-            MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
-        this.addBehaviour(new DecisionInformer(this, tmp));
+        MessageTemplate playerNamesTemplate = MessageTemplate.and(
+                MessageTemplate.MatchProtocol(ProtocolNames.PlayerNames),
+                MessageTemplate.MatchPerformative(ACLMessage.INFORM)
+        );
+
+        // Builds context
+        this.addBehaviour(new ContextWaiter(this, playerNamesTemplate));
     }
 
     @Override
     public void takeDown() {
         this.deregisterAgent();
-        System.out.println("Villager shutdown!");
+//        System.out.println("Villager shutdown!");
     }
 }
