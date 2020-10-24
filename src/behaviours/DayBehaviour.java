@@ -30,4 +30,24 @@ public class DayBehaviour extends SequentialBehaviour {
                 this.gameMaster.addReceiversMessage(msg, true)
         ));
     }
+
+    @Override
+    public int onEnd() {
+
+        String winner = this.gameMaster.getWinnerFaction();
+
+        System.out.println("[DAY] WINNER");
+        System.out.println(winner);
+
+        if (winner == null) {
+            System.out.println("======> Day is over!");
+            this.gameMaster.setGameState(GameMaster.GameStates.NIGHT);
+        }
+        else {
+            this.gameMaster.setGameState(GameMaster.GameStates.END);
+            System.out.println(winner + " won the game!");
+        }
+
+        return super.onEnd();
+    }
 }

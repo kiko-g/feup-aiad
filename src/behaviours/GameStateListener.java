@@ -5,6 +5,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import utils.ProtocolNames;
+import utils.Util;
 
 
 public class GameStateListener extends CyclicBehaviour {
@@ -20,7 +21,10 @@ public class GameStateListener extends CyclicBehaviour {
             MessageTemplate.MatchPerformative(ACLMessage.INFORM),
             MessageTemplate.or(
                     MessageTemplate.MatchProtocol(ProtocolNames.PlayerDeath),
-                    MessageTemplate.MatchProtocol(ProtocolNames.TimeOfDay)
+                    MessageTemplate.or(
+                            MessageTemplate.MatchProtocol(ProtocolNames.TimeOfDay),
+                            MessageTemplate.MatchProtocol(ProtocolNames.End)
+                    )
             )
     );
 
@@ -37,8 +41,28 @@ public class GameStateListener extends CyclicBehaviour {
                     this.handleTimeOfDay(msg.getContent());
                     break;
                 }
+                case ProtocolNames.End: {
+                    this.handleEndOfGame(msg.getContent());
+                }
             }
         }
+    }
+
+    private void handleEndOfGame(String content) {
+        String[] message = content.split(" ");
+        String winnerFaction = message[0];
+
+        boolean iAmWinner = winnerFaction.equals(
+                Util.getFaction(this.playerAgent.getRole())
+        );
+
+        if(iAmWinner) {
+            System.out.println("GG IZI");
+        } else {
+            System.out.println("Congratulations " + winnerFaction + "!");
+        }
+
+        this.playerAgent.takeDown();
     }
 
     private void handleTimeOfDay(String messageContent) {

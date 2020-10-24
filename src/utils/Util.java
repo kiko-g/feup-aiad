@@ -25,4 +25,22 @@ public class Util {
     public static ACLMessage createMessage(int messageType, AID receiver, String protocolName) {
         return createMessage(messageType, receiver, protocolName, null);
     }
+
+    public static String getFaction(String role) {
+        switch (role) {
+            case "Villager" :
+            case "Healer" :
+            case "Detective" : {
+                return "Town";
+            }
+
+            case "Leader" :
+            case "Killing" : {
+                return "Mafia";
+            }
+
+            default:
+                return "Neutral";
+        }
+    }
 }

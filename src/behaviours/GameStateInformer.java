@@ -33,7 +33,20 @@ public class GameStateInformer extends OneShotBehaviour {
                 this.sendTimeOfDay();
                 break;
             }
+            case ProtocolNames.End: {
+                this.sendEndGameMessage();
+                break;
+            }
         }
+    }
+
+    private void sendEndGameMessage() {
+        String content = this.gameMaster.getWinnerFaction() + " won the game!";
+
+        ACLMessage msg = Util.buildMessage(ACLMessage.INFORM,
+                ProtocolNames.End, content);
+
+        this.gameMaster.sendMessageAllPlayers(msg);
     }
 
     private void sendTimeOfDay() {

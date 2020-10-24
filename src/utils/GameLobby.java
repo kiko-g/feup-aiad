@@ -1,6 +1,7 @@
 package utils;
 
 
+import agents.PlayerAgent;
 import jade.core.AID;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 
@@ -144,4 +145,34 @@ public class GameLobby {
         // Unalives a player
         this.lobby.get(name).setAlive(false);
     }
+
+    public int[] getNumberPlayersPerFactions() {
+
+        // index 0: Town
+        // index 1: Mafia
+        // index 2: Neutral
+        int[] faction = {0, 0, 0};
+
+        for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet()) {
+            AgentInfo currentPlayerInfo = currentPlayer.getValue();
+            if(currentPlayerInfo.isAlive())
+                switch (Util.getFaction(currentPlayerInfo.getRole())) {
+                    case "Town": {
+                        faction[0]++;
+                        break;
+                    }
+                    case "Mafia": {
+                        faction[1]++;
+                        break;
+                    }
+                    case "Neutral": {
+                        faction[2]++;
+                        break;
+                    }
+                }
+        }
+
+        return faction;
+    }
+
 }

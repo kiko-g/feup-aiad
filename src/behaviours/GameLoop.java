@@ -14,9 +14,9 @@ public class GameLoop extends Behaviour {
     GameMaster gameMaster;
     boolean endLoop = false;
 
-    boolean nightBehaviourAdded = false;
-    private boolean dayBehaviourAdded = false;
     private boolean readyBehaviourAdded = false;
+    private boolean nightBehaviourAdded = false;
+    private boolean dayBehaviourAdded = false;
 
     public GameLoop(GameMaster gameMaster) {
         this.gameMaster = gameMaster;
@@ -71,7 +71,7 @@ public class GameLoop extends Behaviour {
             // Adds every alive player as receiver
             msg = this.gameMaster.addReceiversMessage(msg, true);
 
-            // Once this behaviour finishes, gameloop state is updated
+            // Once this behaviour finishes, game loop state is updated
             this.gameMaster.addBehaviour(new ContextInformer(this.gameMaster, msg));
 
             System.out.println("======> Just sent Player names");
@@ -86,6 +86,7 @@ public class GameLoop extends Behaviour {
     private void handleDay() {
         this.gameMaster.addBehaviour(new DayBehaviour(this.gameMaster));
         this.dayBehaviourAdded = true;
+        this.nightBehaviourAdded = false;
 
         try {
             Thread.sleep(800);
@@ -97,6 +98,7 @@ public class GameLoop extends Behaviour {
     private void handleNight() {
         this.gameMaster.addBehaviour(new NightBehaviour(this.gameMaster));
         this.nightBehaviourAdded = true;
+        this.dayBehaviourAdded = false;
 
         try {
             Thread.sleep(800);
@@ -107,12 +109,18 @@ public class GameLoop extends Behaviour {
 
     private void handleEnd() {
         // Something
-
+        this.gameMaster.addBehaviour(new GameStateInformer(this.gameMaster, ProtocolNames.End));
         this.endLoop = true;
     }
 
     @Override
     public boolean done() {
         return this.endLoop;
+    }
+
+    @Override
+    public int onEnd() {
+        System.out.println("GameMaster shutting down!");
+        return super.onEnd();
     }
 }

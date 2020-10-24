@@ -45,9 +45,21 @@ public class NightBehaviour extends SequentialBehaviour {
 
     @Override
     public int onEnd() {
-        // Apply requests
-        System.out.println("======> Night is over!");
-        this.gameMaster.setGameState(GameMaster.GameStates.DAY);
-        return 1;
+
+        String winner = this.gameMaster.getWinnerFaction();
+
+        System.out.println("[Night] WINNER");
+        System.out.println(winner);
+
+        if (winner == null) {
+            System.out.println("======> Night is over!");
+            this.gameMaster.setGameState(GameMaster.GameStates.DAY);
+        }
+        else {
+            this.gameMaster.setGameState(GameMaster.GameStates.END);
+            System.out.println(winner + " won the game!");
+        }
+
+        return super.onEnd();
     }
 }

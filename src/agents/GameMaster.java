@@ -104,6 +104,12 @@ public class GameMaster extends Agent {
         send(addReceiversMessage(message, true));
     }
 
+    public void sendMessageAllPlayers(ACLMessage msg) {
+        send(
+                addReceiversMessage(addReceiversMessage(msg, true), false)
+        );
+    }
+
     public ACLMessage addReceiversMessage(ACLMessage message, boolean alive) {
         List<DFAgentDescription> players = (alive) ? this.gameLobby.getAlivePlayers() : this.gameLobby.getDeadPlayers();
 
@@ -122,5 +128,19 @@ public class GameMaster extends Agent {
         }
 
         return message;
+    }
+
+    public String getWinnerFaction() {
+        // Parsing
+        int[] nPlayers = this.gameLobby.getNumberPlayersPerFactions();
+        int nTown = nPlayers[0];
+        int nMafia = nPlayers[1];
+
+        if (nTown == 0)
+            return "Mafia";
+        else if(nMafia == 0)
+            return "Town";
+        else
+            return null;
     }
 }
