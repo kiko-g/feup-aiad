@@ -84,17 +84,25 @@ public class GameLoop extends Behaviour {
     }
 
     private void handleDay() {
-        // Informs Alive agents about who died last night
-        this.gameMaster.addBehaviour(new GameStateInformer(this.gameMaster, ProtocolNames.PlayerDeath));
-
-        //TODO: Handle voting...
-
+        this.gameMaster.addBehaviour(new DayBehaviour(this.gameMaster));
         this.dayBehaviourAdded = true;
+
+        try {
+            Thread.sleep(800);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleNight() {
         this.gameMaster.addBehaviour(new NightBehaviour(this.gameMaster));
         this.nightBehaviourAdded = true;
+
+        try {
+            Thread.sleep(800);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleEnd() {

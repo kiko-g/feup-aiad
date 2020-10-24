@@ -4,6 +4,7 @@ import agents.GameMaster;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import utils.ProtocolNames;
+import utils.Util;
 
 import java.util.List;
 
@@ -22,9 +23,26 @@ public class GameStateInformer extends OneShotBehaviour {
 
     @Override
     public void action() {
-        if (this.typeInfo.equals(ProtocolNames.PlayerDeath)) {
-            this.sendDeadPlayersList();
+
+        switch (this.typeInfo) {
+            case ProtocolNames.PlayerDeath: {
+                this.sendDeadPlayersList();
+                break;
+            }
+            case ProtocolNames.TimeOfDay: {
+                this.sendTimeOfDay();
+                break;
+            }
         }
+    }
+
+    private void sendTimeOfDay() {
+        String content = (this.gameMaster.getGameState().equals(GameMaster.GameStates.DAY)) ? "Day" : "Night";
+
+        ACLMessage msg = Util.buildMessage(ACLMessage.INFORM,
+                ProtocolNames.TimeOfDay, content);
+
+        this.gameMaster.sendMessageAlivePlayers(msg);
     }
 
     private void sendDeadPlayersList() {

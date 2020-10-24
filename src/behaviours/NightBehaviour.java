@@ -4,6 +4,7 @@ import agents.GameMaster;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
 import protocols.DecisionRequester;
+import utils.ProtocolNames;
 
 import static utils.Util.createMessage;
 
@@ -13,6 +14,9 @@ public class NightBehaviour extends SequentialBehaviour {
 
     public NightBehaviour(GameMaster gameMaster) {
         this.gameMaster = gameMaster;
+
+        // Informs alive agents about the current time of day
+        this.addSubBehaviour(new GameStateInformer(this.gameMaster, ProtocolNames.TimeOfDay));
 
         // Town Detective -> Mafia -> Town Healer
 
@@ -42,7 +46,7 @@ public class NightBehaviour extends SequentialBehaviour {
     @Override
     public int onEnd() {
         // Apply requests
-        System.out.println(" == GameMaster == Night is over!");
+        System.out.println("======> Night is over!");
         this.gameMaster.setGameState(GameMaster.GameStates.DAY);
         return 1;
     }

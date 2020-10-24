@@ -31,7 +31,6 @@ public class Killing extends PlayerAgent {
         // Agent tries to join the game's lobby
         ACLMessage msg = this.buildJoinMessage(this.getRole());
 
-        // Behaviours here
 
         // Reports role to gameMaster
         this.addBehaviour(new PlayerInformer(this, msg));
@@ -47,8 +46,20 @@ public class Killing extends PlayerAgent {
 
         // Listens to gameState changes
         this.addBehaviour(new GameStateListener(this));
+    }
 
+    @Override
+    public void setDayTimeBehavior() {
+        MessageTemplate tmp = MessageTemplate.and(
+                MessageTemplate.MatchProtocol(ProtocolNames.VoteTarget),
+                MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 
+        // Handles ability target requests
+        this.addBehaviour(new DecisionInformer(this, tmp));
+    }
+
+    @Override
+    public void setNightTimeBehaviour() {
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol("TargetKilling"),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST));

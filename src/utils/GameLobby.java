@@ -119,6 +119,18 @@ public class GameLobby {
         return this.getPlayers(true);
     }
 
+    //Returns a list with all players of the specified role
+    public List<DFAgentDescription> getPlayersRole(String role) {
+        List<DFAgentDescription> players = new ArrayList<>();
+
+        for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet()) {
+            if(currentPlayer.getValue().getRole().equals(role))
+                players.add(currentPlayer.getValue().getAgentDesc());
+        }
+
+        return players;
+    }
+
     public AID getFirstRole(String role) {
         for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet()) {
             if(currentPlayer.getValue().getRole().equals(role))

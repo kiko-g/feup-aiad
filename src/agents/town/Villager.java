@@ -6,6 +6,7 @@ import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import protocols.ContextWaiter;
+import protocols.DecisionInformer;
 import protocols.PlayerInformer;
 import utils.ProtocolNames;
 
@@ -32,7 +33,6 @@ public class Villager extends PlayerAgent {
 
         // Handlers here
         this.addBehaviour(new PlayerInformer(this, msg));
-        this.addBehaviour(new GameStateListener(this));
 
         MessageTemplate playerNamesTemplate = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.PlayerNames),
@@ -41,6 +41,24 @@ public class Villager extends PlayerAgent {
 
         // Builds context
         this.addBehaviour(new ContextWaiter(this, playerNamesTemplate));
+
+        this.addBehaviour(new GameStateListener(this));
+    }
+
+    @Override
+    public void setDayTimeBehavior() {
+        MessageTemplate tmp = MessageTemplate.and(
+                MessageTemplate.MatchProtocol(ProtocolNames.VoteTarget),
+                MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+
+        // Handles ability target requests
+        this.addBehaviour(new DecisionInformer(this, tmp));
+    }
+
+    @Override
+    public void setNightTimeBehaviour() {
+        // Nothing at all
+        System.out.println("Im sleeping!");
     }
 
     @Override

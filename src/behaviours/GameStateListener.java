@@ -18,17 +18,34 @@ public class GameStateListener extends CyclicBehaviour {
     // Listening this type of messages only
     MessageTemplate mt = MessageTemplate.and(
             MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-            MessageTemplate.MatchProtocol(ProtocolNames.PlayerDeath)
+            MessageTemplate.or(
+                    MessageTemplate.MatchProtocol(ProtocolNames.PlayerDeath),
+                    MessageTemplate.MatchProtocol(ProtocolNames.TimeOfDay)
+            )
     );
 
     @Override
     public void action() {
         ACLMessage msg = this.playerAgent.receive(mt);
         if (msg != null) {
-            if (msg.getProtocol().equals(ProtocolNames.PlayerDeath)) {
-                this.handlePlayerDeaths(msg.getContent());
+            switch (msg.getProtocol()) {
+                case ProtocolNames.PlayerDeath: {
+                    this.handlePlayerDeaths(msg.getContent());
+                    break;
+                }
+                case ProtocolNames.TimeOfDay: {
+                    this.handleTimeOfDay(msg.getContent());
+                    break;
+                }
             }
         }
+    }
+
+    private void handleTimeOfDay(String messageContent) {
+        if (messageContent.equals("Day"))
+            this.playerAgent.setDayTimeBehavior();
+        else
+            this.playerAgent.setNightTimeBehaviour();
     }
 
     private void handlePlayerDeaths(String messageContent) {

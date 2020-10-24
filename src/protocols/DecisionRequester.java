@@ -6,7 +6,6 @@ import jade.proto.AchieveREInitiator;
 
 public class DecisionRequester extends AchieveREInitiator {
     GameMaster gameMaster;
-    boolean answerReceived = false;
 
     public DecisionRequester(GameMaster gameMaster, ACLMessage msg) {
         super(gameMaster, msg);

@@ -98,6 +98,10 @@ public abstract class PlayerAgent extends Agent {
 
     public abstract String getRole();
 
+    public abstract void setDayTimeBehavior();
+
+    public abstract void setNightTimeBehaviour();
+
     public void buryPlayer(String playerName) {
         this.gameContext.playerWasKilled(playerName);
     }

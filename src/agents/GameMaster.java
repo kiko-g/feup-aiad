@@ -113,4 +113,14 @@ public class GameMaster extends Agent {
 
         return message;
     }
+
+    public ACLMessage addReceiversMessageRole(ACLMessage message, String role) {
+        List<DFAgentDescription> players = this.gameLobby.getPlayersRole(role);
+
+        for(DFAgentDescription curr : players) {
+            message.addReceiver(curr.getName());
+        }
+
+        return message;
+    }
 }
