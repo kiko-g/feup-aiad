@@ -6,4 +6,5 @@ public class ProtocolNames {
     public final static String PlayerDeath = "PlayerDeath";
     public final static String TimeOfDay = "TimeOfDay";
     public final static String VoteTarget = "VoteTarget";
+    public final static String TargetKilling = "TargetKilling";
 }

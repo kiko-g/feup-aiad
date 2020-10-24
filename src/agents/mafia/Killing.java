@@ -64,7 +64,7 @@ public class Killing extends PlayerAgent {
     @Override
     public void setNightTimeBehaviour() {
         MessageTemplate tmp = MessageTemplate.and(
-                MessageTemplate.MatchProtocol("TargetKilling"),
+                MessageTemplate.MatchProtocol(ProtocolNames.TargetKilling),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 
         // Handles ability target requests
