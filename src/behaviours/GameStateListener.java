@@ -42,10 +42,14 @@ public class GameStateListener extends CyclicBehaviour {
     }
 
     private void handleTimeOfDay(String messageContent) {
-        if (messageContent.equals("Day"))
+        if (messageContent.equals("Day")) {
+            this.playerAgent.setDay();
             this.playerAgent.setDayTimeBehavior();
-        else
+        }
+        else {
+            this.playerAgent.setNight();
             this.playerAgent.setNightTimeBehaviour();
+        }
     }
 
     private void handlePlayerDeaths(String messageContent) {

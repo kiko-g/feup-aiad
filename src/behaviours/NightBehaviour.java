@@ -30,7 +30,7 @@ public class NightBehaviour extends SequentialBehaviour {
         // Mafia
         ACLMessage msg2 = createMessage(ACLMessage.REQUEST,
                 gameMaster.getGameLobby().getFirstRole("Killing"),
-                "TargetKilling", "Handle night content Killing");
+                "TargetKilling", "Who do you want to kill this night?");
 
         this.addSubBehaviour(new DecisionRequester(gameMaster, msg2));
 

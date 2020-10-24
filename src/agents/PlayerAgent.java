@@ -9,11 +9,20 @@ import jade.lang.acl.ACLMessage;
 import utils.GameContext;
 
 public abstract class PlayerAgent extends Agent {
+
+    private enum TimeOfDay {
+        Day,
+        Night
+    }
+
     // GameMaster Description
     protected DFAgentDescription game_master_desc;
 
     // Other player states (Alive / Dead)
     protected GameContext gameContext;
+
+    // Day or Night
+    private TimeOfDay currentTime;
 
     @Override
     protected void setup() {
@@ -102,6 +111,15 @@ public abstract class PlayerAgent extends Agent {
 
     public abstract void setNightTimeBehaviour();
 
+    public final ACLMessage handleVoteRequest(ACLMessage request, ACLMessage response) {
+        return (this.currentTime.equals(TimeOfDay.Day)) ?
+                handleDayVoteRequest(request, response) : handleNightVoteRequest(request, response);
+    }
+
+    public abstract ACLMessage handleDayVoteRequest(ACLMessage request, ACLMessage response);
+
+    public abstract ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response);
+
     public void buryPlayer(String playerName) {
         this.gameContext.playerWasKilled(playerName);
     }
@@ -112,5 +130,13 @@ public abstract class PlayerAgent extends Agent {
 
     public void setGameContext(GameContext gc) {
         this.gameContext = gc;
+    }
+
+    public void setDay() {
+        this.currentTime = TimeOfDay.Day;
+    }
+
+    public void setNight() {
+        this.currentTime = TimeOfDay.Night;
     }
 }

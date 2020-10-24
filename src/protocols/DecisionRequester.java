@@ -13,13 +13,8 @@ public class DecisionRequester extends AchieveREInitiator {
     }
 
     @Override
-    protected void handleAgree(ACLMessage agree) {
-        System.out.println("Agent "+agree.getSender().getName()+" is now thinking about it's answer");
-    }
-
-    @Override
     protected void handleInform(ACLMessage inform) {
-        System.out.println("Agent "+inform.getSender().getName()+" has decided to kill " + inform.getContent());
+        System.out.println("Agent "+inform.getSender().getName()+" has chosen " + inform.getContent());
         this.gameMaster.getGameLobby().killPlayer(inform.getContent());
     }
 }

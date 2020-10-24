@@ -10,6 +10,9 @@ import protocols.DecisionInformer;
 import protocols.PlayerInformer;
 import utils.ProtocolNames;
 
+import java.util.List;
+import java.util.Random;
+
 public class Killing extends PlayerAgent {
 
     @Override
@@ -66,6 +69,40 @@ public class Killing extends PlayerAgent {
 
         // Handles ability target requests
         this.addBehaviour(new DecisionInformer(this, tmp));
+    }
+
+    @Override
+    public ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response) {
+        // Day time voting
+        List<String> killablePlayers = this.getGameContext().getAlivePlayers();
+
+        Random r = new Random();
+        int playerIndex = r.nextInt(killablePlayers.size());
+
+        String playerToKill = killablePlayers.get(playerIndex);
+
+        ACLMessage inform = request.createReply();
+        inform.setContent(playerToKill);
+        inform.setPerformative(ACLMessage.INFORM);
+
+        return inform;
+    }
+
+    @Override
+    public ACLMessage handleDayVoteRequest(ACLMessage request, ACLMessage response) {
+        // Person to kill during night
+        List<String> killablePlayers = this.getGameContext().getAlivePlayers();
+
+        Random r = new Random();
+        int playerIndex = r.nextInt(killablePlayers.size());
+
+        String playerToKill = killablePlayers.get(playerIndex);
+
+        ACLMessage inform = request.createReply();
+        inform.setContent(playerToKill);
+        inform.setPerformative(ACLMessage.INFORM);
+
+        return inform;
     }
 
     @Override
