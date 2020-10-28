@@ -146,6 +146,20 @@ public class GameLobby {
         this.lobby.get(name).setAlive(false);
     }
 
+    public List<String> getKillingPlayers() {
+        List<String> killingPlayers = new ArrayList<>();
+
+        for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet()) {
+            AgentInfo currentPlayerInfo = currentPlayer.getValue();
+            if(currentPlayerInfo.isAlive()) {
+                if(currentPlayerInfo.role == "Killing") {
+                    killingPlayers.add(currentPlayer.getKey());
+                }
+            }
+        }
+        return killingPlayers;
+    }
+
     public int[] getNumberPlayersPerFactions() {
 
         // index 0: Town

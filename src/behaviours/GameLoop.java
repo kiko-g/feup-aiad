@@ -57,25 +57,6 @@ public class GameLoop extends Behaviour {
             this.gameMaster.updateAgentInfo();
             System.out.println("Information successfully updated!");
 
-            List<String> players = this.gameMaster.getGameLobby().getAlivePlayerNames();
-            StringBuilder messageContent = new StringBuilder();
-            for(String currName : players) {
-                messageContent.append(currName).append("\n");
-            }
-
-            ACLMessage msg = Util.buildMessage(ACLMessage.INFORM,
-                    ProtocolNames.PlayerNames,
-                    messageContent.toString()
-            );
-
-            // Adds every alive player as receiver
-            msg = this.gameMaster.addReceiversMessage(msg, true);
-
-            // Once this behaviour finishes, game loop state is updated
-            this.gameMaster.addBehaviour(new ContextInformer(this.gameMaster, msg));
-
-            System.out.println("======> Just sent Player names");
-
             this.readyBehaviourAdded = true;
         } catch (FIPAException e) {
             System.out.println("Error finding and updating all players desc");

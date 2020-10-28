@@ -7,6 +7,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import utils.GameContext;
+import utils.GameLobby;
 
 public abstract class PlayerAgent extends Agent {
 

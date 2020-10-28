@@ -44,17 +44,8 @@ public class PlayerWaiter extends AchieveREResponder {
     }
 
     @Override
-    protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) throws FailureException {
-//                if (performAction()) {
-//                    System.out.println("Agent "+getLocalName()+": Action successfully performed");
-//                    ACLMessage inform = request.createReply();
-//                    inform.setPerformative(ACLMessage.INFORM);
-//                    return inform;
-//                }
-//                else {
-//                    System.out.println("Agent "+getLocalName()+": Action failed");
-//                    throw new FailureException("unexpected-error");
-//                }
+    protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) {
+
         ACLMessage inform = request.createReply();
         inform.setPerformative(ACLMessage.INFORM);
         return inform;

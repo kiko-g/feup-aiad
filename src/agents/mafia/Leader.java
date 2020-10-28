@@ -2,22 +2,28 @@ package agents.mafia;
 
 import agents.PlayerAgent;
 import behaviours.GameStateListener;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import protocols.ContextWaiter;
 import protocols.DecisionInformer;
 import protocols.PlayerInformer;
+import utils.GameLobby;
 import utils.ProtocolNames;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class    Killing extends PlayerAgent {
+public class Leader extends PlayerAgent {
+
+    protected GameLobby gameLobby;
 
     @Override
     public String getRole() {
-        return "Killing";
+        return "Leader";
     }
 
     @Override
@@ -76,13 +82,20 @@ public class    Killing extends PlayerAgent {
         // Day time voting
         List<String> killablePlayers = this.getGameContext().getAlivePlayers();
 
-        Random r = new Random();
-        int playerIndex = r.nextInt(killablePlayers.size());
+        List<String> killers = this.gameLobby.getKillingPlayers();
 
-        String playerToKill = killablePlayers.get(playerIndex);
+        // Select random killable players
+        ArrayList<Integer> randomKillablePlayers = new ArrayList<>();
+        for (int i = 0; i < killers.size(); i++) {
+            randomKillablePlayers.add(i);
+        }
+        Collections.shuffle(randomKillablePlayers);
+
+
+        //String playerToKill = killablePlayers.get(playerIndex);
 
         ACLMessage inform = request.createReply();
-        inform.setContent(playerToKill);
+        //inform.setContent(playerToKill);
         inform.setPerformative(ACLMessage.INFORM);
 
         return inform;

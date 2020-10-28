@@ -36,9 +36,6 @@ public class DayBehaviour extends SequentialBehaviour {
 
         String winner = this.gameMaster.getWinnerFaction();
 
-        System.out.println("[DAY] WINNER");
-        System.out.println(winner);
-
         if (winner == null) {
             System.out.println("======> Day is over!");
             this.gameMaster.setGameState(GameMaster.GameStates.NIGHT);
