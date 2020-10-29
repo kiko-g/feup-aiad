@@ -82,7 +82,7 @@ public class Leader extends PlayerAgent {
         // Day time voting
         List<String> killablePlayers = this.getGameContext().getAlivePlayers();
 
-        List<String> killers = this.gameLobby.getKillingPlayers();
+        List<String> killers = this.getGameContext().getMafiaPlayers();
 
         // Select random killable players
         ArrayList<Integer> randomKillablePlayers = new ArrayList<>();

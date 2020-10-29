@@ -111,21 +111,19 @@ public class GameMaster extends Agent {
     }
 
     public ACLMessage addReceiversMessage(ACLMessage message, boolean alive) {
-        List<DFAgentDescription> players = (alive) ? this.gameLobby.getAlivePlayers() : this.gameLobby.getDeadPlayers();
+        List<AID> players = (alive) ? this.gameLobby.getAlivePlayersAID() : this.gameLobby.getDeadPlayersAID();
 
-        for(DFAgentDescription curr : players) {
-            message.addReceiver(curr.getName());
+        for(AID curr : players) {
+            message.addReceiver(curr);
         }
 
         return message;
     }
 
-    public ACLMessage addReceiversMessageRole(ACLMessage message, String role) {
-        List<DFAgentDescription> players = this.gameLobby.getPlayersRole(role);
+    public ACLMessage addReceiversMessage(ACLMessage message, List<AID> receivers) {
 
-        for(DFAgentDescription curr : players) {
-            message.addReceiver(curr.getName());
-        }
+        for(AID agent : receivers)
+            message.addReceiver(agent);
 
         return message;
     }

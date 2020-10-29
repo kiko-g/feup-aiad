@@ -13,7 +13,6 @@ public class GameContext {
     private HashMap<String, GameFacts> gameContext;
 
     private class GameFacts {
-
         private boolean isAlive;
         private String role = "";
 

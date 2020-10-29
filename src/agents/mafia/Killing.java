@@ -2,18 +2,20 @@ package agents.mafia;
 
 import agents.PlayerAgent;
 import behaviours.GameStateListener;
+import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import protocols.ContextWaiter;
 import protocols.DecisionInformer;
+import protocols.MafiaWaiter;
 import protocols.PlayerInformer;
 import utils.ProtocolNames;
 
 import java.util.List;
 import java.util.Random;
 
-public class    Killing extends PlayerAgent {
+public class Killing extends PlayerAgent {
 
     @Override
     public String getRole() {
@@ -46,6 +48,14 @@ public class    Killing extends PlayerAgent {
 
         // Builds context
         this.addBehaviour(new ContextWaiter(this, playerNamesTemplate));
+
+        MessageTemplate mafiaNamesTemplate = MessageTemplate.and(
+                MessageTemplate.MatchProtocol(ProtocolNames.MafiaPlayers),
+                MessageTemplate.MatchPerformative(ACLMessage.INFORM)
+        );
+
+        // Stores the mafia team
+        this.addBehaviour(new MafiaWaiter(this, mafiaNamesTemplate));
 
         // Listens to gameState changes
         this.addBehaviour(new GameStateListener(this));

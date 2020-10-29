@@ -57,7 +57,10 @@ public class GameLoop extends Behaviour {
             this.gameMaster.updateAgentInfo();
             System.out.println("Information successfully updated!");
 
+            // Handles sending the player names and informing mafia members of their team
+            this.gameMaster.addBehaviour(new ReadyBehaviour(this.gameMaster));
             this.readyBehaviourAdded = true;
+
         } catch (FIPAException e) {
             System.out.println("Error finding and updating all players desc");
             this.gameMaster.takeDown();
