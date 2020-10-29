@@ -2,7 +2,6 @@ package agents.mafia;
 
 import agents.PlayerAgent;
 import behaviours.GameStateListener;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -82,7 +81,7 @@ public class Leader extends PlayerAgent {
         // Day time voting
         List<String> killablePlayers = this.getGameContext().getAlivePlayers();
 
-        List<String> killers = this.getGameContext().getMafiaPlayers();
+        List<String> killers = this.getGameContext().getMafiaPlayerNames(true);
 
         // Select random killable players
         ArrayList<Integer> randomKillablePlayers = new ArrayList<>();

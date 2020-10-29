@@ -6,6 +6,7 @@ import jade.lang.acl.ACLMessage;
 import protocols.DecisionRequester;
 import utils.ProtocolNames;
 
+import static utils.Util.buildMessage;
 import static utils.Util.createMessage;
 
 public class NightBehaviour extends SequentialBehaviour {
@@ -28,11 +29,17 @@ public class NightBehaviour extends SequentialBehaviour {
 //        this.addSubBehaviour(new DecisionRequester(gameMaster, msg));
 
         // Mafia
-        ACLMessage msg2 = createMessage(ACLMessage.REQUEST,
-                gameMaster.getGameLobby().getFirstRole("Killing"),
-                ProtocolNames.TargetKilling, "Who do you want to kill this night?");
+        ACLMessage msgMafia = buildMessage(ACLMessage.REQUEST,
+                ProtocolNames.TargetKilling,
+                "Who do you want to unalive this night?"
+        );
 
-        this.addSubBehaviour(new DecisionRequester(gameMaster, msg2));
+        msgMafia = this.gameMaster.addReceiversMessage(
+                msgMafia,
+                this.gameMaster.getGameLobby().getPlayersAIDRole("Killing", true)
+        );
+
+        this.addSubBehaviour(new DecisionRequester(gameMaster, msgMafia));
 
         // Town Healer
 //        ACLMessage msg3 = createMessage(ACLMessage.REQUEST,

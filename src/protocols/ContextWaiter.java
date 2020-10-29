@@ -33,7 +33,7 @@ public class ContextWaiter extends AchieveREResponder {
         // Sets context
         String[] playerNames = request.getContent().split("\n");
         List<String> temp = new ArrayList<>(Arrays.asList(playerNames));
-        this.playerAgent.setGameContext(new GameContext(temp));
+        this.playerAgent.setGameContext(new GameContext(this.playerAgent, temp));
 
         // Informs success
         ACLMessage inform = request.createReply();
