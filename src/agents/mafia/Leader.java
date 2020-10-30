@@ -8,7 +8,6 @@ import jade.lang.acl.MessageTemplate;
 import protocols.ContextWaiter;
 import protocols.DecisionInformer;
 import protocols.PlayerInformer;
-import utils.GameLobby;
 import utils.ProtocolNames;
 
 import java.util.ArrayList;
@@ -17,8 +16,6 @@ import java.util.List;
 import java.util.Random;
 
 public class Leader extends PlayerAgent {
-
-    protected GameLobby gameLobby;
 
     @Override
     public String getRole() {
@@ -68,12 +65,19 @@ public class Leader extends PlayerAgent {
 
     @Override
     public void setNightTimeBehaviour() {
-        MessageTemplate tmp = MessageTemplate.and(
-                MessageTemplate.MatchProtocol(ProtocolNames.TargetKilling),
-                MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+        List<String> killingsAlive = this.getGameContext().getPlayerNamesByRole("Killing", true);
+        if(killingsAlive.size() > 0) {
+            //TODO
+        }
+        else {
+            // If there are no more killings, this agent has the same behaviour as one
+            MessageTemplate tmp = MessageTemplate.and(
+                    MessageTemplate.MatchProtocol(ProtocolNames.TargetKilling),
+                    MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 
-        // Handles ability target requests
-        this.addBehaviour(new DecisionInformer(this, tmp));
+            // Handles ability target requests
+            this.addBehaviour(new DecisionInformer(this, tmp));
+        }
     }
 
     @Override
@@ -120,6 +124,5 @@ public class Leader extends PlayerAgent {
     @Override
     public void takeDown() {
         this.deregisterAgent();
-//        System.out.println("Killing shutdown!");
     }
 }

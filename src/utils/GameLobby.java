@@ -300,4 +300,8 @@ public class GameLobby {
         }
         return playerNames;
     }
+
+    public boolean didAllKillingsDie() {
+        return this.getPlayersByRole("Killing", true).size() == 0;
+    }
 }

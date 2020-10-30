@@ -29,7 +29,6 @@ public class ContextWaiter extends AchieveREResponder {
 
     @Override
     protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) {
-
         // Sets context
         String[] playerNames = request.getContent().split("\n");
         List<String> temp = new ArrayList<>(Arrays.asList(playerNames));
