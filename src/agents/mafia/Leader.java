@@ -12,10 +12,13 @@ import protocols.MafiaWaiter;
 import protocols.PlayerInformer;
 import utils.ProtocolNames;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class Leader extends PlayerAgent {
+
+    private List<String> killOrdersGiven = new ArrayList<>();
 
     @Override
     public String getRole() {
@@ -64,6 +67,10 @@ public class Leader extends PlayerAgent {
 
     @Override
     public void setDayTimeBehavior() {
+
+        // Resets killOrders backlog
+        this.killOrdersGiven = new ArrayList<>();
+
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.VoteTarget),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
@@ -78,7 +85,9 @@ public class Leader extends PlayerAgent {
         if(killingsAlive.size() > 0) {
             System.out.println("Waiting for my soldier");
             // If there are killings, this agent waits for them to present themselves and then orders them
-            this.addBehaviour(new TargetDictator(this));
+
+            for(int i = 0; i < killingsAlive.size(); i++)
+                this.addBehaviour(new TargetDictator(this));
         }
         else {
             // If there are no more killings, this agent has the same behaviour as one
@@ -129,14 +138,22 @@ public class Leader extends PlayerAgent {
         // Only happens if/when there are no Mafia Leaders alive
         List<String> killablePlayers = this.getGameContext().getAlivePlayers();
 
-        Random r = new Random();
-        int playerIndex = r.nextInt(killablePlayers.size());
+        String playerToKill = "";
 
-        String playerToKill = killablePlayers.get(playerIndex);
+        // Tries to get a target, if it has already been chosen, tries to get another. Max 3 times
+        for(int i = 0; i < 3; i++) {
+            Random r = new Random();
+            int playerIndex = r.nextInt(killablePlayers.size());
+            playerToKill = killablePlayers.get(playerIndex);
+
+            if(!this.killOrdersGiven.contains(playerToKill))
+                break;
+        }
 
         ACLMessage inform = request.createReply();
 
         System.out.println("[Leader Decision] " + playerToKill);
+        this.killOrdersGiven.add(playerToKill);
 
         // String msgContent = "I want you to unalive "+ ;
         inform.setContent("I want you to unalive " + playerToKill);
