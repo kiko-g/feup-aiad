@@ -85,10 +85,4 @@ public class Villager extends PlayerAgent {
         // Should not happen
         return null;
     }
-
-    @Override
-    public void takeDown() {
-        this.deregisterAgent();
-//        System.out.println("Villager shutdown!");
-    }
 }

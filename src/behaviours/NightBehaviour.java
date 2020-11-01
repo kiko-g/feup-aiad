@@ -7,7 +7,6 @@ import protocols.DecisionRequester;
 import utils.ProtocolNames;
 
 import static utils.Util.buildMessage;
-import static utils.Util.createMessage;
 
 public class NightBehaviour extends SequentialBehaviour {
 

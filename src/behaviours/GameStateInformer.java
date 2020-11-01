@@ -15,10 +15,19 @@ public class GameStateInformer extends OneShotBehaviour {
     // Kind of message to send
     String typeInfo;
 
+    //Used if its a player death
+    String deadPlayerName;
+
     // The protocol name decides what message is sent!!
     public GameStateInformer(GameMaster gameMaster, String protocolName) {
         this.gameMaster = gameMaster;
         this.typeInfo = protocolName;
+    }
+
+    public GameStateInformer(GameMaster gameMaster, boolean isPlayerDeath, String deadPlayerName) {
+        this.gameMaster = gameMaster;
+        this.typeInfo = ProtocolNames.PlayerDeath;
+        this.deadPlayerName = deadPlayerName;
     }
 
     @Override
@@ -26,7 +35,7 @@ public class GameStateInformer extends OneShotBehaviour {
 
         switch (this.typeInfo) {
             case ProtocolNames.PlayerDeath: {
-                this.sendDeadPlayersList();
+                this.sendDeadPlayerName();
                 break;
             }
             case ProtocolNames.TimeOfDay: {
@@ -58,6 +67,14 @@ public class GameStateInformer extends OneShotBehaviour {
         this.gameMaster.sendMessageAlivePlayers(msg);
     }
 
+    private void sendDeadPlayerName() {
+        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+        msg.setProtocol(ProtocolNames.PlayerDeath);
+        msg.setContent(this.deadPlayerName);
+        this.gameMaster.sendMessageAlivePlayers(msg);
+    }
+
+    // TODO: Make better
     private void sendDeadPlayersList() {
         List<String> deadPlayerNames = this.gameMaster.getGameLobby().getDeadPlayerNames();
 
@@ -69,8 +86,9 @@ public class GameStateInformer extends OneShotBehaviour {
             messageContent.append(currName).append("\n");
         }
 
-        msg.setContent(messageContent.toString());
-
-        this.gameMaster.sendMessageAlivePlayers(msg);
+        if(deadPlayerNames.size() > 0) {
+            msg.setContent(messageContent.toString());
+            this.gameMaster.sendMessageAlivePlayers(msg);
+        }
     }
 }

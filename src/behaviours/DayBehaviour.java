@@ -7,6 +7,9 @@ import protocols.DecisionRequester;
 import utils.ProtocolNames;
 import utils.Util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DayBehaviour extends SequentialBehaviour {
 
     GameMaster gameMaster;
@@ -18,7 +21,13 @@ public class DayBehaviour extends SequentialBehaviour {
         this.addSubBehaviour(new GameStateInformer(this.gameMaster, ProtocolNames.TimeOfDay));
 
         // Informs Alive agents about who died last night
-        this.addSubBehaviour(new GameStateInformer(this.gameMaster, ProtocolNames.PlayerDeath));
+        if(this.gameMaster.getNightDeaths().size() > 0) {
+            List<String> lastNigthDeaths = this.gameMaster.getNightDeaths();
+            for (String currentName : lastNigthDeaths) {
+                this.addSubBehaviour(new GameStateInformer(this.gameMaster, true, currentName));
+            }
+            this.gameMaster.setNightDeaths(new ArrayList<>());
+        }
 
 
         ACLMessage msg = Util.buildMessage(ACLMessage.REQUEST,
@@ -29,6 +38,11 @@ public class DayBehaviour extends SequentialBehaviour {
                 this.gameMaster,
                 this.gameMaster.addReceiversMessage(msg, true)
         ));
+
+        if(!this.gameMaster.getDayDeath().equals("")) {
+            this.addSubBehaviour(new GameStateInformer(this.gameMaster, true, this.gameMaster.getDayDeath()));
+            this.gameMaster.setDayDeath("");
+        }
     }
 
     @Override

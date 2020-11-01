@@ -1,3 +1,2 @@
-Villager:4
+Villager:2
 Killing:1
-Leader:1

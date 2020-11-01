@@ -34,7 +34,7 @@ public class GameStateListener extends CyclicBehaviour {
         if (msg != null) {
             switch (msg.getProtocol()) {
                 case ProtocolNames.PlayerDeath: {
-                    this.handlePlayerDeaths(msg.getContent());
+                    this.handlePlayerDeath(msg.getContent());
                     break;
                 }
                 case ProtocolNames.TimeOfDay: {
@@ -76,15 +76,10 @@ public class GameStateListener extends CyclicBehaviour {
         }
     }
 
-    private void handlePlayerDeaths(String messageContent) {
+    private void handlePlayerDeath(String messageContent) {
+        this.playerAgent.logMessage("I was informed that " + messageContent + " just died... RIP " + messageContent + ", I will always remember you!");
 
-        String[] deadPlayerNames = messageContent.split("\n");
-
-        for(String currName : deadPlayerNames) {
-            this.playerAgent.logMessage("I was informed that " + currName + " just died... RIP " + currName + ", I will always remember you!");
-
-            // Updates GameContext a.k.a. personal player state
-            this.playerAgent.buryPlayer(currName);
-        }
+        // Updates GameContext a.k.a. personal player state
+        this.playerAgent.buryPlayer(messageContent);
     }
 }

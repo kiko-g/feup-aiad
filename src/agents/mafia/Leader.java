@@ -144,9 +144,4 @@ public class Leader extends PlayerAgent {
 
         return inform;
     }
-
-    @Override
-    public void takeDown() {
-        this.deregisterAgent();
-    }
 }

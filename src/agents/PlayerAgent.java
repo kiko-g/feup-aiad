@@ -104,7 +104,11 @@ public abstract class PlayerAgent extends Agent {
     }
 
     @Override
-    public abstract void takeDown();
+    public void takeDown() {
+        this.deregisterAgent();
+        System.out.println(this.getRole() + " shutdown");
+        super.takeDown();
+    }
 
     public abstract String getRole();
 

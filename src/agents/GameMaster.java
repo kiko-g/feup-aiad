@@ -11,6 +11,7 @@ import jade.lang.acl.MessageTemplate;
 import protocols.PlayerWaiter;
 import utils.GameLobby;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameMaster extends Agent {
@@ -26,9 +27,15 @@ public class GameMaster extends Agent {
     private GameStates gameState;
     private GameLobby gameLobby;
 
+    private List<String> nightDeaths;
+    private String dayDeath;
+
     public GameMaster(int numberPlayers) {
         this.gameLobby = new GameLobby(numberPlayers);
         this.gameState = GameStates.WAITING_FOR_PLAYERS;
+
+        this.nightDeaths = new ArrayList<>();
+        this.dayDeath = "";
     }
 
     @Override
@@ -126,6 +133,22 @@ public class GameMaster extends Agent {
             message.addReceiver(agent);
 
         return message;
+    }
+
+    public String getDayDeath() {
+        return dayDeath;
+    }
+
+    public void setDayDeath(String dayDeath) {
+        this.dayDeath = dayDeath;
+    }
+
+    public List<String> getNightDeaths() {
+        return nightDeaths;
+    }
+
+    public void setNightDeaths(List<String> nightDeaths) {
+        this.nightDeaths = nightDeaths;
     }
 
     public String getWinnerFaction() {

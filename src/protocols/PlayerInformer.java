@@ -21,7 +21,7 @@ public class PlayerInformer extends AchieveREInitiator {
 
     @Override
     protected void handleAgree(ACLMessage agree) {
-        this.agent.logMessage("Agent "+agree.getSender().getName()+" has accepted me in his GameLobby");
+//        this.agent.logMessage("Agent "+agree.getSender().getName()+" has accepted me in his GameLobby");
     }
 
     @Override

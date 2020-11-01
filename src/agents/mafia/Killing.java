@@ -126,10 +126,4 @@ public class Killing extends PlayerAgent {
 
         return inform;
     }
-
-    @Override
-    public void takeDown() {
-        this.deregisterAgent();
-//        System.out.println("Killing shutdown!");
-    }
 }
