@@ -304,4 +304,8 @@ public class GameLobby {
     public boolean didAllKillingsDie() {
         return this.getPlayersByRole("Killing", true).size() == 0;
     }
+
+    public String getPlayerRole(String playerName) {
+        return lobby.get(playerName).getRole();
+    }
 }

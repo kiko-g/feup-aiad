@@ -29,6 +29,7 @@ public class GameMaster extends Agent {
 
     private List<String> nightDeaths;
     private String dayDeath;
+    private boolean jesterDayDeath = false;
 
     public GameMaster(int numberPlayers) {
         this.gameLobby = new GameLobby(numberPlayers);
@@ -156,6 +157,10 @@ public class GameMaster extends Agent {
     }
 
     public String getWinnerFaction() {
+
+        if(isJesterDayDeath())
+            return "Jester";
+
         // Parsing
         int[] nPlayers = this.gameLobby.getNumberPlayersPerFactions();
         int nTown = nPlayers[0];
@@ -167,5 +172,13 @@ public class GameMaster extends Agent {
             return "Town";
         else
             return null;
+    }
+
+    public boolean isJesterDayDeath() {
+        return jesterDayDeath;
+    }
+
+    public void jesterDiedDuringDay() {
+        this.jesterDayDeath = true;
     }
 }

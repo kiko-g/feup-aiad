@@ -72,6 +72,10 @@ public class DecisionRequester extends AchieveREInitiator {
                 this.gameMaster.setDayDeath(playerName);
                 this.gameMaster.getGameLobby().killPlayer(playerName);
                 System.out.println("The town has chosen " + playerName + " for trial!");
+
+                // Jester win
+                if(this.gameMaster.getGameLobby().getPlayerRole(playerName).equals("Jester"))
+                    this.gameMaster.jesterDiedDuringDay();
             }
             else
                 System.out.println("No one was chosen for trial!");
