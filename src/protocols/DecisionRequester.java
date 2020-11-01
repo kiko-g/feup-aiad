@@ -32,6 +32,7 @@ public class DecisionRequester extends AchieveREInitiator {
         switch (this.protocolName) {
             case ProtocolNames.TargetKilling: {
                 this.gameMaster.getGameLobby().killPlayer(inform.getContent());
+                this.gameMaster.addNightDeath(inform.getContent());
                 break;
             }
             case ProtocolNames.VoteTarget: {
@@ -69,8 +70,8 @@ public class DecisionRequester extends AchieveREInitiator {
             // 2 or more players have the same number of votes
             if(!duplicateFound) {
                 this.gameMaster.setDayDeath(playerName);
+                this.gameMaster.getGameLobby().killPlayer(playerName);
                 System.out.println("The town has chosen " + playerName + " for trial!");
-                this.gameMaster.getGameLobby().killPlayer(this.gameMaster.getDayDeath());
             }
             else
                 System.out.println("No one was chosen for trial!");

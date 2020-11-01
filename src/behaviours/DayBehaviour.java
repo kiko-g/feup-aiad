@@ -20,15 +20,16 @@ public class DayBehaviour extends SequentialBehaviour {
         // Informs alive agents about the current time of day
         this.addSubBehaviour(new GameStateInformer(this.gameMaster, ProtocolNames.TimeOfDay));
 
-        // Informs Alive agents about who died last night
-        if(this.gameMaster.getNightDeaths().size() > 0) {
-            List<String> lastNigthDeaths = this.gameMaster.getNightDeaths();
-            for (String currentName : lastNigthDeaths) {
-                this.addSubBehaviour(new GameStateInformer(this.gameMaster, true, currentName));
-            }
-            this.gameMaster.setNightDeaths(new ArrayList<>());
-        }
+        // Informs Alive agents about who died last night if anyone died
+//        if(this.gameMaster.getNightDeaths().size() > 0) {
+//            List<String> lastNightDeaths = this.gameMaster.getNightDeaths();
+//            for (String currentName : lastNightDeaths) {
+//                this.addSubBehaviour(new GameStateInformer(this.gameMaster, true, currentName));
+//            }
+//            this.gameMaster.setNightDeaths(new ArrayList<>());
+//        }
 
+        this.addSubBehaviour(new GameStateInformer(this.gameMaster, false));
 
         ACLMessage msg = Util.buildMessage(ACLMessage.REQUEST,
                 ProtocolNames.VoteTarget, "Who do you want to send to trial?");
@@ -39,10 +40,15 @@ public class DayBehaviour extends SequentialBehaviour {
                 this.gameMaster.addReceiversMessage(msg, true)
         ));
 
-        if(!this.gameMaster.getDayDeath().equals("")) {
-            this.addSubBehaviour(new GameStateInformer(this.gameMaster, true, this.gameMaster.getDayDeath()));
-            this.gameMaster.setDayDeath("");
-        }
+        // Informs who died in trial
+//        if(!this.gameMaster.getDayDeath().equals("")) {
+//            System.out.println("================ SENT VOTING RESULTS ================");
+//
+//            this.addSubBehaviour(new GameStateInformer(this.gameMaster, true, this.gameMaster.getDayDeath()));
+//            this.gameMaster.setDayDeath("");
+//        }
+
+        this.addSubBehaviour(new GameStateInformer(this.gameMaster, true));
     }
 
     @Override

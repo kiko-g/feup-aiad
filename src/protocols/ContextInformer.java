@@ -19,6 +19,6 @@ public class ContextInformer extends AchieveREInitiator {
 
     @Override
     protected void handleInform(ACLMessage inform) {
-        System.out.println(inform.getSender().getName() + " just finished setting context");
+//        System.out.println(inform.getSender().getName() + " just finished setting context");
     }
 }

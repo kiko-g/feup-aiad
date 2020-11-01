@@ -151,6 +151,10 @@ public class GameMaster extends Agent {
         this.nightDeaths = nightDeaths;
     }
 
+    public void addNightDeath(String name) {
+        this.nightDeaths.add(name);
+    }
+
     public String getWinnerFaction() {
         // Parsing
         int[] nPlayers = this.gameLobby.getNumberPlayersPerFactions();

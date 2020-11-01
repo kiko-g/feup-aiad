@@ -43,6 +43,7 @@ public class GameStateListener extends CyclicBehaviour {
                 }
                 case ProtocolNames.End: {
                     this.handleEndOfGame(msg.getContent());
+                    break;
                 }
             }
         }
@@ -53,7 +54,7 @@ public class GameStateListener extends CyclicBehaviour {
         String winnerFaction = message[0];
 
         boolean iAmWinner = winnerFaction.equals(
-                Util.getFaction(this.playerAgent.getRole())
+            Util.getFaction(this.playerAgent.getRole())
         );
 
         if(iAmWinner) {
@@ -77,9 +78,14 @@ public class GameStateListener extends CyclicBehaviour {
     }
 
     private void handlePlayerDeath(String messageContent) {
-        this.playerAgent.logMessage("I was informed that " + messageContent + " just died... RIP " + messageContent + ", I will always remember you!");
 
-        // Updates GameContext a.k.a. personal player state
-        this.playerAgent.buryPlayer(messageContent);
+        String[] names = messageContent.split("\n");
+
+        for(String currentName : names) {
+            this.playerAgent.logMessage("I was informed that " + currentName + " just died... RIP " + currentName + ", I will always remember you!");
+
+            // Updates GameContext a.k.a. personal player state
+            this.playerAgent.buryPlayer(currentName);
+        }
     }
 }
