@@ -1,5 +1,6 @@
 import agents.GameMaster;
 import agents.mafia.Killing;
+import agents.mafia.Leader;
 import agents.town.Villager;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
@@ -25,6 +26,11 @@ public class GameLauncher {
             }
             case "Killing": {
                 ac = container.acceptNewAgent(name, new Killing());
+                ac.start();
+                break;
+            }
+            case "Leader": {
+                ac = container.acceptNewAgent(name, new Leader());
                 ac.start();
                 break;
             }

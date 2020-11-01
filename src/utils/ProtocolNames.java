@@ -9,4 +9,5 @@ public class ProtocolNames {
     public final static String VoteTarget = "VoteTarget";
     public final static String TargetKilling = "TargetKilling";
     public final static String End = "End";
+    public final static String LeaderOrder = "LeaderOrder";
 }

@@ -2,7 +2,8 @@ package agents.mafia;
 
 import agents.PlayerAgent;
 import behaviours.GameStateListener;
-import jade.core.behaviours.SequentialBehaviour;
+import behaviours.TargetDictator;
+import behaviours.TargetKillingWithLeader;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -35,7 +36,6 @@ public class Killing extends PlayerAgent {
 
         // Agent tries to join the game's lobby
         ACLMessage msg = this.buildJoinMessage(this.getRole());
-
 
         // Reports role to gameMaster
         this.addBehaviour(new PlayerInformer(this, msg));
@@ -73,17 +73,29 @@ public class Killing extends PlayerAgent {
 
     @Override
     public void setNightTimeBehaviour() {
-        MessageTemplate tmp = MessageTemplate.and(
-                MessageTemplate.MatchProtocol(ProtocolNames.TargetKilling),
-                MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+        // There should only be 1
+        List<String> leaders = this.getGameContext().getPlayerNamesByRole("Leader", true);
+        if(leaders.size() == 1) {
 
-        // Handles ability target requests
-        this.addBehaviour(new DecisionInformer(this, tmp));
+            System.out.println("I've got a leader!");
+
+            // If the leader is alive, this agent waits for
+            // the gm to request a target, and presents itself to the leader
+            this.addBehaviour(new TargetKillingWithLeader(this));
+        }
+        else {
+            MessageTemplate tmp = MessageTemplate.and(
+                    MessageTemplate.MatchProtocol(ProtocolNames.TargetKilling),
+                    MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+
+            // Handles ability target requests
+            this.addBehaviour(new DecisionInformer(this, tmp));
+        }
     }
 
     @Override
     public ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response) {
-        // Day time voting
+        // Only happens if/when there are no Mafia Leaders alive
         List<String> killablePlayers = this.getGameContext().getAlivePlayers();
 
         Random r = new Random();

@@ -1,6 +1,8 @@
 package protocols;
 
 import agents.PlayerAgent;
+import agents.mafia.Killing;
+import agents.mafia.Leader;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;

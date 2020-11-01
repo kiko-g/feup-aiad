@@ -14,7 +14,7 @@ public class ContextInformer extends AchieveREInitiator {
 
     @Override
     protected void handleAgree(ACLMessage agree) {
-        System.out.println(agree.getSender().getName() + " agreed to set context");
+//        System.out.println(agree.getSender().getName() + " agreed to set context");
     }
 
     @Override
