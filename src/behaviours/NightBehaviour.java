@@ -46,12 +46,20 @@ public class NightBehaviour extends SequentialBehaviour {
         this.addSubBehaviour(new DecisionRequester(gameMaster, msgMafia));
 
         // Town Healer
-//        ACLMessage msg3 = createMessage(ACLMessage.REQUEST,
-//                gameMaster.getGameLobby().getFirstRole("Healer"),
-//                "TargetHealer", "Handle night content Killing");
-//
-//        this.addSubBehaviour(new DecisionRequester(gameMaster, msg3));
+        ACLMessage msgHealer = buildMessage(ACLMessage.REQUEST,
+                ProtocolNames.TargetHealing,
+                "Who will you visit tonight?"
+        );
 
+        msgHealer = this.gameMaster.addReceiversMessage(
+                msgHealer,
+                this.gameMaster.getGameLobby().getPlayersAIDRole("Healer", true)
+        );
+
+        this.addSubBehaviour(new DecisionRequester(gameMaster, msgHealer));
+
+
+        this.addSubBehaviour(new NightResultsCalculator(this.gameMaster));
     }
 
     @Override

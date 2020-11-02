@@ -31,8 +31,7 @@ public class DecisionRequester extends AchieveREInitiator {
 
         switch (this.protocolName) {
             case ProtocolNames.TargetKilling: {
-                this.gameMaster.getGameLobby().killPlayer(inform.getContent());
-                this.gameMaster.addNightDeath(inform.getContent());
+                this.gameMaster.addAttackedPlayer(inform.getContent());
                 break;
             }
             case ProtocolNames.VoteTarget: {
@@ -46,12 +45,18 @@ public class DecisionRequester extends AchieveREInitiator {
 
                 break;
             }
+            case ProtocolNames.TargetHealing: {
+                // Stores the saved player and its savior
+                this.gameMaster.addSavedPlayer(inform.getContent() , inform.getSender().getLocalName());
+                break;
+            }
         }
     }
 
     @Override
     public int onEnd() {
 
+        // Decides whether or not there's a majority of votes to kill a player
         if(this.protocolName.equals(ProtocolNames.VoteTarget)) {
             boolean duplicateFound = false;
             String playerName = "";
@@ -67,7 +72,7 @@ public class DecisionRequester extends AchieveREInitiator {
                 }
             }
 
-            // 2 or more players have the same number of votes
+            // Majority achieved
             if(!duplicateFound) {
                 this.gameMaster.setDayDeath(playerName);
                 this.gameMaster.getGameLobby().killPlayer(playerName);

@@ -12,6 +12,8 @@ import protocols.PlayerWaiter;
 import utils.GameLobby;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class GameMaster extends Agent {
@@ -23,11 +25,18 @@ public class GameMaster extends Agent {
         NIGHT,
         END
     }
-    //waker behavior
+
     private GameStates gameState;
     private GameLobby gameLobby;
 
-    private List<String> nightDeaths;
+    private List<String> attackedPlayers; // Players attacked by Mafia
+
+    // key: player saved
+    // value: who saved it
+    private HashMap<String, String> savedPlayers; // Players saved by Healer during night
+
+    private List<String> nightDeaths; // Players that were attacked and not saved
+
     private String dayDeath;
     private boolean jesterDayDeath = false;
 
@@ -35,6 +44,8 @@ public class GameMaster extends Agent {
         this.gameLobby = new GameLobby(numberPlayers);
         this.gameState = GameStates.WAITING_FOR_PLAYERS;
 
+        this.attackedPlayers = new ArrayList<>();
+        this.savedPlayers = new HashMap<>();
         this.nightDeaths = new ArrayList<>();
         this.dayDeath = "";
     }
@@ -180,5 +191,33 @@ public class GameMaster extends Agent {
 
     public void jesterDiedDuringDay() {
         this.jesterDayDeath = true;
+    }
+
+    public HashMap<String, String> getSavedPlayers() {
+        return savedPlayers;
+    }
+
+    public String getPlayerSavior(String savedPlayerName) {
+        return this.savedPlayers.get(savedPlayerName);
+    }
+
+    public void addSavedPlayer(String savedPlayer, String saviour) {
+        this.savedPlayers.put(savedPlayer, saviour);
+    }
+
+    public void setSavedPlayers(HashMap<String, String> savedPlayers) {
+        this.savedPlayers = savedPlayers;
+    }
+
+    public List<String> getAttackedPlayers() {
+        return attackedPlayers;
+    }
+
+    public void setAttackedPlayers(List<String> attackedPlayers) {
+        this.attackedPlayers = attackedPlayers;
+    }
+
+    public void addAttackedPlayer(String attackedPlayer) {
+        this.attackedPlayers.add(attackedPlayer);
     }
 }

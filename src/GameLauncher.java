@@ -2,6 +2,7 @@ import agents.GameMaster;
 import agents.mafia.Killing;
 import agents.mafia.Leader;
 import agents.neutral.Jester;
+import agents.town.Healer;
 import agents.town.Villager;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
@@ -37,6 +38,11 @@ public class GameLauncher {
             }
             case "Jester": {
                 ac = container.acceptNewAgent(name, new Jester());
+                ac.start();
+                break;
+            }
+            case "Healer": {
+                ac = container.acceptNewAgent(name, new Healer());
                 ac.start();
                 break;
             }
