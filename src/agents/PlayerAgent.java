@@ -6,6 +6,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
+import utils.ChatLog;
 import utils.GameContext;
 
 public abstract class PlayerAgent extends Agent {
@@ -23,6 +24,10 @@ public abstract class PlayerAgent extends Agent {
 
     // Day or Night
     private TimeOfDay currentTime;
+
+    // All chat messages received up until now
+//    private ChatLog chatLog;
+
 
     @Override
     protected void setup() {
