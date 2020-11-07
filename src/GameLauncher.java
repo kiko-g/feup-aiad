@@ -2,6 +2,7 @@ import agents.GameMaster;
 import agents.mafia.Killing;
 import agents.mafia.Leader;
 import agents.neutral.Jester;
+import agents.town.Detective;
 import agents.town.Healer;
 import agents.town.Villager;
 import jade.core.Profile;
@@ -46,7 +47,11 @@ public class GameLauncher {
                 ac.start();
                 break;
             }
-            // TODO: Other roles
+            case "Detective": {
+                ac = container.acceptNewAgent(name, new Detective());
+                ac.start();
+                break;
+            }
             default: {
                 System.out.println(role + " is still not implemented! Skipping...");
             }

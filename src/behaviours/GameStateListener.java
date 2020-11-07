@@ -82,7 +82,8 @@ public class GameStateListener extends CyclicBehaviour {
         String[] names = messageContent.split("\n");
 
         for(String currentName : names) {
-            this.playerAgent.logMessage("I was informed that " + currentName + " just died... RIP " + currentName + ", I will always remember you!");
+            if(!this.playerAgent.isDay())
+                this.playerAgent.logMessage("I was informed that " + currentName + " just died... RIP " + currentName + ", I will always remember you!");
 
             // Updates GameContext a.k.a. personal player state
             this.playerAgent.buryPlayer(currentName);

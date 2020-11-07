@@ -143,4 +143,8 @@ public abstract class PlayerAgent extends Agent {
     public void setNight() {
         this.currentTime = TimeOfDay.Night;
     }
+
+    public boolean isDay() {
+        return this.currentTime == TimeOfDay.Day;
+    }
 }

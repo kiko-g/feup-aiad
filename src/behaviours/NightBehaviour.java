@@ -21,11 +21,8 @@ public class NightBehaviour extends SequentialBehaviour {
         // Town Detective -> Mafia -> Town Healer
 
         // Town Detective
-//        ACLMessage msg = createMessage(ACLMessage.REQUEST,
-//                gameMaster.getGameLobby().getFirstRole("Detective"),
-//                "TargetDetective", "Handle night content Village");
-//
-//        this.addSubBehaviour(new DecisionRequester(gameMaster, msg));
+        if(this.gameMaster.getGameLobby().getPlayersAIDRole("Detective", true).size() > 0) //There are Detectives alive
+            this.addSubBehaviour(new InvestigationInitiator(this.gameMaster));
 
         // Mafia
         ACLMessage msgMafia = buildMessage(ACLMessage.REQUEST,
