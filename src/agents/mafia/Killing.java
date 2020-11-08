@@ -82,9 +82,6 @@ public class Killing extends PlayerAgent {
         // There should only be 1
         List<String> leaders = this.getGameContext().getPlayerNamesByRole("Leader", true);
         if(leaders.size() == 1) {
-
-            System.out.println("I've got a leader!");
-
             // If the leader is alive, this agent waits for
             // the gm to request a target, and presents itself to the leader
             this.addBehaviour(new TargetKillingWithLeader(this));

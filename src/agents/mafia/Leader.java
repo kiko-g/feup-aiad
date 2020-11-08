@@ -40,8 +40,6 @@ public class Leader extends PlayerAgent {
         // Agent tries to join the game's lobby
         ACLMessage msg = this.buildJoinMessage(this.getRole());
 
-        System.out.println(msg.getContent());
-
         // Reports role to gameMaster
         this.addBehaviour(new PlayerInformer(this, msg));
 
@@ -88,9 +86,7 @@ public class Leader extends PlayerAgent {
     public void setNightTimeBehaviour() {
         List<String> killingsAlive = this.getGameContext().getPlayerNamesByRole("Killing", true);
         if(killingsAlive.size() > 0) {
-            System.out.println("Waiting for my soldier");
             // If there are killings, this agent waits for them to present themselves and then orders them
-
             for(int i = 0; i < killingsAlive.size(); i++)
                 this.addBehaviour(new TargetDictator(this));
         }

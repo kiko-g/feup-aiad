@@ -35,7 +35,7 @@ public class DecisionRequester extends AchieveREInitiator {
                 break;
             }
             case ProtocolNames.VoteTarget: {
-                System.out.println("\t" + inform.getSender().getLocalName()+" has voted in " + inform.getContent());
+                System.out.println(inform.getSender().getLocalName()+" has voted in " + inform.getContent());
                 String playerName = inform.getContent();
 
                 // If exists, increments

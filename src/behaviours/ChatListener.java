@@ -25,13 +25,8 @@ public class ChatListener extends CyclicBehaviour {
     public void action() {
         ACLMessage msg = this.playerAgent.receive(mt);
         if (msg != null) {
-            this.playerAgent.logMessage("Got a message! :D");
-
             try {
                 ChatMessage cm = (ChatMessage) msg.getContentObject();
-
-                //TEMP ONLY
-                this.playerAgent.logMessage(cm.toString());
 
                 // Stores it
                 this.playerAgent.addToChatLog(cm);
@@ -42,6 +37,5 @@ public class ChatListener extends CyclicBehaviour {
                 e.printStackTrace();
             }
         }
-        else block(1000);
     }
 }

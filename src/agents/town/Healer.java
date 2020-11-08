@@ -45,6 +45,9 @@ public class Healer extends PlayerAgent {
                 MessageTemplate.MatchPerformative(ACLMessage.INFORM)
         );
 
+        // Builds context
+        this.addBehaviour(new ContextWaiter(this, playerNamesTemplate));
+
         // Reads and handles game state updates (Day/Night, PlayerDeaths...)
         this.addBehaviour(new GameStateListener(this));
 

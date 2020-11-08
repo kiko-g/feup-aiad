@@ -48,6 +48,7 @@ public class ChatMessageDistributor extends Behaviour {
 
                 // Create new message
                 ACLMessage retransmission = new ACLMessage(ACLMessage.INFORM);
+                retransmission.setProtocol(ProtocolNames.Chat);
                 retransmission.setContentObject(cm);
 
                 // Add receivers (every player alive except the sender)
