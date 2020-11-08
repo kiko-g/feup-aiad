@@ -35,8 +35,6 @@ public class Healer extends PlayerAgent {
         // Agent tries to join the game's lobby
         ACLMessage msg = this.buildJoinMessage(this.getRole());
 
-        System.out.println(msg.getContent());
-
         // Handlers here
         this.addBehaviour(new PlayerInformer(this, msg));
 
