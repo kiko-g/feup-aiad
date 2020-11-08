@@ -20,6 +20,8 @@ public class PlayerWaiter extends AchieveREResponder {
         if (request.getContent() == null)
             throw new RefuseException("Request not valid!");
 
+        System.out.println(request.getContent().substring(9));
+
         // Parsing request
         // Message format: Hi! I am <NAME>, the <ROLE>.
         String [] splitMessage = request.getContent().split(" ");

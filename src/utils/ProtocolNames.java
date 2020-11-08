@@ -12,4 +12,5 @@ public class ProtocolNames {
     public final static String LeaderOrder = "LeaderOrder";
     public final static String TargetHealing = "TargetHealing";
     public final static String Investigate = "Investigate";
+    public final static String Chat = "Chat";
 }

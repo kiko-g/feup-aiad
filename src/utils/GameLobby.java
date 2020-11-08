@@ -99,12 +99,6 @@ public class GameLobby {
         return temp.stream().map(AgentInfo::getAgentDesc).collect(Collectors.toList());
     }
 
-    // Returns a list with all players still in game
-    public List<DFAgentDescription> getAlivePlayers() {
-        List<AgentInfo> temp = this.getPlayersByStatus(true);
-        return temp.stream().map(AgentInfo::getAgentDesc).collect(Collectors.toList());
-    }
-
     // Returns a list with all dead players names (AID)
     public List<AID> getDeadPlayersAID() {
         List<AgentInfo> temp = this.getPlayersByStatus(false);
@@ -117,6 +111,14 @@ public class GameLobby {
         return temp.stream().map(AgentInfo::getAID).collect(Collectors.toList());
     }
 
+    public List<AID> getAllPlayers() {
+        List<AID> players = new ArrayList<>();
+
+        for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet())
+            players.add(currentPlayer.getValue().getAID());
+
+        return players;
+    }
 
     private List<AgentInfo> getPlayersByRole(String role, boolean isAlive) {
         List<AgentInfo> players = new ArrayList<>();

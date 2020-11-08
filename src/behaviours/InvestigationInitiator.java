@@ -36,7 +36,6 @@ public class InvestigationInitiator extends Behaviour {
         );
 
         this.requestMessageSent = messageRequest;
-
         return messageRequest;
     }
 
@@ -75,10 +74,14 @@ public class InvestigationInitiator extends Behaviour {
                 boolean isSus = handleMessage(msg);
 
                 ACLMessage response = msg.createReply();
-                if (isSus)
+                if (isSus) {
                     response.setContent("Kinda sus");
-                else
+                    System.out.println(msg.getSender().getLocalName() + " chose to investigate " + msg.getContent() + ": Kinda sus");
+                }
+                else {
                     response.setContent("Not sus");
+                    System.out.println(msg.getSender().getLocalName() + " chose to investigate " + msg.getContent() + ": Not sus!");
+                }
 
                 this.gameMaster.send(response);
                 this.currentStep = Steps.Done;

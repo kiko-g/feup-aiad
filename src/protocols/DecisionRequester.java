@@ -27,14 +27,15 @@ public class DecisionRequester extends AchieveREInitiator {
 
     @Override
     protected void handleInform(ACLMessage inform) {
-        System.out.println("Agent "+inform.getSender().getName()+" has chosen " + inform.getContent());
 
         switch (this.protocolName) {
             case ProtocolNames.TargetKilling: {
+                System.out.println(inform.getSender().getLocalName()+" has decided to attack " + inform.getContent());
                 this.gameMaster.addAttackedPlayer(inform.getContent());
                 break;
             }
             case ProtocolNames.VoteTarget: {
+                System.out.println("\t" + inform.getSender().getLocalName()+" has voted in " + inform.getContent());
                 String playerName = inform.getContent();
 
                 // If exists, increments
@@ -46,6 +47,8 @@ public class DecisionRequester extends AchieveREInitiator {
                 break;
             }
             case ProtocolNames.TargetHealing: {
+                System.out.println(inform.getSender().getLocalName()+" has decided to visit " + inform.getContent());
+
                 // Stores the saved player and its savior
                 this.gameMaster.addSavedPlayer(inform.getContent() , inform.getSender().getLocalName());
                 break;

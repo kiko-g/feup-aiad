@@ -1,5 +1,6 @@
 package agents;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -7,6 +8,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import utils.ChatLog;
+import utils.ChatMessage;
 import utils.GameContext;
 
 public abstract class PlayerAgent extends Agent {
@@ -26,8 +28,11 @@ public abstract class PlayerAgent extends Agent {
     private TimeOfDay currentTime;
 
     // All chat messages received up until now
-//    private ChatLog chatLog;
+    private ChatLog chatLog;
 
+    public PlayerAgent() {
+        this.chatLog = new ChatLog();
+    }
 
     @Override
     protected void setup() {
@@ -152,4 +157,10 @@ public abstract class PlayerAgent extends Agent {
     public boolean isDay() {
         return this.currentTime == TimeOfDay.Day;
     }
+
+    public void addToChatLog(ChatMessage message) {
+        this.chatLog.addMessage(message);
+    }
+
+    public AID getGameMasterAID() { return this.game_master_desc.getName(); }
 }

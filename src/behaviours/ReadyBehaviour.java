@@ -39,7 +39,6 @@ public class ReadyBehaviour extends SequentialBehaviour {
         List<String> mafiaLeaders = this.gameMaster.getGameLobby().getPlayerNamesRole("Leader");
         StringBuilder messageContent = new StringBuilder();
 
-
         // Message format: "name role\n"
 
         for(String currKilling : mafiaKillings)
@@ -71,12 +70,9 @@ public class ReadyBehaviour extends SequentialBehaviour {
         this.addSubBehaviour(new MafiaInformer(this.gameMaster, mafiaMsg));
     }
 
-
     @Override
     public int onEnd() {
-        System.out.println("======> Night begins");
         this.gameMaster.setGameState(GameMaster.GameStates.NIGHT);
-
         return super.onEnd();
     }
 }

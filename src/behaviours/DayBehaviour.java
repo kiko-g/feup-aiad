@@ -7,9 +7,6 @@ import protocols.DecisionRequester;
 import utils.ProtocolNames;
 import utils.Util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DayBehaviour extends SequentialBehaviour {
 
     GameMaster gameMaster;
@@ -17,19 +14,16 @@ public class DayBehaviour extends SequentialBehaviour {
     public DayBehaviour(GameMaster gameMaster) {
         this.gameMaster = gameMaster;
 
+        System.out.println("======> Day begins");
+
         // Informs alive agents about the current time of day
         this.addSubBehaviour(new GameStateInformer(this.gameMaster, ProtocolNames.TimeOfDay));
 
-        // Informs Alive agents about who died last night if anyone died
-//        if(this.gameMaster.getNightDeaths().size() > 0) {
-//            List<String> lastNightDeaths = this.gameMaster.getNightDeaths();
-//            for (String currentName : lastNightDeaths) {
-//                this.addSubBehaviour(new GameStateInformer(this.gameMaster, true, currentName));
-//            }
-//            this.gameMaster.setNightDeaths(new ArrayList<>());
-//        }
-
+        // Who couldn't make it till morning
         this.addSubBehaviour(new GameStateInformer(this.gameMaster, false));
+
+        // Discussion time
+        this.addSubBehaviour(new ChatMessageDistributor(this.gameMaster));
 
         ACLMessage msg = Util.buildMessage(ACLMessage.REQUEST,
                 ProtocolNames.VoteTarget, "Who do you want to send to trial?");
@@ -40,14 +34,7 @@ public class DayBehaviour extends SequentialBehaviour {
                 this.gameMaster.addReceiversMessage(msg, true)
         ));
 
-        // Informs who died in trial
-//        if(!this.gameMaster.getDayDeath().equals("")) {
-//            System.out.println("================ SENT VOTING RESULTS ================");
-//
-//            this.addSubBehaviour(new GameStateInformer(this.gameMaster, true, this.gameMaster.getDayDeath()));
-//            this.gameMaster.setDayDeath("");
-//        }
-
+        // Who died in trial
         this.addSubBehaviour(new GameStateInformer(this.gameMaster, true));
     }
 
@@ -62,6 +49,7 @@ public class DayBehaviour extends SequentialBehaviour {
         }
         else {
             this.gameMaster.setGameState(GameMaster.GameStates.END);
+            System.out.println("======> Game is over!");
             System.out.println(winner + " won the game!");
         }
 

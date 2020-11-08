@@ -1,6 +1,7 @@
 package agents.mafia;
 
 import agents.PlayerAgent;
+import behaviours.ChatListener;
 import behaviours.GameStateListener;
 import behaviours.TargetDictator;
 import behaviours.TargetKillingWithLeader;
@@ -57,12 +58,17 @@ public class Killing extends PlayerAgent {
         // Stores the mafia team
         this.addBehaviour(new MafiaWaiter(this, mafiaNamesTemplate));
 
-        // Listens to gameState changes
+        // Reads and handles game state updates (Day/Night, PlayerDeaths...)
         this.addBehaviour(new GameStateListener(this));
+
+        // Reads and stores messages posted by other agents
+        this.addBehaviour(new ChatListener(this));
     }
 
     @Override
     public void setDayTimeBehavior() {
+        // TODO: Post beliefs in chat
+
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.VoteTarget),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST));

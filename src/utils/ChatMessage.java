@@ -1,21 +1,13 @@
 package utils;
 
 import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
 
 public class ChatMessage implements Serializable {
 
     private long timeReception; // Time at which the message was received by the GM
     private final String content;
     private final String senderName;
-
-//    public ChatMessage(String chatPostMessageContent) {
-//        // Message Format: "<sentAt>#<senderName>#<content>"
-//        String[] messageFields = chatPostMessageContent.split("#");
-//
-//        this.sentAt = Long.parseLong(messageFields[0]);
-//        this.content = messageFields[2];
-//        this.senderName = messageFields[1];
-//    }
 
     public ChatMessage(String content, String senderName) {
         this.content = content;
@@ -37,5 +29,15 @@ public class ChatMessage implements Serializable {
 
     public String getSenderName() {
         return senderName;
+    }
+
+    @Override
+    public String toString() {
+        String time = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(timeReception) % 24,
+                TimeUnit.MILLISECONDS.toMinutes(timeReception) % TimeUnit.HOURS.toMinutes(1),
+                TimeUnit.MILLISECONDS.toSeconds(timeReception) % TimeUnit.MINUTES.toSeconds(1));
+
+        return "[" + time + "] " +
+                senderName + ": " + content;
     }
 }

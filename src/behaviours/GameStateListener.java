@@ -58,9 +58,9 @@ public class GameStateListener extends CyclicBehaviour {
         );
 
         if(iAmWinner) {
-            System.out.println("GG IZI");
+            this.playerAgent.logMessage("GG IZI");
         } else {
-            System.out.println("Congratulations " + winnerFaction + "!");
+            this.playerAgent.logMessage("Congratulations " + winnerFaction + "!");
         }
 
         this.playerAgent.takeDown();

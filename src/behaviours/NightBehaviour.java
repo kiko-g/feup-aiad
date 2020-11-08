@@ -15,6 +15,8 @@ public class NightBehaviour extends SequentialBehaviour {
     public NightBehaviour(GameMaster gameMaster) {
         this.gameMaster = gameMaster;
 
+        System.out.println("======> Night begins");
+
         // Informs alive agents about the current time of day
         this.addSubBehaviour(new GameStateInformer(this.gameMaster, ProtocolNames.TimeOfDay));
 
@@ -70,6 +72,7 @@ public class NightBehaviour extends SequentialBehaviour {
         }
         else {
             this.gameMaster.setGameState(GameMaster.GameStates.END);
+            System.out.println("======> Game is over!");
             System.out.println(winner + " won the game!");
         }
 

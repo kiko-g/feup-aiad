@@ -1,6 +1,8 @@
 package agents.town;
 
 import agents.PlayerAgent;
+import behaviours.ChatListener;
+import behaviours.ChatPoster;
 import behaviours.GameStateListener;
 import behaviours.InvestigationWaiter;
 import jade.domain.FIPAException;
@@ -62,8 +64,6 @@ public class Detective extends PlayerAgent {
         // Agent tries to join the game's lobby
         ACLMessage msg = this.buildJoinMessage(this.getRole());
 
-        this.logMessage(msg.getContent());
-
         // Handlers here
         this.addBehaviour(new PlayerInformer(this, msg));
 
@@ -75,11 +75,19 @@ public class Detective extends PlayerAgent {
         // Builds context
         this.addBehaviour(new ContextWaiter(this, playerNamesTemplate));
 
+        // Reads and handles game state updates (Day/Night, PlayerDeaths...)
         this.addBehaviour(new GameStateListener(this));
+
+        // Reads and stores messages posted by other agents
+        this.addBehaviour(new ChatListener(this));
     }
 
     @Override
     public void setDayTimeBehavior() {
+        // TODO: Post beliefs in chat
+
+        this.addBehaviour(new ChatPoster(this, "I am the Detective of this town"));
+
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.VoteTarget),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
@@ -140,7 +148,6 @@ public class Detective extends PlayerAgent {
     }
 
     public void addVisit(String visitedPlayer, boolean isSus) {
-        this.logMessage("Is " + visitedPlayer + " Sus? " + isSus);
         this.nightVisits.add(new VisitReport(visitedPlayer, isSus));
     }
 }

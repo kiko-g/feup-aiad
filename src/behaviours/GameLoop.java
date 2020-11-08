@@ -3,12 +3,7 @@ package behaviours;
 import agents.GameMaster;
 import jade.core.behaviours.Behaviour;
 import jade.domain.FIPAException;
-import jade.lang.acl.ACLMessage;
-import protocols.ContextInformer;
 import utils.ProtocolNames;
-import utils.Util;
-
-import java.util.List;
 
 public class GameLoop extends Behaviour {
     GameMaster gameMaster;
@@ -25,7 +20,6 @@ public class GameLoop extends Behaviour {
     @Override
     public void action() {
         switch (this.gameMaster.getGameState()) {
-
             case WAITING_FOR_PLAYERS: {
                 return;
             }
@@ -100,11 +94,5 @@ public class GameLoop extends Behaviour {
     @Override
     public boolean done() {
         return this.endLoop;
-    }
-
-    @Override
-    public int onEnd() {
-        System.out.println("GameMaster shutting down!");
-        return super.onEnd();
     }
 }

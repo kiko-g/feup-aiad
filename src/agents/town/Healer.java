@@ -1,6 +1,7 @@
 package agents.town;
 
 import agents.PlayerAgent;
+import behaviours.ChatListener;
 import behaviours.GameStateListener;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
@@ -44,14 +45,18 @@ public class Healer extends PlayerAgent {
                 MessageTemplate.MatchPerformative(ACLMessage.INFORM)
         );
 
-        // Builds context
-        this.addBehaviour(new ContextWaiter(this, playerNamesTemplate));
-
+        // Reads and handles game state updates (Day/Night, PlayerDeaths...)
         this.addBehaviour(new GameStateListener(this));
+
+        // Reads and stores messages posted by other agents
+        this.addBehaviour(new ChatListener(this));
     }
 
     @Override
     public void setDayTimeBehavior() {
+        // TODO: Post beliefs in chat
+
+
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.VoteTarget),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
