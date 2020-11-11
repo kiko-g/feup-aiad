@@ -31,7 +31,7 @@ public class ChatListener extends CyclicBehaviour {
                 // Stores it
                 this.playerAgent.addToChatLog(cm);
 
-                //TODO: UPDATE SUS RATE
+                this.playerAgent.handleChatMsg(cm);
 
             } catch (UnreadableException e) {
                 e.printStackTrace();

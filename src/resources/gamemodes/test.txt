@@ -1,5 +1,5 @@
-Villager:8
+Villager:4
 Detective:1
-Healer:1
+Healer:0
 Killing:2
 Leader:1

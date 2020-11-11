@@ -9,9 +9,15 @@ import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import utils.ChatLog;
 import utils.ChatMessage;
+import utils.ChatMessageTemplate;
 import utils.GameContext;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class PlayerAgent extends Agent {
+
+    HashMap<String, Double> susRateMap = new HashMap<>();
 
     private enum TimeOfDay {
         Day,
@@ -163,4 +169,40 @@ public abstract class PlayerAgent extends Agent {
     }
 
     public AID getGameMasterAID() { return this.game_master_desc.getName(); }
+
+    public void addToSusRateMap(String name, Double value) {
+        susRateMap.put(name, value);
+    }
+
+    public void setPlayerSusRate(String name, double delta) {
+        double oldSusRate = this.susRateMap.get(name);
+        this.susRateMap.replace(name, oldSusRate * delta);
+    }
+
+    public void handleChatMsg(ChatMessage message) {
+        switch (message.getTemplateMessage()) {
+            case ChatMessageTemplate.RevealRole: {
+                setPlayerSusRate(message.getSenderName(), 0.8);
+                break;
+            }
+            case ChatMessageTemplate.AccusePlayerRole: {
+                break;
+            }
+            case ChatMessageTemplate.SkipAccusation: {
+                setPlayerSusRate(message.getSenderName(), 1.1);
+                break;
+            }
+            case ChatMessageTemplate.AccusePlayer: {
+                String victim = message.getContent().substring(18);
+                setPlayerSusRate(victim, 1.4);
+                break;
+            }
+        }
+
+        String susRates = "";
+        for(Map.Entry<String, Double> currentPlayer : this.susRateMap.entrySet())
+            susRates += currentPlayer.getKey() + " " + currentPlayer.getValue() + " ; ";
+
+        this.logMessage(susRates);
+    }
 }

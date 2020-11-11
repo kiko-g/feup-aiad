@@ -7,11 +7,13 @@ public class ChatMessage implements Serializable {
 
     private long timeReception; // Time at which the message was received by the GM
     private final String content;
+    private final String templateMessage;
     private final String senderName;
 
-    public ChatMessage(String content, String senderName) {
+    public ChatMessage(String content, String templateMessage, String senderName) {
         this.content = content;
         this.senderName = senderName;
+        this.templateMessage = templateMessage;
     }
 
     // To be called by GM before retransmitting
@@ -29,6 +31,10 @@ public class ChatMessage implements Serializable {
 
     public String getSenderName() {
         return senderName;
+    }
+
+    public String getTemplateMessage() {
+        return templateMessage;
     }
 
     @Override

@@ -11,17 +11,19 @@ import java.io.IOException;
 public class ChatPoster extends OneShotBehaviour {
 
     private PlayerAgent playerAgent;
+    private String templateMessage;
     private String messageContent;
 
-    public ChatPoster(PlayerAgent playerAgent, String messageContent) {
+    public ChatPoster(PlayerAgent playerAgent, String templateMessage, String messageContent) {
         this.playerAgent = playerAgent;
+        this.templateMessage = templateMessage;
         this.messageContent = messageContent;
     }
 
     @Override
     public void action() {
         // Creates Chat Message to be sent
-        ChatMessage cm = new ChatMessage(this.messageContent, this.playerAgent.getLocalName());
+        ChatMessage cm = new ChatMessage(this.messageContent, this.templateMessage, this.playerAgent.getLocalName());
 
         // Creates ACLMessage and puts ChatMessage as objectContent
         ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);

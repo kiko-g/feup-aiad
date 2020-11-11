@@ -11,6 +11,8 @@ import jade.lang.acl.MessageTemplate;
 import protocols.ContextWaiter;
 import protocols.DecisionInformer;
 import protocols.PlayerInformer;
+import utils.ChatMessage;
+import utils.ChatMessageTemplate;
 import utils.ProtocolNames;
 
 import java.util.ArrayList;
@@ -86,7 +88,7 @@ public class Detective extends PlayerAgent {
     public void setDayTimeBehavior() {
         // TODO: Post beliefs in chat
 
-        this.addBehaviour(new ChatPoster(this, "I am the Detective of this town"));
+        this.addBehaviour(new ChatPoster(this, ChatMessageTemplate.RevealRole, ChatMessageTemplate.revealRole("Detective")));
 
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.VoteTarget),

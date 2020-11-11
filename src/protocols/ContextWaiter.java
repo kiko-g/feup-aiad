@@ -34,6 +34,10 @@ public class ContextWaiter extends AchieveREResponder {
         List<String> temp = new ArrayList<>(Arrays.asList(playerNames));
         this.playerAgent.setGameContext(new GameContext(this.playerAgent, temp));
 
+        for(String currentPlayerName : playerNames) {
+            this.playerAgent.addToSusRateMap(currentPlayerName, 0.5);
+        }
+        
         // Informs success
         ACLMessage inform = request.createReply();
         inform.setPerformative(ACLMessage.INFORM);
