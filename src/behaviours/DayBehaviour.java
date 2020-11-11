@@ -14,12 +14,16 @@ public class DayBehaviour extends SequentialBehaviour {
     public DayBehaviour(GameMaster gameMaster) {
         this.gameMaster = gameMaster;
 
+        System.out.println("======> Day begins");
+
         // Informs alive agents about the current time of day
         this.addSubBehaviour(new GameStateInformer(this.gameMaster, ProtocolNames.TimeOfDay));
 
-        // Informs Alive agents about who died last night
-        this.addSubBehaviour(new GameStateInformer(this.gameMaster, ProtocolNames.PlayerDeath));
+        // Who couldn't make it till morning
+        this.addSubBehaviour(new GameStateInformer(this.gameMaster, false));
 
+        // Discussion time
+        this.addSubBehaviour(new ChatMessageDistributor(this.gameMaster));
 
         ACLMessage msg = Util.buildMessage(ACLMessage.REQUEST,
                 ProtocolNames.VoteTarget, "Who do you want to send to trial?");
@@ -29,6 +33,9 @@ public class DayBehaviour extends SequentialBehaviour {
                 this.gameMaster,
                 this.gameMaster.addReceiversMessage(msg, true)
         ));
+
+        // Who died in trial
+        this.addSubBehaviour(new GameStateInformer(this.gameMaster, true));
     }
 
     @Override
@@ -36,15 +43,13 @@ public class DayBehaviour extends SequentialBehaviour {
 
         String winner = this.gameMaster.getWinnerFaction();
 
-        System.out.println("[DAY] WINNER");
-        System.out.println(winner);
-
         if (winner == null) {
             System.out.println("======> Day is over!");
             this.gameMaster.setGameState(GameMaster.GameStates.NIGHT);
         }
         else {
             this.gameMaster.setGameState(GameMaster.GameStates.END);
+            System.out.println("======> Game is over!");
             System.out.println(winner + " won the game!");
         }
 

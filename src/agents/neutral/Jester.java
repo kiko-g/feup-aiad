@@ -1,4 +1,4 @@
-package agents.town;
+package agents.neutral;
 
 import agents.PlayerAgent;
 import behaviours.ChatListener;
@@ -14,11 +14,11 @@ import utils.ProtocolNames;
 import java.util.List;
 import java.util.Random;
 
-public class Villager extends PlayerAgent {
-
+public class Jester extends PlayerAgent
+{
     @Override
     public String getRole() {
-        return "Villager";
+        return "Jester";
     }
 
     @Override

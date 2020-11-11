@@ -1,14 +1,23 @@
 package agents;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
+import utils.ChatLog;
+import utils.ChatMessage;
+import utils.ChatMessageTemplate;
 import utils.GameContext;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class PlayerAgent extends Agent {
+
+    HashMap<String, Double> susRateMap = new HashMap<>();
 
     private enum TimeOfDay {
         Day,
@@ -23,6 +32,13 @@ public abstract class PlayerAgent extends Agent {
 
     // Day or Night
     private TimeOfDay currentTime;
+
+    // All chat messages received up until now
+    private ChatLog chatLog;
+
+    public PlayerAgent() {
+        this.chatLog = new ChatLog();
+    }
 
     @Override
     protected void setup() {
@@ -103,7 +119,11 @@ public abstract class PlayerAgent extends Agent {
     }
 
     @Override
-    public abstract void takeDown();
+    public void takeDown() {
+        this.deregisterAgent();
+//        System.out.println(this.getRole() + " shutdown");
+        super.takeDown();
+    }
 
     public abstract String getRole();
 
@@ -138,5 +158,51 @@ public abstract class PlayerAgent extends Agent {
 
     public void setNight() {
         this.currentTime = TimeOfDay.Night;
+    }
+
+    public boolean isDay() {
+        return this.currentTime == TimeOfDay.Day;
+    }
+
+    public void addToChatLog(ChatMessage message) {
+        this.chatLog.addMessage(message);
+    }
+
+    public AID getGameMasterAID() { return this.game_master_desc.getName(); }
+
+    public void addToSusRateMap(String name, Double value) {
+        susRateMap.put(name, value);
+    }
+
+    public void setPlayerSusRate(String name, double delta) {
+        double oldSusRate = this.susRateMap.get(name);
+        this.susRateMap.replace(name, oldSusRate * delta);
+    }
+
+    public void handleChatMsg(ChatMessage message) {
+        switch (message.getTemplateMessage()) {
+            case ChatMessageTemplate.RevealRole: {
+                setPlayerSusRate(message.getSenderName(), 0.8);
+                break;
+            }
+            case ChatMessageTemplate.AccusePlayerRole: {
+                break;
+            }
+            case ChatMessageTemplate.SkipAccusation: {
+                setPlayerSusRate(message.getSenderName(), 1.1);
+                break;
+            }
+            case ChatMessageTemplate.AccusePlayer: {
+                String victim = message.getContent().substring(18);
+                setPlayerSusRate(victim, 1.4);
+                break;
+            }
+        }
+
+        String susRates = "";
+        for(Map.Entry<String, Double> currentPlayer : this.susRateMap.entrySet())
+            susRates += currentPlayer.getKey() + " " + currentPlayer.getValue() + " ; ";
+
+        this.logMessage(susRates);
     }
 }

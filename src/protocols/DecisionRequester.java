@@ -27,14 +27,15 @@ public class DecisionRequester extends AchieveREInitiator {
 
     @Override
     protected void handleInform(ACLMessage inform) {
-        System.out.println("Agent "+inform.getSender().getName()+" has chosen " + inform.getContent());
 
         switch (this.protocolName) {
             case ProtocolNames.TargetKilling: {
-                this.gameMaster.getGameLobby().killPlayer(inform.getContent());
+                System.out.println(inform.getSender().getLocalName()+" has decided to attack " + inform.getContent());
+                this.gameMaster.addAttackedPlayer(inform.getContent());
                 break;
             }
             case ProtocolNames.VoteTarget: {
+                System.out.println(inform.getSender().getLocalName()+" has voted in " + inform.getContent());
                 String playerName = inform.getContent();
 
                 // If exists, increments
@@ -45,12 +46,20 @@ public class DecisionRequester extends AchieveREInitiator {
 
                 break;
             }
+            case ProtocolNames.TargetHealing: {
+                System.out.println(inform.getSender().getLocalName()+" has decided to visit " + inform.getContent());
+
+                // Stores the saved player and its savior
+                this.gameMaster.addSavedPlayer(inform.getContent() , inform.getSender().getLocalName());
+                break;
+            }
         }
     }
 
     @Override
     public int onEnd() {
 
+        // Decides whether or not there's a majority of votes to kill a player
         if(this.protocolName.equals(ProtocolNames.VoteTarget)) {
             boolean duplicateFound = false;
             String playerName = "";
@@ -66,10 +75,15 @@ public class DecisionRequester extends AchieveREInitiator {
                 }
             }
 
-            // 2 or more players have the same number of votes
+            // Majority achieved
             if(!duplicateFound) {
+                this.gameMaster.setDayDeath(playerName);
                 this.gameMaster.getGameLobby().killPlayer(playerName);
                 System.out.println("The town has chosen " + playerName + " for trial!");
+
+                // Jester win
+                if(this.gameMaster.getGameLobby().getPlayerRole(playerName).equals("Jester"))
+                    this.gameMaster.jesterDiedDuringDay();
             }
             else
                 System.out.println("No one was chosen for trial!");

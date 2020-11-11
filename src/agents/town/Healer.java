@@ -14,11 +14,11 @@ import utils.ProtocolNames;
 import java.util.List;
 import java.util.Random;
 
-public class Villager extends PlayerAgent {
+public class Healer extends PlayerAgent {
 
     @Override
     public String getRole() {
-        return "Villager";
+        return "Healer";
     }
 
     @Override
@@ -57,6 +57,7 @@ public class Villager extends PlayerAgent {
     public void setDayTimeBehavior() {
         // TODO: Post beliefs in chat
 
+
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.VoteTarget),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
@@ -67,7 +68,12 @@ public class Villager extends PlayerAgent {
 
     @Override
     public void setNightTimeBehaviour() {
-        // Nothing at all
+        MessageTemplate tmp = MessageTemplate.and(
+                MessageTemplate.MatchProtocol(ProtocolNames.TargetHealing),
+                MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+
+        // Handles ability target requests
+        this.addBehaviour(new DecisionInformer(this, tmp));
     }
 
     @Override
@@ -88,7 +94,18 @@ public class Villager extends PlayerAgent {
 
     @Override
     public ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response) {
-        // Should not happen
-        return null;
+        // Only happens if/when there are no Mafia Leaders alive
+        List<String> alivePlayers = this.getGameContext().getAlivePlayers();
+
+        Random r = new Random();
+        int playerIndex = r.nextInt(alivePlayers.size());
+
+        String playerToSave = alivePlayers.get(playerIndex);
+
+        ACLMessage inform = request.createReply();
+        inform.setContent(playerToSave);
+        inform.setPerformative(ACLMessage.INFORM);
+
+        return inform;
     }
 }

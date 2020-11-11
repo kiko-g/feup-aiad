@@ -1,7 +1,6 @@
 package protocols;
 
 import agents.GameMaster;
-import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -20,6 +19,8 @@ public class PlayerWaiter extends AchieveREResponder {
     protected ACLMessage handleRequest(ACLMessage request) throws RefuseException {
         if (request.getContent() == null)
             throw new RefuseException("Request not valid!");
+
+        System.out.println(request.getContent().substring(9));
 
         // Parsing request
         // Message format: Hi! I am <NAME>, the <ROLE>.
@@ -44,17 +45,8 @@ public class PlayerWaiter extends AchieveREResponder {
     }
 
     @Override
-    protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) throws FailureException {
-//                if (performAction()) {
-//                    System.out.println("Agent "+getLocalName()+": Action successfully performed");
-//                    ACLMessage inform = request.createReply();
-//                    inform.setPerformative(ACLMessage.INFORM);
-//                    return inform;
-//                }
-//                else {
-//                    System.out.println("Agent "+getLocalName()+": Action failed");
-//                    throw new FailureException("unexpected-error");
-//                }
+    protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) {
+
         ACLMessage inform = request.createReply();
         inform.setPerformative(ACLMessage.INFORM);
         return inform;

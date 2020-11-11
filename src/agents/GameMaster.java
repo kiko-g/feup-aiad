@@ -11,6 +11,9 @@ import jade.lang.acl.MessageTemplate;
 import protocols.PlayerWaiter;
 import utils.GameLobby;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class GameMaster extends Agent {
@@ -22,13 +25,29 @@ public class GameMaster extends Agent {
         NIGHT,
         END
     }
-    //waker behavior
+
     private GameStates gameState;
     private GameLobby gameLobby;
+
+    private List<String> attackedPlayers; // Players attacked by Mafia
+
+    // key: player saved
+    // value: who saved it
+    private HashMap<String, String> savedPlayers; // Players saved by Healer during night
+
+    private List<String> nightDeaths; // Players that were attacked and not saved
+
+    private String dayDeath;
+    private boolean jesterDayDeath = false;
 
     public GameMaster(int numberPlayers) {
         this.gameLobby = new GameLobby(numberPlayers);
         this.gameState = GameStates.WAITING_FOR_PLAYERS;
+
+        this.attackedPlayers = new ArrayList<>();
+        this.savedPlayers = new HashMap<>();
+        this.nightDeaths = new ArrayList<>();
+        this.dayDeath = "";
     }
 
     @Override
@@ -111,26 +130,48 @@ public class GameMaster extends Agent {
     }
 
     public ACLMessage addReceiversMessage(ACLMessage message, boolean alive) {
-        List<DFAgentDescription> players = (alive) ? this.gameLobby.getAlivePlayers() : this.gameLobby.getDeadPlayers();
+        List<AID> players = (alive) ? this.gameLobby.getAlivePlayersAID() : this.gameLobby.getDeadPlayersAID();
 
-        for(DFAgentDescription curr : players) {
-            message.addReceiver(curr.getName());
+        for(AID curr : players) {
+            message.addReceiver(curr);
         }
 
         return message;
     }
 
-    public ACLMessage addReceiversMessageRole(ACLMessage message, String role) {
-        List<DFAgentDescription> players = this.gameLobby.getPlayersRole(role);
+    public ACLMessage addReceiversMessage(ACLMessage message, List<AID> receivers) {
 
-        for(DFAgentDescription curr : players) {
-            message.addReceiver(curr.getName());
-        }
+        for(AID agent : receivers)
+            message.addReceiver(agent);
 
         return message;
+    }
+
+    public String getDayDeath() {
+        return dayDeath;
+    }
+
+    public void setDayDeath(String dayDeath) {
+        this.dayDeath = dayDeath;
+    }
+
+    public List<String> getNightDeaths() {
+        return nightDeaths;
+    }
+
+    public void setNightDeaths(List<String> nightDeaths) {
+        this.nightDeaths = nightDeaths;
+    }
+
+    public void addNightDeath(String name) {
+        this.nightDeaths.add(name);
     }
 
     public String getWinnerFaction() {
+
+        if(isJesterDayDeath())
+            return "Jester";
+
         // Parsing
         int[] nPlayers = this.gameLobby.getNumberPlayersPerFactions();
         int nTown = nPlayers[0];
@@ -142,5 +183,41 @@ public class GameMaster extends Agent {
             return "Town";
         else
             return null;
+    }
+
+    public boolean isJesterDayDeath() {
+        return jesterDayDeath;
+    }
+
+    public void jesterDiedDuringDay() {
+        this.jesterDayDeath = true;
+    }
+
+    public HashMap<String, String> getSavedPlayers() {
+        return savedPlayers;
+    }
+
+    public String getPlayerSavior(String savedPlayerName) {
+        return this.savedPlayers.get(savedPlayerName);
+    }
+
+    public void addSavedPlayer(String savedPlayer, String saviour) {
+        this.savedPlayers.put(savedPlayer, saviour);
+    }
+
+    public void setSavedPlayers(HashMap<String, String> savedPlayers) {
+        this.savedPlayers = savedPlayers;
+    }
+
+    public List<String> getAttackedPlayers() {
+        return attackedPlayers;
+    }
+
+    public void setAttackedPlayers(List<String> attackedPlayers) {
+        this.attackedPlayers = attackedPlayers;
+    }
+
+    public void addAttackedPlayer(String attackedPlayer) {
+        this.attackedPlayers.add(attackedPlayer);
     }
 }

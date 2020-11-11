@@ -29,12 +29,15 @@ public class ContextWaiter extends AchieveREResponder {
 
     @Override
     protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) {
-
         // Sets context
         String[] playerNames = request.getContent().split("\n");
         List<String> temp = new ArrayList<>(Arrays.asList(playerNames));
-        this.playerAgent.setGameContext(new GameContext(temp));
+        this.playerAgent.setGameContext(new GameContext(this.playerAgent, temp));
 
+        for(String currentPlayerName : playerNames) {
+            this.playerAgent.addToSusRateMap(currentPlayerName, 0.5);
+        }
+        
         // Informs success
         ACLMessage inform = request.createReply();
         inform.setPerformative(ACLMessage.INFORM);

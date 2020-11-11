@@ -34,7 +34,7 @@ public class GameStateListener extends CyclicBehaviour {
         if (msg != null) {
             switch (msg.getProtocol()) {
                 case ProtocolNames.PlayerDeath: {
-                    this.handlePlayerDeaths(msg.getContent());
+                    this.handlePlayerDeath(msg.getContent());
                     break;
                 }
                 case ProtocolNames.TimeOfDay: {
@@ -43,6 +43,7 @@ public class GameStateListener extends CyclicBehaviour {
                 }
                 case ProtocolNames.End: {
                     this.handleEndOfGame(msg.getContent());
+                    break;
                 }
             }
         }
@@ -53,13 +54,13 @@ public class GameStateListener extends CyclicBehaviour {
         String winnerFaction = message[0];
 
         boolean iAmWinner = winnerFaction.equals(
-                Util.getFaction(this.playerAgent.getRole())
+            Util.getFaction(this.playerAgent.getRole())
         );
 
         if(iAmWinner) {
-            System.out.println("GG IZI");
+            this.playerAgent.logMessage("GG IZI");
         } else {
-            System.out.println("Congratulations " + winnerFaction + "!");
+            this.playerAgent.logMessage("Congratulations " + winnerFaction + "!");
         }
 
         this.playerAgent.takeDown();
@@ -76,15 +77,16 @@ public class GameStateListener extends CyclicBehaviour {
         }
     }
 
-    private void handlePlayerDeaths(String messageContent) {
+    private void handlePlayerDeath(String messageContent) {
 
-        String[] deadPlayerNames = messageContent.split("\n");
+        String[] names = messageContent.split("\n");
 
-        for(String currName : deadPlayerNames) {
-            this.playerAgent.logMessage("I was informed that " + currName + " just died... RIP " + currName + ", I will always remember you!");
+        for(String currentName : names) {
+            if(!this.playerAgent.isDay())
+                this.playerAgent.logMessage("I was informed that " + currentName + " just died... RIP " + currentName + ", I will always remember you!");
 
             // Updates GameContext a.k.a. personal player state
-            this.playerAgent.buryPlayer(currName);
+            this.playerAgent.buryPlayer(currentName);
         }
     }
 }

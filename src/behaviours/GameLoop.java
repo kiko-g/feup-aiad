@@ -3,12 +3,7 @@ package behaviours;
 import agents.GameMaster;
 import jade.core.behaviours.Behaviour;
 import jade.domain.FIPAException;
-import jade.lang.acl.ACLMessage;
-import protocols.ContextInformer;
 import utils.ProtocolNames;
-import utils.Util;
-
-import java.util.List;
 
 public class GameLoop extends Behaviour {
     GameMaster gameMaster;
@@ -25,7 +20,6 @@ public class GameLoop extends Behaviour {
     @Override
     public void action() {
         switch (this.gameMaster.getGameState()) {
-
             case WAITING_FOR_PLAYERS: {
                 return;
             }
@@ -57,26 +51,10 @@ public class GameLoop extends Behaviour {
             this.gameMaster.updateAgentInfo();
             System.out.println("Information successfully updated!");
 
-            List<String> players = this.gameMaster.getGameLobby().getAlivePlayerNames();
-            StringBuilder messageContent = new StringBuilder();
-            for(String currName : players) {
-                messageContent.append(currName).append("\n");
-            }
-
-            ACLMessage msg = Util.buildMessage(ACLMessage.INFORM,
-                    ProtocolNames.PlayerNames,
-                    messageContent.toString()
-            );
-
-            // Adds every alive player as receiver
-            msg = this.gameMaster.addReceiversMessage(msg, true);
-
-            // Once this behaviour finishes, game loop state is updated
-            this.gameMaster.addBehaviour(new ContextInformer(this.gameMaster, msg));
-
-            System.out.println("======> Just sent Player names");
-
+            // Handles sending the player names and informing mafia members of their team
+            this.gameMaster.addBehaviour(new ReadyBehaviour(this.gameMaster));
             this.readyBehaviourAdded = true;
+
         } catch (FIPAException e) {
             System.out.println("Error finding and updating all players desc");
             this.gameMaster.takeDown();
@@ -116,11 +94,5 @@ public class GameLoop extends Behaviour {
     @Override
     public boolean done() {
         return this.endLoop;
-    }
-
-    @Override
-    public int onEnd() {
-        System.out.println("GameMaster shutting down!");
-        return super.onEnd();
     }
 }

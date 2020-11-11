@@ -6,6 +6,7 @@ import jade.lang.acl.ACLMessage;
 import utils.ProtocolNames;
 import utils.Util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameStateInformer extends OneShotBehaviour {
@@ -15,10 +16,19 @@ public class GameStateInformer extends OneShotBehaviour {
     // Kind of message to send
     String typeInfo;
 
+    //Used if its a player death
+    private boolean isDay;
+
     // The protocol name decides what message is sent!!
     public GameStateInformer(GameMaster gameMaster, String protocolName) {
         this.gameMaster = gameMaster;
         this.typeInfo = protocolName;
+    }
+
+    public GameStateInformer(GameMaster gameMaster, boolean dayTime) {
+        this.gameMaster = gameMaster;
+        this.typeInfo = ProtocolNames.PlayerDeath;
+        this.isDay = dayTime;
     }
 
     @Override
@@ -26,7 +36,10 @@ public class GameStateInformer extends OneShotBehaviour {
 
         switch (this.typeInfo) {
             case ProtocolNames.PlayerDeath: {
-                this.sendDeadPlayersList();
+                if(this.isDay)
+                    sendDeadPlayerNameDay();
+                else
+                    sendDeadPlayerNamesNight();
                 break;
             }
             case ProtocolNames.TimeOfDay: {
@@ -58,19 +71,34 @@ public class GameStateInformer extends OneShotBehaviour {
         this.gameMaster.sendMessageAlivePlayers(msg);
     }
 
-    private void sendDeadPlayersList() {
-        List<String> deadPlayerNames = this.gameMaster.getGameLobby().getDeadPlayerNames();
+    private void sendDeadPlayerNamesNight() {
+        // Informs Alive agents about who died last night if anyone died
+        List<String> deadPlayerNames = this.gameMaster.getNightDeaths();
 
-        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-        msg.setProtocol(ProtocolNames.PlayerDeath);
+        if(deadPlayerNames.size() > 0) {
+            ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+            msg.setProtocol(ProtocolNames.PlayerDeath);
 
-        StringBuilder messageContent = new StringBuilder();
-        for(String currName : deadPlayerNames) {
-            messageContent.append(currName).append("\n");
+            StringBuilder messageContent = new StringBuilder();
+            for(String currName : deadPlayerNames) {
+                messageContent.append(currName).append("\n");
+            }
+
+            msg.setContent(messageContent.toString());
+            this.gameMaster.sendMessageAlivePlayers(msg);
+            this.gameMaster.setNightDeaths(new ArrayList<>());
         }
+    }
 
-        msg.setContent(messageContent.toString());
+    private void sendDeadPlayerNameDay() {
+        if(!this.gameMaster.getDayDeath().equals("")) {
 
-        this.gameMaster.sendMessageAlivePlayers(msg);
+            ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+            msg.setProtocol(ProtocolNames.PlayerDeath);
+            msg.setContent(this.gameMaster.getDayDeath() + "\n");
+            this.gameMaster.sendMessageAlivePlayers(msg);
+
+            this.gameMaster.setDayDeath("");
+        }
     }
 }
