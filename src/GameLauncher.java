@@ -1,50 +1,54 @@
+import agents.town.*;
+import agents.mafia.*;
+import agents.neutral.*;
 import agents.GameMaster;
-import agents.mafia.Killing;
-import agents.town.Villager;
-import gui.AgentWindow;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
-import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import gui.AgentWindow;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
+import javafx.stage.Stage;
+import javafx.geometry.Pos;
+import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import utils.ConfigReader;
+import javafx.scene.image.Image;
+import javafx.scene.control.Label;
+import javafx.scene.control.Button;
+import javafx.application.Application;
 import java.util.*;
+import utils.ConfigReader;
+import utils.GameLobby;
+
 
 public class GameLauncher extends Application {
     GameMaster gameMaster;
 
     public static void main(String[] args) {
-        launch();
+        launch(); // launch Java FX GUI
     }
 
     @Override
     public void start(Stage stage) throws Exception {
-        launchGame();
-        stage.setTitle("Java FX Window");
+        this.launchGame();
+        stage.setTitle("Game Window");
         stage.getIcons().add(new Image("/resources/icon.png"));
 
-        int maxButtonsPerRow = 5;
-        int playerAmount = this.gameMaster.getGameLobby().getCapacity();
-        int rowAmount = (int)Math.ceil((float) playerAmount/maxButtonsPerRow);
-        HBox[] HBoxes = new HBox[rowAmount];
 
+        int maxButtonsPerRow = 5;
+        int playerAmount = gameMaster.getGameLobby().getCapacity();
+        int rowAmount = (int) Math.ceil((float)playerAmount/maxButtonsPerRow);
+
+        HBox[] HBoxes = new HBox[rowAmount];
         for(int i = 0; i < rowAmount; i++) {
-            int buttonsPerRow = (i == rowAmount - 1) ? (playerAmount % maxButtonsPerRow) : maxButtonsPerRow;
+            int buttonsPerRow = (i == rowAmount-1) ? (playerAmount%maxButtonsPerRow) : maxButtonsPerRow;
 
             Button[] rowButtons = new Button[buttonsPerRow];
             for(int j = 0; j < buttonsPerRow; j++) {
-                rowButtons[j] = new Button("Button " + j);
+                rowButtons[j] = new Button("" + (i*maxButtonsPerRow+j));
                 rowButtons[j].setOnAction(e -> this.buttonAction());
             }
 
@@ -54,8 +58,8 @@ public class GameLauncher extends Application {
             HBoxes[i].setPadding(new Insets(5));
         }
 
-        Label label = new Label("Player buttons");
         VBox vbox = new VBox(HBoxes);
+        Label label = new Label("Player buttons");
         vbox.getChildren().add(label);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(20));
@@ -74,26 +78,18 @@ public class GameLauncher extends Application {
 
 
     public void launchGame() throws Exception {
-        // Loads available names
-        List<String> names = ConfigReader.importNames("src/resources/names.txt");
-        // Loads roles
-        List<String> roles = ConfigReader.importRoles("src/resources/gamemodes/test.txt");
+        List<String> names = ConfigReader.importNames("src/resources/names.txt"); // Loads available names
+        List<String> roles = ConfigReader.importRoles("src/resources/gamemodes/test.txt"); // Loads roles
 
-        // Get a JADE runtime
-        Runtime rt = Runtime.instance();
+        Runtime runtime = Runtime.instance(); // Get a JADE runtime
+        Profile p1 = new ProfileImpl(); // Create the main container
+        Profile p2 = new ProfileImpl(); // Create additional container
+        ContainerController mainController = runtime.createMainContainer(p1);
+        ContainerController container = runtime.createAgentContainer(p2);
 
-        // Create the main container
-        Profile p1 = new ProfileImpl();
-        ContainerController mainController = rt.createMainContainer(p1);
-
-        // Create additional container
-        Profile p2 = new ProfileImpl();
-        ContainerController container = rt.createAgentContainer(p2);
-
-        // Launch GameMaster
-        this.gameMaster = new GameMaster(roles.size()); //roles.size() is playerAmount
-        AgentController gm_c = container.acceptNewAgent("GameMaster", gameMaster);
-        gm_c.start();
+        this.gameMaster = new GameMaster(roles.size()); // Launch GameMaster
+        AgentController gameMasterController = container.acceptNewAgent("GameMaster", gameMaster);
+        gameMasterController.start();
 
         Thread.sleep(1000);
 
@@ -102,7 +98,6 @@ public class GameLauncher extends Application {
 
     public void launchAgent(String role, String name, ContainerController container) throws StaleProxyException {
         AgentController ac;
-
         switch(role) {
             case "Villager" -> {
                 ac = container.acceptNewAgent(name, new Villager());
@@ -112,11 +107,25 @@ public class GameLauncher extends Application {
                 ac = container.acceptNewAgent(name, new Killing());
                 ac.start();
             }
+            case "Leader" -> {
+                ac = container.acceptNewAgent(name, new Leader());
+                ac.start();
+            }
+            case "Jester" -> {
+                ac = container.acceptNewAgent(name, new Jester());
+                ac.start();
+            }
+            case "Healer" -> {
+                ac = container.acceptNewAgent(name, new Healer());
+                ac.start();
+            }
+            case "Detective" -> {
+                ac = container.acceptNewAgent(name, new Detective());
+                ac.start();
+            }
             default -> System.out.println(role + " is still not implemented! Skipping...");
         }
-
     }
-
     public void launchAgents(List<String> roles, List<String> names, ContainerController container) throws StaleProxyException {
         // Role handling
         List<String> tempRoles = new ArrayList<>(roles);

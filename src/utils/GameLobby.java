@@ -48,20 +48,27 @@ public class GameLobby {
         }
     }
 
-    private final int capacity;
 
     // key: Player name
     // value: AgentInfo
+    private final int capacity;
+    private List<String> names;
     private HashMap<String, AgentInfo> lobby;
+
+    public List<String> getNames() {
+        return names;
+    }
 
     public GameLobby(int capacity) {
         this.capacity = capacity;
         this.lobby = new HashMap<>();
+        this.names = new ArrayList<>();
     }
 
     public void addPlayer(String name, String role, DFAgentDescription agentDesc) {
         AgentInfo aInf = new AgentInfo(role, agentDesc);
         this.lobby.put(name, aInf);
+        this.names.add(name);
     }
 
     public boolean isFull() {
