@@ -45,7 +45,7 @@ public class GameStateInformer extends OneShotBehaviour {
                 break;
             }
             case ProtocolNames.PlayerSaved: {
-
+                sendSavedPlayerName();
                 break;
             }
             case ProtocolNames.TimeOfDay: {

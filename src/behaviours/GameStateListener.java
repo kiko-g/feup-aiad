@@ -24,7 +24,10 @@ public class GameStateListener extends CyclicBehaviour {
                     MessageTemplate.MatchProtocol(ProtocolNames.PlayerDeath),
                     MessageTemplate.or(
                             MessageTemplate.MatchProtocol(ProtocolNames.TimeOfDay),
-                            MessageTemplate.MatchProtocol(ProtocolNames.End)
+                            MessageTemplate.or(
+                                    MessageTemplate.MatchProtocol(ProtocolNames.End),
+                                    MessageTemplate.MatchProtocol(ProtocolNames.PlayerSaved)
+                            )
                     )
             )
     );
