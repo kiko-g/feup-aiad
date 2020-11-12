@@ -7,10 +7,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
-import utils.ChatLog;
-import utils.ChatMessage;
-import utils.ChatMessageTemplate;
-import utils.GameContext;
+import utils.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +15,9 @@ import java.util.Map;
 public abstract class PlayerAgent extends Agent {
 
     HashMap<String, Double> susRateMap = new HashMap<>();
+
+    private Util.Trait playerTrait;
+
 
     private enum TimeOfDay {
         Day,
@@ -36,8 +36,14 @@ public abstract class PlayerAgent extends Agent {
     // All chat messages received up until now
     private ChatLog chatLog;
 
+    public PlayerAgent(Util.Trait playerTrait){
+        this.chatLog = new ChatLog();
+        this.playerTrait = playerTrait;
+    }
+
     public PlayerAgent() {
         this.chatLog = new ChatLog();
+        this.playerTrait = Util.Trait.getRandomTrait();
     }
 
     @Override
@@ -175,8 +181,11 @@ public abstract class PlayerAgent extends Agent {
     }
 
     public void setPlayerSusRate(String name, double delta) {
+        double multiplier = Util.getTraitMultiplier(this.playerTrait);
         double oldSusRate = this.susRateMap.get(name);
-        this.susRateMap.replace(name, oldSusRate * delta);
+        double newSus = oldSusRate * delta * multiplier;
+
+        this.susRateMap.replace(name, Math.max(1.0, newSus));
     }
 
     public void handleChatMsg(ChatMessage message) {
@@ -185,24 +194,50 @@ public abstract class PlayerAgent extends Agent {
                 setPlayerSusRate(message.getSenderName(), 0.8);
                 break;
             }
-            case ChatMessageTemplate.AccusePlayerRole: {
-                break;
-            }
+            //case ChatMessageTemplate.AccusePlayerRole: {
+                //break;
+            //}
             case ChatMessageTemplate.SkipAccusation: {
                 setPlayerSusRate(message.getSenderName(), 1.1);
                 break;
             }
             case ChatMessageTemplate.AccusePlayer: {
-                String victim = message.getContent().substring(18);
+                String[] messageWords = message.getContent().split(" ");
+                String victim = messageWords[messageWords.length - 1];
+
                 setPlayerSusRate(victim, 1.4);
+                break;
+            }
+            case ChatMessageTemplate.HealerMessage: {
+                String[] messageWords = message.getContent().split(" ");
+                String victim = messageWords[messageWords.length - 1];
+
+                setPlayerSusRate(message.getSenderName(), 0.6);
+                setPlayerSusRate(victim, 0.6);
+                break;
+            }
+            case ChatMessageTemplate.DetectiveMessageHasActivity: {
+                String[] messageWords = message.getContent().split(" ");
+                String victim = messageWords[0];
+
+                setPlayerSusRate(message.getSenderName(), 0.8);
+                setPlayerSusRate(victim, 1.1);
+                break;
+            }
+            case ChatMessageTemplate.DetectiveMessageHasNotActivity: {
+                String[] messageWords = message.getContent().split(" ");
+                String victim = messageWords[0];
+
+                setPlayerSusRate(message.getSenderName(), 0.8);
+                setPlayerSusRate(victim, 0.9);
                 break;
             }
         }
 
-        String susRates = "";
+        StringBuilder susRates = new StringBuilder();
         for(Map.Entry<String, Double> currentPlayer : this.susRateMap.entrySet())
-            susRates += currentPlayer.getKey() + " " + currentPlayer.getValue() + " ; ";
+            susRates.append(currentPlayer.getKey()).append(" ").append(currentPlayer.getValue()).append(" ; ");
 
-        this.logMessage(susRates);
+        this.logMessage(susRates.toString());
     }
 }

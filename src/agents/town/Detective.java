@@ -14,6 +14,7 @@ import protocols.PlayerInformer;
 import utils.ChatMessage;
 import utils.ChatMessageTemplate;
 import utils.ProtocolNames;
+import utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,11 @@ public class Detective extends PlayerAgent {
         public boolean isSus() {
             return isSus;
         }
+    }
+
+    public Detective(Util.Trait trait) {
+        super(trait);
+        this.nightVisits = new ArrayList<>();
     }
 
     public Detective() {

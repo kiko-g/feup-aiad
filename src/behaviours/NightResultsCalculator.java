@@ -39,6 +39,9 @@ public class NightResultsCalculator extends OneShotBehaviour {
                 this.gameMaster.getGameLobby().killPlayer(currentAttackedPlayer);
                 this.gameMaster.addNightDeath(currentAttackedPlayer);
             }
+            else {
+                this.gameMaster.addActuallySavedPlayer(currentAttackedPlayer, savedPLayers.get(currentAttackedPlayer));
+            }
         }
 
         // Clears registers for next night

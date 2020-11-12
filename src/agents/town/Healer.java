@@ -10,11 +10,24 @@ import protocols.ContextWaiter;
 import protocols.DecisionInformer;
 import protocols.PlayerInformer;
 import utils.ProtocolNames;
+import utils.Util;
 
 import java.util.List;
 import java.util.Random;
 
 public class Healer extends PlayerAgent {
+
+    private String playerSavedLastNight;
+
+    public Healer(Util.Trait trait) {
+        super(trait);
+        this.playerSavedLastNight = "";
+    }
+
+    public Healer() {
+        super();
+        this.playerSavedLastNight = "";
+    }
 
     @Override
     public String getRole() {
@@ -68,6 +81,8 @@ public class Healer extends PlayerAgent {
 
     @Override
     public void setNightTimeBehaviour() {
+        this.playerSavedLastNight = "";
+
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.TargetHealing),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
@@ -107,5 +122,13 @@ public class Healer extends PlayerAgent {
         inform.setPerformative(ACLMessage.INFORM);
 
         return inform;
+    }
+
+    public String getPlayerSavedLastNight() {
+        return playerSavedLastNight;
+    }
+
+    public void setPlayerSavedLastNight(String playerSavedLastNight) {
+        this.playerSavedLastNight = playerSavedLastNight;
     }
 }

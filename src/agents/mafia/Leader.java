@@ -12,6 +12,7 @@ import protocols.DecisionInformer;
 import protocols.MafiaWaiter;
 import protocols.PlayerInformer;
 import utils.ProtocolNames;
+import utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,14 @@ import java.util.Random;
 public class Leader extends PlayerAgent {
 
     private List<String> killOrdersGiven = new ArrayList<>();
+
+    public Leader(Util.Trait trait) {
+        super(trait);
+    }
+
+    public Leader() {
+        super();
+    }
 
     @Override
     public String getRole() {

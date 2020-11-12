@@ -10,11 +10,20 @@ import protocols.ContextWaiter;
 import protocols.DecisionInformer;
 import protocols.PlayerInformer;
 import utils.ProtocolNames;
+import utils.Util;
 
 import java.util.List;
 import java.util.Random;
 
 public class Villager extends PlayerAgent {
+
+    public Villager(Util.Trait trait) {
+        super(trait);
+    }
+
+    public Villager() {
+        super();
+    }
 
     @Override
     public String getRole() {

@@ -33,7 +33,8 @@ public class GameMaster extends Agent {
 
     // key: player saved
     // value: who saved it
-    private HashMap<String, String> savedPlayers; // Players saved by Healer during night
+    private HashMap<String, String> savedPlayers; // Players visited by Healer during night
+    private HashMap<String, String> actuallySavedPlayers; // Players attacked and then saved by Healer
 
     private List<String> nightDeaths; // Players that were attacked and not saved
 
@@ -46,6 +47,7 @@ public class GameMaster extends Agent {
 
         this.attackedPlayers = new ArrayList<>();
         this.savedPlayers = new HashMap<>();
+        this.actuallySavedPlayers = new HashMap<>();
         this.nightDeaths = new ArrayList<>();
         this.dayDeath = "";
     }
@@ -205,8 +207,20 @@ public class GameMaster extends Agent {
         this.savedPlayers.put(savedPlayer, saviour);
     }
 
+    public void addActuallySavedPlayer(String savedPlayer, String saviour) {
+        this.actuallySavedPlayers.put(savedPlayer, saviour);
+    }
+
     public void setSavedPlayers(HashMap<String, String> savedPlayers) {
         this.savedPlayers = savedPlayers;
+    }
+
+    public void setActuallySavedPlayers(HashMap<String, String> actuallySavedPlayers) {
+        this.actuallySavedPlayers = actuallySavedPlayers;
+    }
+
+    public HashMap<String, String> getActuallySavedPlayers() {
+        return this.actuallySavedPlayers;
     }
 
     public List<String> getAttackedPlayers() {

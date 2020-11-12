@@ -1,6 +1,7 @@
 package behaviours;
 
 import agents.PlayerAgent;
+import agents.town.Healer;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -35,6 +36,16 @@ public class GameStateListener extends CyclicBehaviour {
             switch (msg.getProtocol()) {
                 case ProtocolNames.PlayerDeath: {
                     this.handlePlayerDeath(msg.getContent());
+                    break;
+                }
+                case ProtocolNames.PlayerSaved: {
+                    String[] words = msg.getContent().split(" ");
+                    String savedPlayer = words[words.length - 1];
+
+                    if(this.playerAgent.getClass() == Healer.class) {
+                        ((Healer) this.playerAgent).setPlayerSavedLastNight(savedPlayer);
+                    }
+
                     break;
                 }
                 case ProtocolNames.TimeOfDay: {

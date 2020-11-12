@@ -1,12 +1,14 @@
 package behaviours;
 
 import agents.GameMaster;
+import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import utils.ProtocolNames;
 import utils.Util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GameStateInformer extends OneShotBehaviour {
@@ -40,6 +42,10 @@ public class GameStateInformer extends OneShotBehaviour {
                     sendDeadPlayerNameDay();
                 else
                     sendDeadPlayerNamesNight();
+                break;
+            }
+            case ProtocolNames.PlayerSaved: {
+
                 break;
             }
             case ProtocolNames.TimeOfDay: {
@@ -100,5 +106,26 @@ public class GameStateInformer extends OneShotBehaviour {
 
             this.gameMaster.setDayDeath("");
         }
+    }
+
+    private void sendSavedPlayerName() {
+        HashMap<String, String> savedPlayers = this.gameMaster.getActuallySavedPlayers();
+
+        List<AID> healers = this.gameMaster.getGameLobby().getPlayersAIDRole("Healer", true);
+        for(HashMap.Entry<String, String> currentPlayer : savedPlayers.entrySet()) {
+            ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+            msg.setProtocol(ProtocolNames.PlayerSaved);
+            msg.setContent("Last night you saved " + currentPlayer.getKey());
+
+            for(AID currentHealer : healers) {
+                if(currentHealer.getLocalName().equals(currentPlayer.getValue())) {
+                    msg.addReceiver(currentHealer);
+                    break;
+                }
+            }
+            this.gameMaster.send(msg);
+        }
+
+        this.gameMaster.setActuallySavedPlayers(new HashMap<>());
     }
 }

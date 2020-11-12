@@ -10,12 +10,21 @@ import protocols.ContextWaiter;
 import protocols.DecisionInformer;
 import protocols.PlayerInformer;
 import utils.ProtocolNames;
+import utils.Util;
 
 import java.util.List;
 import java.util.Random;
 
 public class Jester extends PlayerAgent
 {
+    public Jester(Util.Trait trait) {
+        super(trait);
+    }
+
+    public Jester() {
+        super();
+    }
+
     @Override
     public String getRole() {
         return "Jester";
