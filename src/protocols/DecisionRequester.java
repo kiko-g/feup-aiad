@@ -38,11 +38,13 @@ public class DecisionRequester extends AchieveREInitiator {
                 System.out.println(inform.getSender().getLocalName()+" has voted in " + inform.getContent());
                 String playerName = inform.getContent();
 
-                // If exists, increments
-                if (this.votingResults.containsKey(playerName))
-                    this.votingResults.replace(playerName, this.votingResults.get(playerName) + 1);
-                else
-                    this.votingResults.put(playerName, 1); // If not, adds
+                if(!playerName.equals("Skip")) {
+                    // If exists, increments
+                    if (this.votingResults.containsKey(playerName))
+                        this.votingResults.replace(playerName, this.votingResults.get(playerName) + 1);
+                    else
+                        this.votingResults.put(playerName, 1); // If not, adds
+                }
 
                 break;
             }

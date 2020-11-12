@@ -93,8 +93,27 @@ public class Detective extends PlayerAgent {
     @Override
     public void setDayTimeBehavior() {
         // TODO: Post beliefs in chat
+        VisitReport lastReport = getLastNightReport();
 
-        this.addBehaviour(new ChatPoster(this, ChatMessageTemplate.RevealRole, ChatMessageTemplate.revealRole("Detective")));
+        if(lastReport.isSus)
+        {
+            boolean isLeader = false;
+            for(int i = 0; i < nightVisits.size() - 1; i++) {
+                if(lastReport.playerName.equals(nightVisits.get(i).playerName) && !nightVisits.get(i).isSus) {
+                    isLeader = true;
+                    break;
+                }
+            }
+            if(isLeader)
+                this.addBehaviour(new ChatPoster(this, ChatMessageTemplate.DetectiveAcuseLeader,
+                        ChatMessageTemplate.detectiveAcuseLeader(lastReport.playerName)));
+            else
+                this.addBehaviour(new ChatPoster(this, ChatMessageTemplate.DetectiveMessageHasActivity,
+                    ChatMessageTemplate.detectiveMessageHasActivity(lastReport.playerName)));
+        }
+        else
+            this.addBehaviour(new ChatPoster(this, ChatMessageTemplate.DetectiveMessageHasNoActivity,
+                    ChatMessageTemplate.detectiveMessageHasNoActivity(lastReport.playerName)));
 
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.VoteTarget),

@@ -9,8 +9,7 @@ import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import utils.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public abstract class PlayerAgent extends Agent {
 
@@ -142,9 +141,26 @@ public abstract class PlayerAgent extends Agent {
                 handleDayVoteRequest(request, response) : handleNightVoteRequest(request, response);
     }
 
-    public abstract ACLMessage handleDayVoteRequest(ACLMessage request, ACLMessage response);
+    public ACLMessage handleDayVoteRequest(ACLMessage request, ACLMessage response) {
+        List<String> mostSusPlayers = this.getMostSuspectPlayers(GlobalVars.VOTE_MIN_SUS_VALUE);
+        String content;
 
-    public abstract ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response);
+        if(mostSusPlayers.size() > 0) {
+            Random r = new Random();
+            int playerIndex = r.nextInt(mostSusPlayers.size());
+            content = mostSusPlayers.get(playerIndex);
+        }
+        else
+            content = "Skip";
+
+        ACLMessage inform = request.createReply();
+        inform.setContent(content);
+        inform.setPerformative(ACLMessage.INFORM);
+
+        return inform;
+    }
+
+    public ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response) { return null; }
 
     public void buryPlayer(String playerName) {
         this.gameContext.playerWasKilled(playerName);
@@ -183,20 +199,18 @@ public abstract class PlayerAgent extends Agent {
     public void setPlayerSusRate(String name, double delta) {
         double multiplier = Util.getTraitMultiplier(this.playerTrait);
         double oldSusRate = this.susRateMap.get(name);
-        double newSus = oldSusRate * delta * multiplier;
+        double newSus;
 
-        this.susRateMap.replace(name, Math.max(1.0, newSus));
+        if(delta > 1 || delta == 0)
+            newSus = oldSusRate * delta * multiplier;
+        else
+            newSus = oldSusRate * delta / multiplier;
+
+        this.susRateMap.replace(name, Math.min(1.0, newSus));
     }
 
     public void handleChatMsg(ChatMessage message) {
         switch (message.getTemplateMessage()) {
-            case ChatMessageTemplate.RevealRole: {
-                setPlayerSusRate(message.getSenderName(), 0.8);
-                break;
-            }
-            //case ChatMessageTemplate.AccusePlayerRole: {
-                //break;
-            //}
             case ChatMessageTemplate.SkipAccusation: {
                 setPlayerSusRate(message.getSenderName(), 1.1);
                 break;
@@ -224,12 +238,20 @@ public abstract class PlayerAgent extends Agent {
                 setPlayerSusRate(victim, 1.1);
                 break;
             }
-            case ChatMessageTemplate.DetectiveMessageHasNotActivity: {
+            case ChatMessageTemplate.DetectiveMessageHasNoActivity: {
                 String[] messageWords = message.getContent().split(" ");
                 String victim = messageWords[0];
 
                 setPlayerSusRate(message.getSenderName(), 0.8);
                 setPlayerSusRate(victim, 0.9);
+                break;
+            }
+            case ChatMessageTemplate.DetectiveAcuseLeader: {
+                String[] messageWords = message.getContent().split(" ");
+                String leader = messageWords[0];
+
+                setPlayerSusRate(message.getSenderName(), 0.6);
+                setPlayerSusRate(leader, 10);
                 break;
             }
         }
@@ -239,5 +261,15 @@ public abstract class PlayerAgent extends Agent {
             susRates.append(currentPlayer.getKey()).append(" ").append(currentPlayer.getValue()).append(" ; ");
 
         this.logMessage(susRates.toString());
+    }
+
+    public List<String> getMostSuspectPlayers(double minSus) {
+        List<String> mostSusPlayers = new ArrayList<>();
+        for(HashMap.Entry<String, Double> currentPlayer : susRateMap.entrySet()) {
+            if(currentPlayer.getValue() >= minSus && this.gameContext.isPlayerAlive(currentPlayer.getKey()))
+                if(!currentPlayer.getKey().equals(this.getLocalName()))
+                    mostSusPlayers.add(currentPlayer.getKey());
+        }
+        return mostSusPlayers;
     }
 }

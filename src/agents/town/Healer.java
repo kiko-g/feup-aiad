@@ -2,6 +2,7 @@ package agents.town;
 
 import agents.PlayerAgent;
 import behaviours.ChatListener;
+import behaviours.ChatPoster;
 import behaviours.GameStateListener;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
@@ -9,6 +10,8 @@ import jade.lang.acl.MessageTemplate;
 import protocols.ContextWaiter;
 import protocols.DecisionInformer;
 import protocols.PlayerInformer;
+import utils.ChatMessageTemplate;
+import utils.GlobalVars;
 import utils.ProtocolNames;
 import utils.Util;
 
@@ -69,7 +72,8 @@ public class Healer extends PlayerAgent {
     @Override
     public void setDayTimeBehavior() {
         // TODO: Post beliefs in chat
-
+        if(!playerSavedLastNight.equals(""))
+            this.addBehaviour(new ChatPoster(this, ChatMessageTemplate.HealerMessage, ChatMessageTemplate.healerMessage(playerSavedLastNight)));
 
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.VoteTarget),
@@ -93,18 +97,10 @@ public class Healer extends PlayerAgent {
 
     @Override
     public ACLMessage handleDayVoteRequest(ACLMessage request, ACLMessage response) {
-        List<String> alivePlayers = this.getGameContext().getAlivePlayers();
+        if(!playerSavedLastNight.equals(""))
+            setPlayerSusRate(playerSavedLastNight, 0);
 
-        Random r = new Random();
-        int playerIndex = r.nextInt(alivePlayers.size());
-
-        String playerForTrial = alivePlayers.get(playerIndex);
-
-        ACLMessage inform = request.createReply();
-        inform.setContent(playerForTrial);
-        inform.setPerformative(ACLMessage.INFORM);
-
-        return inform;
+        return super.handleDayVoteRequest(request, response);
     }
 
     @Override

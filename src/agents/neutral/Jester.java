@@ -78,26 +78,4 @@ public class Jester extends PlayerAgent
     public void setNightTimeBehaviour() {
         // Nothing at all
     }
-
-    @Override
-    public ACLMessage handleDayVoteRequest(ACLMessage request, ACLMessage response) {
-        List<String> alivePlayers = this.getGameContext().getAlivePlayers();
-
-        Random r = new Random();
-        int playerIndex = r.nextInt(alivePlayers.size());
-
-        String playerForTrial = alivePlayers.get(playerIndex);
-
-        ACLMessage inform = request.createReply();
-        inform.setContent(playerForTrial);
-        inform.setPerformative(ACLMessage.INFORM);
-
-        return inform;
-    }
-
-    @Override
-    public ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response) {
-        // Should not happen
-        return null;
-    }
 }

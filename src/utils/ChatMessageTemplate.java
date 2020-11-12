@@ -2,21 +2,14 @@ package utils;
 
 public class ChatMessageTemplate {
 
-    public static final String RevealRole = "RevealRole";
-    //public static final String AccusePlayerRole = "AccusePlayerRole";
     public static final String SkipAccusation = "SkipAccusation";
     public static final String AccusePlayer = "AccusePlayer";
     public static final String ClearPlayer = "ClearPlayer";
     public static final String HealerMessage = "HealerMessage";
     public static final String DetectiveMessageHasActivity = "DetectiveMessageHasActivity";
-    public static final String DetectiveMessageHasNotActivity = "DetectiveMessageHasNotActivity";
+    public static final String DetectiveMessageHasNoActivity = "DetectiveMessageHasNoActivity";
+    public static final String DetectiveAcuseLeader = "DetectiveAcuseLeader";
 
-
-    public static String revealRole(String role) { return "My role is " + role; }
-
-    /*public static String accusePlayerRole(String name, String role) {
-        return name + " is a " + role;
-    }*/
 
     public static String skipAccusation() { return "I'm not suspicious of anyone"; }
 
@@ -28,5 +21,7 @@ public class ChatMessageTemplate {
 
     public static String detectiveMessageHasActivity(String name) { return name + " has night activity"; }
 
-    public static String detectiveMessageHasNotActivity(String name) { return name + " doesn't have night activity"; }
+    public static String detectiveMessageHasNoActivity(String name) { return name + " doesn't have night activity"; }
+
+    public static String detectiveAcuseLeader(String name) { return name + " is the leader of Mafia!!!!"; }
 }

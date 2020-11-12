@@ -10,6 +10,7 @@ import utils.Util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GameStateInformer extends OneShotBehaviour {
 
@@ -109,7 +110,7 @@ public class GameStateInformer extends OneShotBehaviour {
     }
 
     private void sendSavedPlayerName() {
-        HashMap<String, String> savedPlayers = this.gameMaster.getActuallySavedPlayers();
+        ConcurrentHashMap<String, String> savedPlayers = this.gameMaster.getActuallySavedPlayers();
 
         List<AID> healers = this.gameMaster.getGameLobby().getPlayersAIDRole("Healer", true);
         for(HashMap.Entry<String, String> currentPlayer : savedPlayers.entrySet()) {
@@ -126,6 +127,6 @@ public class GameStateInformer extends OneShotBehaviour {
             this.gameMaster.send(msg);
         }
 
-        this.gameMaster.setActuallySavedPlayers(new HashMap<>());
+        this.gameMaster.setActuallySavedPlayers(new ConcurrentHashMap<>());
     }
 }

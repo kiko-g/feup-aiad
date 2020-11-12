@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NightResultsCalculator extends OneShotBehaviour {
     private final GameMaster gameMaster;
@@ -21,7 +22,7 @@ public class NightResultsCalculator extends OneShotBehaviour {
         // Calculates night outcome
 
         List<String> possibleDeaths = this.gameMaster.getAttackedPlayers();
-        HashMap<String, String> savedPLayers = this.gameMaster.getSavedPlayers();
+        ConcurrentHashMap<String, String> savedPLayers = this.gameMaster.getSavedPlayers();
 
         // Checks for cases of Healer kills
         for(Map.Entry<String, String> currSaveCase : savedPLayers.entrySet()) {
@@ -46,6 +47,6 @@ public class NightResultsCalculator extends OneShotBehaviour {
 
         // Clears registers for next night
         this.gameMaster.setAttackedPlayers(new ArrayList<>());
-        this.gameMaster.setSavedPlayers(new HashMap<>());
+        this.gameMaster.setSavedPlayers(new ConcurrentHashMap<>());
     }
 }
