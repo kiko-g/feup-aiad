@@ -10,6 +10,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import protocols.PlayerWaiter;
 import utils.GameLobby;
+import utils.ProtocolNames;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -219,5 +220,24 @@ public class GameMaster extends Agent {
 
     public void addAttackedPlayer(String attackedPlayer) {
         this.attackedPlayers.add(attackedPlayer);
+    }
+
+    public String requestPlayerPersonalInformation(String playerName) {
+        ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+        request.setProtocol(ProtocolNames.PlayerInfo);
+
+        AID receiver = gameLobby.getAIDByName(playerName);
+        if(receiver == null) return "null receiver";
+        request.addReceiver(receiver);
+
+        this.send(request);
+
+        MessageTemplate mt = MessageTemplate.and(
+            MessageTemplate.MatchProtocol(ProtocolNames.PlayerInfo),
+            MessageTemplate.MatchPerformative(ACLMessage.INFORM)
+        );
+        ACLMessage response = this.blockingReceive(mt);
+
+        return response.getContent();
     }
 }

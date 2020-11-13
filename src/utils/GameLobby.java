@@ -11,14 +11,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GameLobby {
-
-    private class AgentInfo {
+    private static class AgentInfo {
         private final String role;
         private boolean isAlive;
+        private String information;
         private DFAgentDescription agentDesc;
 
         public AgentInfo(String role, DFAgentDescription agentDesc) {
             this.role = role;
+            this.information = "";
             this.agentDesc = agentDesc;
             this.isAlive = true;
         }
@@ -46,29 +47,30 @@ public class GameLobby {
         public AID getAID() {
             return this.agentDesc.getName();
         }
+
+        synchronized public void setInformation(String information) {
+            this.information = information;
+        }
+
+        synchronized public String getInformation() {
+            return information;
+        }
     }
 
 
     // key: Player name
     // value: AgentInfo
     private final int capacity;
-    private List<String> names;
-    private HashMap<String, AgentInfo> lobby;
-
-    public List<String> getNames() {
-        return names;
-    }
+    private final HashMap<String, AgentInfo> lobby;
 
     public GameLobby(int capacity) {
         this.capacity = capacity;
         this.lobby = new HashMap<>();
-        this.names = new ArrayList<>();
     }
 
     public void addPlayer(String name, String role, DFAgentDescription agentDesc) {
         AgentInfo aInf = new AgentInfo(role, agentDesc);
         this.lobby.put(name, aInf);
-        this.names.add(name);
     }
 
     public boolean isFull() {
@@ -89,14 +91,21 @@ public class GameLobby {
         }
     }
 
+
+    public List<AID> getAllPlayers() {
+        List<AID> players = new ArrayList<>();
+        for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet())
+            players.add(currentPlayer.getValue().getAID());
+
+        return players;
+    }
+
     private List<AgentInfo> getPlayersByStatus(boolean isAlive) {
         List<AgentInfo> players = new ArrayList<>();
-
         for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet()) {
             if(currentPlayer.getValue().isAlive() == isAlive)
                 players.add(currentPlayer.getValue());
         }
-
         return players;
     }
 
@@ -116,15 +125,6 @@ public class GameLobby {
     public List<AID> getAlivePlayersAID() {
         List<AgentInfo> temp = this.getPlayersByStatus(true);
         return temp.stream().map(AgentInfo::getAID).collect(Collectors.toList());
-    }
-
-    public List<AID> getAllPlayers() {
-        List<AID> players = new ArrayList<>();
-
-        for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet())
-            players.add(currentPlayer.getValue().getAID());
-
-        return players;
     }
 
     private List<AgentInfo> getPlayersByRole(String role, boolean isAlive) {
@@ -208,7 +208,6 @@ public class GameLobby {
     }
 
     public int[] getNumberPlayersPerFactions() {
-
         // index 0: Town
         // index 1: Mafia
         // index 2: Neutral
@@ -217,19 +216,10 @@ public class GameLobby {
         for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet()) {
             AgentInfo currentPlayerInfo = currentPlayer.getValue();
             if(currentPlayerInfo.isAlive())
-                switch (Util.getFaction(currentPlayerInfo.getRole())) {
-                    case "Town": {
-                        faction[0]++;
-                        break;
-                    }
-                    case "Mafia": {
-                        faction[1]++;
-                        break;
-                    }
-                    case "Neutral": {
-                        faction[2]++;
-                        break;
-                    }
+                switch(Util.getFaction(currentPlayerInfo.getRole())) {
+                    case "Town" -> faction[0]++;
+                    case "Mafia" -> faction[1]++;
+                    case "Neutral" -> faction[2]++;
                 }
         }
 
@@ -238,7 +228,6 @@ public class GameLobby {
 
     private List<String> getPlayerNames(boolean isAlive) {
         List<String> playerNames = new ArrayList<>();
-
         for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet()) {
             if(currentPlayer.getValue().isAlive() == isAlive)
                 playerNames.add(currentPlayer.getKey());
@@ -284,6 +273,15 @@ public class GameLobby {
         return playerNames;
     }
 
+    public List<String> getAllNames() {
+        List<String> playerNames = new ArrayList<>();
+
+        for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet()) {
+            playerNames.add(currentPlayer.getKey());
+        }
+        return playerNames;
+    }
+
     public List<String> getPlayerNamesFaction(String faction) {
         List<String> playerNames = new ArrayList<>();
 
@@ -316,5 +314,23 @@ public class GameLobby {
 
     public String getPlayerRole(String playerName) {
         return lobby.get(playerName).getRole();
+    }
+
+    // -------------------------
+    synchronized public void setAgentInformation(String playerName, String information) {
+        this.lobby.get(playerName).setInformation(information);
+    }
+
+    synchronized String getAgentInformation(String playerName) {
+        return this.lobby.get(playerName).getInformation();
+    }
+
+    public AID getAIDByName(String playerName) {
+        return ! this.lobby.containsKey(playerName) ? null : this.lobby.get(playerName).getAID();
+    }
+
+    public String[] getAllPlayerNames() {
+        List<String> players = new ArrayList<>(lobby.keySet());
+        return players.toArray(new String[0]);
     }
 }

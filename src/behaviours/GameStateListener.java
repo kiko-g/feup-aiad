@@ -28,9 +28,14 @@ public class GameStateListener extends CyclicBehaviour {
             )
     );
 
+    MessageTemplate mt2 = MessageTemplate.and(
+        MessageTemplate.MatchProtocol(ProtocolNames.PlayerInfo),
+        MessageTemplate.MatchPerformative(ACLMessage.REQUEST)
+    );
+
     @Override
     public void action() {
-        ACLMessage msg = this.playerAgent.receive(mt);
+        ACLMessage msg = this.playerAgent.receive(MessageTemplate.or(mt, mt2));
         if (msg != null) {
             switch (msg.getProtocol()) {
                 case ProtocolNames.PlayerDeath: {
@@ -45,8 +50,21 @@ public class GameStateListener extends CyclicBehaviour {
                     this.handleEndOfGame(msg.getContent());
                     break;
                 }
+                case ProtocolNames.PlayerInfo: {
+                    this.handleSendPlayerInfo(msg);
+                    break;
+                }
             }
         }
+    }
+
+    private void handleSendPlayerInfo(ACLMessage msg) {
+        ACLMessage reply = msg.createReply();
+        reply.setPerformative(ACLMessage.INFORM);
+
+        String info = "trait#name:susRate#";
+        reply.setContent(info);
+        this.playerAgent.send(reply);
     }
 
     private void handleEndOfGame(String content) {

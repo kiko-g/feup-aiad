@@ -1,7 +1,8 @@
 Label {
     -fx-font-family: "";
-    -fx-font-size: 18px;
+    -fx-font-size: 14px;
     -fx-text-fill: white;
+    -fx-padding: 10;
 }
 
 Button {
