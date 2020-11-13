@@ -1,4 +1,4 @@
-Villager:6
+Villager:8
 Detective:1
 Healer:2
 Killing:2

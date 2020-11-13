@@ -148,7 +148,7 @@ public abstract class PlayerAgent extends Agent {
         List<String> mostSusPlayers = this.getMostSuspectPlayers(GlobalVars.VOTE_MIN_SUS_VALUE);
         String content;
 
-        if(mostSusPlayers.size() > 0) {
+        if(mostSusPlayers.size() < this.gameContext.getAlivePlayers().size() / 3) {
             Random r = new Random();
             int playerIndex = r.nextInt(mostSusPlayers.size());
             content = mostSusPlayers.get(playerIndex);
@@ -273,7 +273,6 @@ public abstract class PlayerAgent extends Agent {
     }
 
     public List<String> getLessSuspectPlayers() {
-        String lessSuspectPlayer = "";
         List<String> lessSuspectPlayers = new ArrayList<>(3);
         int i = 0;
         for(String playerName : getPlayerBySusOrder()) {
