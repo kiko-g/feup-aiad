@@ -89,6 +89,7 @@ public class GameStateInformer extends OneShotBehaviour {
             StringBuilder messageContent = new StringBuilder();
             for(String currName : deadPlayerNames) {
                 messageContent.append(currName).append("\n");
+                System.out.println("\t" + currName + " was attacked last night, and died in the morning...");
             }
 
             msg.setContent(messageContent.toString());
