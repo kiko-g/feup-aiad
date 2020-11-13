@@ -54,12 +54,6 @@ public class TargetKillingWithLeader extends Behaviour {
         // Saves GM Request to reply to it later
         this.targetRequest = gmRequest;
 
-        // Confirm gm that im working on giving it an answer
-//        ACLMessage acceptJob = gmRequest.createReply();
-//        acceptJob.setPerformative(ACLMessage.AGREE);
-//        acceptJob.setProtocol(ProtocolNames.TargetKilling);
-//        this.killingAgent.send(acceptJob);
-
         // Prepares
         ACLMessage presentation = new ACLMessage(ACLMessage.INFORM);
         presentation.setProtocol(ProtocolNames.LeaderOrder);
@@ -82,7 +76,7 @@ public class TargetKillingWithLeader extends Behaviour {
 
         ACLMessage inform = this.targetRequest.createReply();
         inform.setContent(target);
-        inform.setPerformative(ACLMessage.INFORM);
+        inform.setPerformative(ACLMessage.PROPOSE);
 
         this.killingAgent.send(inform);
         this.step = Steps.Done;

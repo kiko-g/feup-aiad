@@ -5,7 +5,6 @@ import agents.GameMaster;
 import jade.core.behaviours.OneShotBehaviour;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,6 +34,10 @@ public class NightResultsCalculator extends OneShotBehaviour {
         }
 
         for(String currentAttackedPlayer : possibleDeaths) {
+            // No unalives to do here
+            if(currentAttackedPlayer.equals("Skip"))
+                continue;
+
             // Attacked players that were not saved, die in the morning
             if(!savedPLayers.containsKey(currentAttackedPlayer)) {
                 this.gameMaster.getGameLobby().killPlayer(currentAttackedPlayer);

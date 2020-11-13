@@ -1,10 +1,7 @@
 package agents.mafia;
 
 import agents.PlayerAgent;
-import behaviours.ChatListener;
-import behaviours.GameStateListener;
-import behaviours.TargetDictator;
-import behaviours.TargetKillingWithLeader;
+import behaviours.*;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -90,49 +87,54 @@ public class Killing extends PlayerAgent {
 
     @Override
     public void setNightTimeBehaviour() {
-        // There should only be 1
+
         List<String> leaders = this.getGameContext().getPlayerNamesByRole("Leader", true);
-        if(leaders.size() == 1) {
+        if(leaders.size() > 0) {
             // If the leader is alive, this agent waits for
             // the gm to request a target, and presents itself to the leader
             this.addBehaviour(new TargetKillingWithLeader(this));
         }
-        else {
-            MessageTemplate tmp = MessageTemplate.and(
-                    MessageTemplate.MatchProtocol(ProtocolNames.TargetKilling),
-                    MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
-
-            // Handles ability target requests
-            this.addBehaviour(new DecisionInformer(this, tmp));
-        }
+        else this.addBehaviour(new TargetKilling(this));
     }
 
-    @Override
-    public ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response) {
-        // Only happens if/when there are no Mafia Killings alive
+    // Last proposal was rejected
+    public ACLMessage handleNightVoteRequestRejected(ACLMessage request, List<String> rejectedNames) {
         List<String> killablePlayers = this.getGameContext().getAlivePlayers();
         List<String> mafiaPlayers = this.gameContext.getMafiaPlayerNames(false);
         String playerName;
+
+        for(String mafiaPlayer : mafiaPlayers)
+            killablePlayers.remove(mafiaPlayer);
+
+        for(String rejected : rejectedNames)
+            killablePlayers.remove(rejected);
+
+        // No possible choice to make ==> Skip
+        if(killablePlayers.size() == 0) {
+            ACLMessage inform = request.createReply();
+            inform.setContent("Skip");
+            inform.setPerformative(ACLMessage.INFORM);
+            return inform;
+        }
+
         int playerIndex;
 
         if(new Random().nextInt(10) < 6) {
             do{
                 playerName = getLessSuspectPlayers().get(new Random().nextInt(3));
-            } while (mafiaPlayers.contains(playerName) || !killablePlayers.contains(playerName));
+            } while (!killablePlayers.contains(playerName));
             playerIndex = killablePlayers.indexOf(playerName);
         }
         else {
-            do {
-                Random r = new Random();
-                playerIndex = r.nextInt(killablePlayers.size());
-            } while (mafiaPlayers.contains(killablePlayers.get(playerIndex)));
+            Random r = new Random();
+            playerIndex = r.nextInt(killablePlayers.size());
         }
 
         String playerToKill = killablePlayers.get(playerIndex);
 
         ACLMessage inform = request.createReply();
         inform.setContent(playerToKill);
-        inform.setPerformative(ACLMessage.INFORM);
+        inform.setPerformative(ACLMessage.PROPOSE);
 
         return inform;
     }
