@@ -1,10 +1,7 @@
 package agents.mafia;
 
 import agents.PlayerAgent;
-import behaviours.ChatListener;
-import behaviours.GameStateListener;
-import behaviours.TargetDictator;
-import behaviours.TargetKillingWithLeader;
+import behaviours.*;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -88,26 +85,27 @@ public class Killing extends PlayerAgent {
 
     @Override
     public void setNightTimeBehaviour() {
-        // There should only be 1
+
         List<String> leaders = this.getGameContext().getPlayerNamesByRole("Leader", true);
-        if(leaders.size() == 1) {
+        if(leaders.size() > 0) {
             // If the leader is alive, this agent waits for
             // the gm to request a target, and presents itself to the leader
             this.addBehaviour(new TargetKillingWithLeader(this));
         }
         else {
-            MessageTemplate tmp = MessageTemplate.and(
-                    MessageTemplate.MatchProtocol(ProtocolNames.TargetKilling),
-                    MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
-
-            // Handles ability target requests
-            this.addBehaviour(new DecisionInformer(this, tmp));
+//            MessageTemplate tmp = MessageTemplate.and(
+//                    MessageTemplate.MatchProtocol(ProtocolNames.TargetKilling),
+//                    MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+//
+//            // Handles ability target requests
+//            this.addBehaviour(new DecisionInformer(this, tmp));
+            this.addBehaviour(new TargetKilling(this));
         }
     }
 
     @Override
+    // Only happens if/when there are no Mafia Leaders alive
     public ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response) {
-        // Only happens if/when there are no Mafia Leaders alive
         List<String> killablePlayers = this.getGameContext().getAlivePlayers();
 
         Random r = new Random();
@@ -118,6 +116,33 @@ public class Killing extends PlayerAgent {
         ACLMessage inform = request.createReply();
         inform.setContent(playerToKill);
         inform.setPerformative(ACLMessage.INFORM);
+
+        return inform;
+    }
+
+    // Last proposal was rejected
+    public ACLMessage handleNightVoteRequestRejected(ACLMessage request, List<String> rejectedNames) {
+        ACLMessage inform = request.createReply();
+
+        List<String> killablePlayers = this.getGameContext().getAlivePlayers();
+
+        for(String currRejectedPlayerName : rejectedNames)
+            killablePlayers.remove(currRejectedPlayerName);
+
+        if(killablePlayers.size() == 0) {
+            inform.setContent("Skip");
+            inform.setPerformative(ACLMessage.PROPOSE);
+            return inform;
+        }
+
+        Random r = new Random();
+        int playerIndex = r.nextInt(killablePlayers.size());
+
+        String playerToKill = killablePlayers.get(playerIndex);
+
+
+        inform.setContent(playerToKill);
+        inform.setPerformative(ACLMessage.PROPOSE);
 
         return inform;
     }
