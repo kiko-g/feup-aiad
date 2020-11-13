@@ -47,14 +47,6 @@ public class GameLobby {
         public AID getAID() {
             return this.agentDesc.getName();
         }
-
-        synchronized public void setInformation(String information) {
-            this.information = information;
-        }
-
-        synchronized public String getInformation() {
-            return information;
-        }
     }
 
 
@@ -125,6 +117,10 @@ public class GameLobby {
     public List<AID> getAlivePlayersAID() {
         List<AgentInfo> temp = this.getPlayersByStatus(true);
         return temp.stream().map(AgentInfo::getAID).collect(Collectors.toList());
+    }
+
+    public boolean isAlive(String playerName) {
+        return lobby.get(playerName).isAlive();
     }
 
     private List<AgentInfo> getPlayersByRole(String role, boolean isAlive) {
@@ -316,17 +312,12 @@ public class GameLobby {
         return lobby.get(playerName).getRole();
     }
 
-    // -------------------------
-    synchronized public void setAgentInformation(String playerName, String information) {
-        this.lobby.get(playerName).setInformation(information);
-    }
-
-    synchronized String getAgentInformation(String playerName) {
-        return this.lobby.get(playerName).getInformation();
-    }
-
     public AID getAIDByName(String playerName) {
         return ! this.lobby.containsKey(playerName) ? null : this.lobby.get(playerName).getAID();
+    }
+
+    public String getRoleByName(String playerName) {
+        return ! this.lobby.containsKey(playerName) ? null : this.lobby.get(playerName).getRole();
     }
 
     public String[] getAllPlayerNames() {

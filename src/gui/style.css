@@ -1,41 +1,60 @@
 Label {
-    -fx-font-family: "";
-    -fx-font-size: 14px;
+    -fx-text-alignment: center;
+    -fx-font-size: 16px;
     -fx-text-fill: white;
-    -fx-padding: 10;
+    -fx-padding: 1 10;
+}
+
+.headers {
+    -fx-padding: 1 37;
+    -fx-font-weight: bolder;
+}
+.top {
+    -fx-padding: 10 0 10 10;
+    -fx-font-size: 15px;
+    -fx-text-fill: white;
+    -fx-background-color: #00000066;
+}
+.table-title {
+    -fx-font-weight: bolder;
+    -fx-text-alignment: center;
+    -fx-font-size: 15px;
+    -fx-text-fill: white;
+}
+.table-body {
+    -fx-text-alignment: center;
+    -fx-font-size: 15px;
+    -fx-text-fill: white;
 }
 
 Button {
-    -fx-font-size: 12px;
-    -fx-font-family: "Roboto Slab sans-serif";
+    -fx-font-size: 14px;
+    -fx-font-weight: bolder;
     -fx-text-fill: linear-gradient(white, white);
 
-    -fx-background-color:
-            #c0efff,
-            linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
-            linear-gradient(#20262b, #191d22),
-            radial-gradient(center 50% 0%, radius 100%, rgba(114, 131, 148, 0.9), rgba(255, 255, 255, 0));
+    -fx-background-color: #90EE9055;
     -fx-background-radius: 5, 4, 3, 5;
     -fx-background-insets: 0, 1, 2, 0;
 
+    -fx-padding: 5;
     -fx-end-margin: 100;
-    -fx-padding: 10;
     -fx-effect: dropshadow(one-pass-box, black, 1, 0, 0, 1);
 }
 
 Button:hover {
     -fx-cursor: hand;
-    -fx-font-size: 12px;
-    -fx-font-family: "Roboto Slab";
+    -fx-font-size: 14px;
 
     -fx-background-radius: 5,4,3,5;
     -fx-background-insets: 0,1,2,0;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6) , 5, 0.0, 0, 1);
 
-    -fx-padding: 10;
-    -fx-text-fill: linear-gradient(white, rgb(208, 208, 208));
+    -fx-padding: 4;
+    -fx-text-fill: linear-gradient(white, rgb(233, 233, 233));
 }
 
-HBox, VBox {
-    -fx-background-color: rgb(19, 28, 47);
+.root {
+    -fx-background-image: url("https://512pixels.net/downloads/macos-wallpapers-thumbs/10-14-Night-Thumb.jpg");
+    -fx-background-repeat: repeat;
+    -fx-background-size: cover;
 }

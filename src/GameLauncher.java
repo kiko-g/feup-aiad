@@ -75,15 +75,17 @@ public class GameLauncher extends Application {
         vbox.getStylesheets().add("https://fonts.googleapis.com/css?family=Open+Sans"); // Open Sans font
         vbox.applyCss();
 
-        stage.setScene(new Scene(vbox, 700, 500));
+        stage.setScene(new Scene(vbox, 900, 600));
         stage.show();
     }
 
     private void buttonAction(String playerName) {
+        String role = gameMaster.getGameLobby().getRoleByName(playerName);
         String info = gameMaster.requestPlayerPersonalInformation(playerName);
-        System.out.println(info);
-//        AgentWindow agentWindow = new AgentWindow();
-//        agentWindow.display();
+        boolean isAlive = gameMaster.getGameLobby().isAlive(playerName);
+
+        AgentWindow agentWindow = new AgentWindow(playerName, role, info, isAlive);
+        agentWindow.display();
     }
 
 

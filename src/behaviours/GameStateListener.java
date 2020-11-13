@@ -62,7 +62,7 @@ public class GameStateListener extends CyclicBehaviour {
         ACLMessage reply = msg.createReply();
         reply.setPerformative(ACLMessage.INFORM);
 
-        String info = "trait#name:susRate#";
+        String info = "trait#AAAAAAAA:0.7#BBBBBBBB:0.5#CCCCCCCC:0.3#DDDDDDDD:0.8";
         reply.setContent(info);
         this.playerAgent.send(reply);
     }
