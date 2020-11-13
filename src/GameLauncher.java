@@ -54,7 +54,7 @@ public class GameLauncher {
                 break;
             }
             default: {
-                System.out.println(role + " is still not implemented! Skipping...");
+                System.out.println(role + " is not implemented! Skipping...");
             }
         }
     }

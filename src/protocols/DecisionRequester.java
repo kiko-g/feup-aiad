@@ -30,21 +30,19 @@ public class DecisionRequester extends AchieveREInitiator {
 
         switch (this.protocolName) {
             case ProtocolNames.TargetKilling: {
-                System.out.println(inform.getSender().getLocalName()+" has decided to attack " + inform.getContent());
+                System.out.println(inform.getSender().getLocalName() + " has decided to attack " + inform.getContent());
                 this.gameMaster.addAttackedPlayer(inform.getContent());
                 break;
             }
             case ProtocolNames.VoteTarget: {
-                System.out.println(inform.getSender().getLocalName()+" has voted in " + inform.getContent());
+                System.out.println(inform.getSender().getLocalName() + " has voted in " + inform.getContent());
                 String playerName = inform.getContent();
 
-                if(!playerName.equals("Skip")) {
-                    // If exists, increments
-                    if (this.votingResults.containsKey(playerName))
-                        this.votingResults.replace(playerName, this.votingResults.get(playerName) + 1);
-                    else
-                        this.votingResults.put(playerName, 1); // If not, adds
-                }
+                // If exists, increments
+                if (this.votingResults.containsKey(playerName))
+                    this.votingResults.replace(playerName, this.votingResults.get(playerName) + 1);
+                else
+                    this.votingResults.put(playerName, 1); // If not, adds; Skips go here too!
 
                 break;
             }
@@ -77,8 +75,8 @@ public class DecisionRequester extends AchieveREInitiator {
                 }
             }
 
-            // Majority achieved
-            if(!duplicateFound) {
+            // Majority achieved in a player
+            if(!duplicateFound && !playerName.equals("Skip")) {
                 this.gameMaster.setDayDeath(playerName);
                 this.gameMaster.getGameLobby().killPlayer(playerName);
                 System.out.println("The town has chosen " + playerName + " for trial!");
