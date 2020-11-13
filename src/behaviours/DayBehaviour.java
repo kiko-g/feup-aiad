@@ -22,6 +22,9 @@ public class DayBehaviour extends SequentialBehaviour {
         // Who couldn't make it till morning
         this.addSubBehaviour(new GameStateInformer(this.gameMaster, false));
 
+        // Informs healers if they saved someone
+        this.addSubBehaviour(new GameStateInformer(this.gameMaster, ProtocolNames.PlayerSaved));
+
         // Discussion time
         this.addSubBehaviour(new ChatMessageDistributor(this.gameMaster));
 

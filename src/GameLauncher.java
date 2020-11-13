@@ -12,6 +12,7 @@ import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 import utils.ConfigReader;
+import utils.Util;
 
 import java.io.IOException;
 import java.util.*;
@@ -53,7 +54,7 @@ public class GameLauncher {
                 break;
             }
             default: {
-                System.out.println(role + " is still not implemented! Skipping...");
+                System.out.println(role + " is not implemented! Skipping...");
             }
         }
     }

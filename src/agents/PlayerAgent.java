@@ -7,17 +7,16 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
-import utils.ChatLog;
-import utils.ChatMessage;
-import utils.ChatMessageTemplate;
-import utils.GameContext;
+import utils.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public abstract class PlayerAgent extends Agent {
 
     HashMap<String, Double> susRateMap = new HashMap<>();
+
+    private Util.Trait playerTrait;
+
 
     private enum TimeOfDay {
         Day,
@@ -36,8 +35,14 @@ public abstract class PlayerAgent extends Agent {
     // All chat messages received up until now
     private ChatLog chatLog;
 
+    public PlayerAgent(Util.Trait playerTrait){
+        this.chatLog = new ChatLog();
+        this.playerTrait = playerTrait;
+    }
+
     public PlayerAgent() {
         this.chatLog = new ChatLog();
+        this.playerTrait = Util.Trait.getRandomTrait();
     }
 
     @Override
@@ -136,9 +141,29 @@ public abstract class PlayerAgent extends Agent {
                 handleDayVoteRequest(request, response) : handleNightVoteRequest(request, response);
     }
 
-    public abstract ACLMessage handleDayVoteRequest(ACLMessage request, ACLMessage response);
+    public ACLMessage handleDayVoteRequest(ACLMessage request, ACLMessage response) {
+        printSusRate();
+        // -------------
 
-    public abstract ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response);
+        List<String> mostSusPlayers = this.getMostSuspectPlayers(GlobalVars.VOTE_MIN_SUS_VALUE);
+        String content;
+
+        if(mostSusPlayers.size() < this.gameContext.getAlivePlayers().size() / 3) {
+            Random r = new Random();
+            int playerIndex = r.nextInt(mostSusPlayers.size());
+            content = mostSusPlayers.get(playerIndex);
+        }
+        else
+            content = "Skip";
+
+        ACLMessage inform = request.createReply();
+        inform.setContent(content);
+        inform.setPerformative(ACLMessage.INFORM);
+
+        return inform;
+    }
+
+    public ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response) { return null; }
 
     public void buryPlayer(String playerName) {
         this.gameContext.playerWasKilled(playerName);
@@ -175,34 +200,115 @@ public abstract class PlayerAgent extends Agent {
     }
 
     public void setPlayerSusRate(String name, double delta) {
+        double multiplier = Util.getTraitMultiplier(this.playerTrait);
         double oldSusRate = this.susRateMap.get(name);
-        this.susRateMap.replace(name, oldSusRate * delta);
+        double newSus;
+
+        if(delta > 1 || delta == 0)
+            newSus = oldSusRate * delta * multiplier;
+        else
+            newSus = oldSusRate * delta / multiplier;
+
+        this.susRateMap.replace(name, Math.min(1.0, newSus));
     }
 
     public void handleChatMsg(ChatMessage message) {
         switch (message.getTemplateMessage()) {
-            case ChatMessageTemplate.RevealRole: {
-                setPlayerSusRate(message.getSenderName(), 0.8);
-                break;
-            }
-            case ChatMessageTemplate.AccusePlayerRole: {
-                break;
-            }
             case ChatMessageTemplate.SkipAccusation: {
                 setPlayerSusRate(message.getSenderName(), 1.1);
                 break;
             }
             case ChatMessageTemplate.AccusePlayer: {
-                String victim = message.getContent().substring(18);
+                String[] messageWords = message.getContent().split(" ");
+                String victim = messageWords[messageWords.length - 1];
+
                 setPlayerSusRate(victim, 1.4);
                 break;
             }
+            case ChatMessageTemplate.HealerMessage: {
+                String[] messageWords = message.getContent().split(" ");
+                String victim = messageWords[messageWords.length - 1];
+
+                setPlayerSusRate(message.getSenderName(), 0.6);
+                setPlayerSusRate(victim, 0.6);
+                break;
+            }
+            case ChatMessageTemplate.DetectiveMessageHasActivity: {
+                String[] messageWords = message.getContent().split(" ");
+                String victim = messageWords[0];
+
+                setPlayerSusRate(message.getSenderName(), 0.8);
+                setPlayerSusRate(victim, 1.1);
+                break;
+            }
+            case ChatMessageTemplate.DetectiveMessageHasNoActivity: {
+                String[] messageWords = message.getContent().split(" ");
+                String victim = messageWords[0];
+
+                setPlayerSusRate(message.getSenderName(), 0.8);
+                setPlayerSusRate(victim, 0.9);
+                break;
+            }
+            case ChatMessageTemplate.DetectiveAcuseLeader: {
+                String[] messageWords = message.getContent().split(" ");
+                String leader = messageWords[0];
+
+                setPlayerSusRate(message.getSenderName(), 0.6);
+                setPlayerSusRate(leader, 10);
+                break;
+            }
+        }
+    }
+
+    public List<String> getMostSuspectPlayers(double minSus) {
+        List<String> mostSusPlayers = new ArrayList<>();
+
+        for(String playerName : getPlayerBySusOrder()) {
+            if(susRateMap.get(playerName) >= minSus && this.gameContext.isPlayerAlive(playerName)) {
+                if(!playerName.equals(this.getLocalName()))
+                    mostSusPlayers.add(playerName);
+            }
+        }
+        return mostSusPlayers;
+    }
+
+    public List<String> getLessSuspectPlayers() {
+        List<String> lessSuspectPlayers = new ArrayList<>(3);
+        int i = 0;
+        for(String playerName : getPlayerBySusOrder()) {
+            if(this.gameContext.isPlayerAlive(playerName)) {
+                if(!playerName.equals(this.getLocalName())) {
+                    lessSuspectPlayers.add(playerName);
+                    i++;
+                    if(i == 3)
+                        return lessSuspectPlayers;
+                }
+            }
+        }
+        return lessSuspectPlayers;
+    }
+
+    private List<String> getPlayerBySusOrder() {
+        List<String> playersList = new ArrayList<>(susRateMap.keySet());
+        List<Double> playersSusRate = new ArrayList<>(susRateMap.values());
+        playersSusRate.sort(Double::compareTo);
+        List<String> s = Arrays.asList(new String[playersList.size()]);
+
+        for(String playerName : playersList) {
+            Double value = susRateMap.get(playerName);
+            int index = playersSusRate.indexOf(value);
+            playersSusRate.set(index, -1.0);
+            s.set(index, playerName);
         }
 
-        String susRates = "";
-        for(Map.Entry<String, Double> currentPlayer : this.susRateMap.entrySet())
-            susRates += currentPlayer.getKey() + " " + currentPlayer.getValue() + " ; ";
+        return s;
+    }
 
-        this.logMessage(susRates);
+    public void printSusRate() {
+        StringBuilder susRates = new StringBuilder();
+        for(Map.Entry<String, Double> currentPlayer : this.susRateMap.entrySet())
+            if(this.getGameContext().getAlivePlayers().contains(currentPlayer.getKey()))
+                susRates.append(currentPlayer.getKey()).append(" ").append(currentPlayer.getValue()).append(" ; ");
+        this.logMessage(susRates.toString());
     }
 }

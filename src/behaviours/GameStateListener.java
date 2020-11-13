@@ -1,9 +1,11 @@
 package behaviours;
 
 import agents.PlayerAgent;
+import agents.town.Healer;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import utils.ChatMessageTemplate;
 import utils.ProtocolNames;
 import utils.Util;
 
@@ -23,7 +25,10 @@ public class GameStateListener extends CyclicBehaviour {
                     MessageTemplate.MatchProtocol(ProtocolNames.PlayerDeath),
                     MessageTemplate.or(
                             MessageTemplate.MatchProtocol(ProtocolNames.TimeOfDay),
-                            MessageTemplate.MatchProtocol(ProtocolNames.End)
+                            MessageTemplate.or(
+                                    MessageTemplate.MatchProtocol(ProtocolNames.End),
+                                    MessageTemplate.MatchProtocol(ProtocolNames.PlayerSaved)
+                            )
                     )
             )
     );
@@ -35,6 +40,17 @@ public class GameStateListener extends CyclicBehaviour {
             switch (msg.getProtocol()) {
                 case ProtocolNames.PlayerDeath: {
                     this.handlePlayerDeath(msg.getContent());
+                    break;
+                }
+                case ProtocolNames.PlayerSaved: {
+                    String[] words = msg.getContent().split(" ");
+                    String savedPlayer = words[words.length - 1];
+
+                    if(this.playerAgent.getClass() == Healer.class) {
+                        ((Healer) this.playerAgent).setPlayerSavedLastNight(savedPlayer);
+                        this.playerAgent.addBehaviour(new ChatPoster(this.playerAgent, ChatMessageTemplate.HealerMessage, ChatMessageTemplate.healerMessage(savedPlayer)));
+
+                    }
                     break;
                 }
                 case ProtocolNames.TimeOfDay: {

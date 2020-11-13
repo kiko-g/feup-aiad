@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GameMaster extends Agent {
 
@@ -33,7 +34,8 @@ public class GameMaster extends Agent {
 
     // key: player saved
     // value: who saved it
-    private HashMap<String, String> savedPlayers; // Players saved by Healer during night
+    private ConcurrentHashMap<String, String> savedPlayers; // Players visited by Healer during night
+    private ConcurrentHashMap<String, String> actuallySavedPlayers; // Players attacked and then saved by Healer
 
     private List<String> nightDeaths; // Players that were attacked and not saved
 
@@ -45,7 +47,8 @@ public class GameMaster extends Agent {
         this.gameState = GameStates.WAITING_FOR_PLAYERS;
 
         this.attackedPlayers = new ArrayList<>();
-        this.savedPlayers = new HashMap<>();
+        this.savedPlayers = new ConcurrentHashMap<>();
+        this.actuallySavedPlayers = new ConcurrentHashMap<>();
         this.nightDeaths = new ArrayList<>();
         this.dayDeath = "";
     }
@@ -193,7 +196,7 @@ public class GameMaster extends Agent {
         this.jesterDayDeath = true;
     }
 
-    public HashMap<String, String> getSavedPlayers() {
+    public ConcurrentHashMap<String, String> getSavedPlayers() {
         return savedPlayers;
     }
 
@@ -205,8 +208,20 @@ public class GameMaster extends Agent {
         this.savedPlayers.put(savedPlayer, saviour);
     }
 
-    public void setSavedPlayers(HashMap<String, String> savedPlayers) {
+    public void addActuallySavedPlayer(String savedPlayer, String saviour) {
+        this.actuallySavedPlayers.put(savedPlayer, saviour);
+    }
+
+    public void setSavedPlayers(ConcurrentHashMap<String, String> savedPlayers) {
         this.savedPlayers = savedPlayers;
+    }
+
+    public void setActuallySavedPlayers(ConcurrentHashMap<String, String> actuallySavedPlayers) {
+        this.actuallySavedPlayers = actuallySavedPlayers;
+    }
+
+    public ConcurrentHashMap<String, String> getActuallySavedPlayers() {
+        return this.actuallySavedPlayers;
     }
 
     public List<String> getAttackedPlayers() {

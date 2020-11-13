@@ -3,6 +3,8 @@ package utils;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 
+import java.util.Random;
+
 public class Util {
 
     public static ACLMessage buildMessage(int messageType, String protocolName, String content) {
@@ -41,6 +43,32 @@ public class Util {
 
             default:
                 return "Neutral";
+        }
+    }
+
+    public enum Trait {
+        OverTheLine,
+        Agressive,
+        Mild,
+        Peaceful;
+
+        public static Trait getRandomTrait() {
+            Random random = new Random();
+            return values()[random.nextInt(values().length)];
+        }
+    }
+
+    public static double getTraitMultiplier(Trait trait) {
+        switch (trait) {
+            case OverTheLine:
+                return 1.5;
+            case Agressive:
+                return 1.3;
+            case Mild:
+                return 1.1;
+            case Peaceful:
+            default:
+                return 1;
         }
     }
 }
