@@ -5,6 +5,7 @@ import agents.town.Healer;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import utils.ChatMessageTemplate;
 import utils.ProtocolNames;
 import utils.Util;
 
@@ -47,8 +48,9 @@ public class GameStateListener extends CyclicBehaviour {
 
                     if(this.playerAgent.getClass() == Healer.class) {
                         ((Healer) this.playerAgent).setPlayerSavedLastNight(savedPlayer);
-                    }
+                        this.playerAgent.addBehaviour(new ChatPoster(this.playerAgent, ChatMessageTemplate.HealerMessage, ChatMessageTemplate.healerMessage(savedPlayer)));
 
+                    }
                     break;
                 }
                 case ProtocolNames.TimeOfDay: {

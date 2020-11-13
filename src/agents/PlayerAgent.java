@@ -142,6 +142,9 @@ public abstract class PlayerAgent extends Agent {
     }
 
     public ACLMessage handleDayVoteRequest(ACLMessage request, ACLMessage response) {
+        printSusRate();
+        // -------------
+
         List<String> mostSusPlayers = this.getMostSuspectPlayers(GlobalVars.VOTE_MIN_SUS_VALUE);
         String content;
 
@@ -255,21 +258,58 @@ public abstract class PlayerAgent extends Agent {
                 break;
             }
         }
-
-        StringBuilder susRates = new StringBuilder();
-        for(Map.Entry<String, Double> currentPlayer : this.susRateMap.entrySet())
-            susRates.append(currentPlayer.getKey()).append(" ").append(currentPlayer.getValue()).append(" ; ");
-
-        this.logMessage(susRates.toString());
     }
 
     public List<String> getMostSuspectPlayers(double minSus) {
         List<String> mostSusPlayers = new ArrayList<>();
-        for(HashMap.Entry<String, Double> currentPlayer : susRateMap.entrySet()) {
-            if(currentPlayer.getValue() >= minSus && this.gameContext.isPlayerAlive(currentPlayer.getKey()))
-                if(!currentPlayer.getKey().equals(this.getLocalName()))
-                    mostSusPlayers.add(currentPlayer.getKey());
+
+        for(String playerName : getPlayerBySusOrder()) {
+            if(susRateMap.get(playerName) >= minSus && this.gameContext.isPlayerAlive(playerName)) {
+                if(!playerName.equals(this.getLocalName()))
+                    mostSusPlayers.add(playerName);
+            }
         }
         return mostSusPlayers;
+    }
+
+    public List<String> getLessSuspectPlayers() {
+        String lessSuspectPlayer = "";
+        List<String> lessSuspectPlayers = new ArrayList<>(3);
+        int i = 0;
+        for(String playerName : getPlayerBySusOrder()) {
+            if(this.gameContext.isPlayerAlive(playerName)) {
+                if(!playerName.equals(this.getLocalName())) {
+                    lessSuspectPlayers.add(playerName);
+                    i++;
+                    if(i == 3)
+                        return lessSuspectPlayers;
+                }
+            }
+        }
+        return lessSuspectPlayers;
+    }
+
+    private List<String> getPlayerBySusOrder() {
+        List<String> playersList = new ArrayList<>(susRateMap.keySet());
+        List<Double> playersSusRate = new ArrayList<>(susRateMap.values());
+        playersSusRate.sort(Double::compareTo);
+        List<String> s = Arrays.asList(new String[playersList.size()]);
+
+        for(String playerName : playersList) {
+            Double value = susRateMap.get(playerName);
+            int index = playersSusRate.indexOf(value);
+            playersSusRate.set(index, -1.0);
+            s.set(index, playerName);
+        }
+
+        return s;
+    }
+
+    public void printSusRate() {
+        StringBuilder susRates = new StringBuilder();
+        for(Map.Entry<String, Double> currentPlayer : this.susRateMap.entrySet())
+            if(this.getGameContext().getAlivePlayers().contains(currentPlayer.getKey()))
+                susRates.append(currentPlayer.getKey()).append(" ").append(currentPlayer.getValue()).append(" ; ");
+        this.logMessage(susRates.toString());
     }
 }

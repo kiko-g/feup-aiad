@@ -72,8 +72,6 @@ public class Healer extends PlayerAgent {
     @Override
     public void setDayTimeBehavior() {
         // TODO: Post beliefs in chat
-        if(!playerSavedLastNight.equals(""))
-            this.addBehaviour(new ChatPoster(this, ChatMessageTemplate.HealerMessage, ChatMessageTemplate.healerMessage(playerSavedLastNight)));
 
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.VoteTarget),
@@ -105,13 +103,12 @@ public class Healer extends PlayerAgent {
 
     @Override
     public ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response) {
-        // Only happens if/when there are no Mafia Leaders alive
         List<String> alivePlayers = this.getGameContext().getAlivePlayers();
+        String playerToSave;
 
-        Random r = new Random();
-        int playerIndex = r.nextInt(alivePlayers.size());
-
-        String playerToSave = alivePlayers.get(playerIndex);
+        do {
+            playerToSave = getLessSuspectPlayers().get(new Random().nextInt(3));
+        } while (!alivePlayers.contains(playerToSave));
 
         ACLMessage inform = request.createReply();
         inform.setContent(playerToSave);

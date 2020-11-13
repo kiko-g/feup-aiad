@@ -101,6 +101,7 @@ public class Detective extends PlayerAgent {
             for(int i = 0; i < nightVisits.size() - 1; i++) {
                 if(lastReport.playerName.equals(nightVisits.get(i).playerName) && !nightVisits.get(i).isSus) {
                     isLeader = true;
+                    this.setPlayerSusRate(lastReport.playerName, 1000);
                     break;
                 }
             }
@@ -127,22 +128,6 @@ public class Detective extends PlayerAgent {
     public void setNightTimeBehaviour() {
         // Handles ability target requests
         this.addBehaviour(new InvestigationWaiter(this));
-    }
-
-    @Override
-    public ACLMessage handleDayVoteRequest(ACLMessage request, ACLMessage response) {
-        List<String> alivePlayers = this.getGameContext().getAlivePlayers();
-
-        Random r = new Random();
-        int playerIndex = r.nextInt(alivePlayers.size());
-
-        String playerForTrial = alivePlayers.get(playerIndex);
-
-        ACLMessage inform = request.createReply();
-        inform.setContent(playerForTrial);
-        inform.setPerformative(ACLMessage.INFORM);
-
-        return inform;
     }
 
     // Who will be visited / investigated during night
