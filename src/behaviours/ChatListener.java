@@ -36,6 +36,6 @@ public class ChatListener extends CyclicBehaviour {
             } catch (UnreadableException e) {
                 e.printStackTrace();
             }
-        }
+        } else block(1000);
     }
 }

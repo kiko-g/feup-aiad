@@ -64,6 +64,7 @@ public class GameStateListener extends CyclicBehaviour {
                 }
             }
         }
+        else block(700);
     }
 
     private void handleEndOfGame(String content) {
