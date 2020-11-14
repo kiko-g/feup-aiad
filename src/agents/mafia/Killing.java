@@ -1,10 +1,7 @@
 package agents.mafia;
 
 import agents.PlayerAgent;
-import behaviours.ChatListener;
-import behaviours.GameStateListener;
-import behaviours.TargetDictator;
-import behaviours.TargetKillingWithLeader;
+import behaviours.*;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -12,12 +9,23 @@ import protocols.ContextWaiter;
 import protocols.DecisionInformer;
 import protocols.MafiaWaiter;
 import protocols.PlayerInformer;
+import utils.GlobalVars;
 import utils.ProtocolNames;
+import utils.Util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class Killing extends PlayerAgent {
+
+    public Killing(Util.Trait trait) {
+        super(trait);
+    }
+
+    public Killing() {
+        super();
+    }
 
     @Override
     public String getRole() {
@@ -79,52 +87,82 @@ public class Killing extends PlayerAgent {
 
     @Override
     public void setNightTimeBehaviour() {
-        // There should only be 1
+
         List<String> leaders = this.getGameContext().getPlayerNamesByRole("Leader", true);
-        if(leaders.size() == 1) {
+        if(leaders.size() > 0) {
             // If the leader is alive, this agent waits for
             // the gm to request a target, and presents itself to the leader
             this.addBehaviour(new TargetKillingWithLeader(this));
         }
-        else {
-            MessageTemplate tmp = MessageTemplate.and(
-                    MessageTemplate.MatchProtocol(ProtocolNames.TargetKilling),
-                    MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
-
-            // Handles ability target requests
-            this.addBehaviour(new DecisionInformer(this, tmp));
-        }
+        else this.addBehaviour(new TargetKilling(this));
     }
 
-    @Override
-    public ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response) {
-        // Only happens if/when there are no Mafia Leaders alive
+    // Last proposal was rejected
+    public ACLMessage handleNightVoteRequestRejected(ACLMessage request, List<String> rejectedNames) {
         List<String> killablePlayers = this.getGameContext().getAlivePlayers();
+        List<String> mafiaPlayers = this.gameContext.getMafiaPlayerNames(false);
+        String playerName;
 
-        Random r = new Random();
-        int playerIndex = r.nextInt(killablePlayers.size());
+        for(String mafiaPlayer : mafiaPlayers)
+            killablePlayers.remove(mafiaPlayer);
+
+        for(String rejected : rejectedNames)
+            killablePlayers.remove(rejected);
+
+        // No possible choice to make ==> Skip
+        if(killablePlayers.size() == 0) {
+            ACLMessage inform = request.createReply();
+            inform.setContent("Skip");
+            inform.setPerformative(ACLMessage.INFORM);
+            return inform;
+        }
+
+        int playerIndex;
+
+        if(new Random().nextInt(10) < 6) {
+            do{
+                playerName = getLessSuspectPlayers().get(new Random().nextInt(3));
+            } while (!killablePlayers.contains(playerName));
+            playerIndex = killablePlayers.indexOf(playerName);
+        }
+        else {
+            Random r = new Random();
+            playerIndex = r.nextInt(killablePlayers.size());
+        }
 
         String playerToKill = killablePlayers.get(playerIndex);
 
         ACLMessage inform = request.createReply();
         inform.setContent(playerToKill);
-        inform.setPerformative(ACLMessage.INFORM);
+        inform.setPerformative(ACLMessage.PROPOSE);
 
         return inform;
     }
 
     @Override
     public ACLMessage handleDayVoteRequest(ACLMessage request, ACLMessage response) {
-        // Person to kill during night
-        List<String> killablePlayers = this.getGameContext().getAlivePlayers();
+        printSusRate();
 
-        Random r = new Random();
-        int playerIndex = r.nextInt(killablePlayers.size());
+        List<String> mostSusPlayersWithoutMafia = new ArrayList<>();
+        List<String> mafiaPlayers = this.gameContext.getMafiaPlayerNames(true);
+        String content;
 
-        String playerToKill = killablePlayers.get(playerIndex);
+        for(String playerName : getMostSuspectPlayers(GlobalVars.VOTE_MIN_SUS_VALUE)) {
+            if(!mafiaPlayers.contains(playerName)) {
+                mostSusPlayersWithoutMafia.add(playerName);
+            }
+        }
+
+        if(mostSusPlayersWithoutMafia.size() > 0) {
+            Random r = new Random();
+            int playerIndex = r.nextInt(mostSusPlayersWithoutMafia.size());
+            content = mostSusPlayersWithoutMafia.get(playerIndex);
+        }
+        else
+            content = "Skip";
 
         ACLMessage inform = request.createReply();
-        inform.setContent(playerToKill);
+        inform.setContent(content);
         inform.setPerformative(ACLMessage.INFORM);
 
         return inform;

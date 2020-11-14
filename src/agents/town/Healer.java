@@ -2,6 +2,7 @@ package agents.town;
 
 import agents.PlayerAgent;
 import behaviours.ChatListener;
+import behaviours.ChatPoster;
 import behaviours.GameStateListener;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
@@ -9,12 +10,27 @@ import jade.lang.acl.MessageTemplate;
 import protocols.ContextWaiter;
 import protocols.DecisionInformer;
 import protocols.PlayerInformer;
+import utils.ChatMessageTemplate;
+import utils.GlobalVars;
 import utils.ProtocolNames;
+import utils.Util;
 
 import java.util.List;
 import java.util.Random;
 
 public class Healer extends PlayerAgent {
+
+    private String playerSavedLastNight;
+
+    public Healer(Util.Trait trait) {
+        super(trait);
+        this.playerSavedLastNight = "";
+    }
+
+    public Healer() {
+        super();
+        this.playerSavedLastNight = "";
+    }
 
     @Override
     public String getRole() {
@@ -57,7 +73,6 @@ public class Healer extends PlayerAgent {
     public void setDayTimeBehavior() {
         // TODO: Post beliefs in chat
 
-
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.VoteTarget),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
@@ -68,6 +83,8 @@ public class Healer extends PlayerAgent {
 
     @Override
     public void setNightTimeBehaviour() {
+        this.playerSavedLastNight = "";
+
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.TargetHealing),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
@@ -78,34 +95,33 @@ public class Healer extends PlayerAgent {
 
     @Override
     public ACLMessage handleDayVoteRequest(ACLMessage request, ACLMessage response) {
-        List<String> alivePlayers = this.getGameContext().getAlivePlayers();
+        if(!playerSavedLastNight.equals(""))
+            setPlayerSusRate(playerSavedLastNight, 0);
 
-        Random r = new Random();
-        int playerIndex = r.nextInt(alivePlayers.size());
-
-        String playerForTrial = alivePlayers.get(playerIndex);
-
-        ACLMessage inform = request.createReply();
-        inform.setContent(playerForTrial);
-        inform.setPerformative(ACLMessage.INFORM);
-
-        return inform;
+        return super.handleDayVoteRequest(request, response);
     }
 
     @Override
     public ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response) {
-        // Only happens if/when there are no Mafia Leaders alive
         List<String> alivePlayers = this.getGameContext().getAlivePlayers();
+        String playerToSave;
 
-        Random r = new Random();
-        int playerIndex = r.nextInt(alivePlayers.size());
-
-        String playerToSave = alivePlayers.get(playerIndex);
+        do {
+            playerToSave = getLessSuspectPlayers().get(new Random().nextInt(3));
+        } while (!alivePlayers.contains(playerToSave));
 
         ACLMessage inform = request.createReply();
         inform.setContent(playerToSave);
         inform.setPerformative(ACLMessage.INFORM);
 
         return inform;
+    }
+
+    public String getPlayerSavedLastNight() {
+        return playerSavedLastNight;
+    }
+
+    public void setPlayerSavedLastNight(String playerSavedLastNight) {
+        this.playerSavedLastNight = playerSavedLastNight;
     }
 }

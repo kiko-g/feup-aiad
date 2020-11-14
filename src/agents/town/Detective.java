@@ -14,6 +14,7 @@ import protocols.PlayerInformer;
 import utils.ChatMessage;
 import utils.ChatMessageTemplate;
 import utils.ProtocolNames;
+import utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,11 @@ public class Detective extends PlayerAgent {
         public boolean isSus() {
             return isSus;
         }
+    }
+
+    public Detective(Util.Trait trait) {
+        super(trait);
+        this.nightVisits = new ArrayList<>();
     }
 
     public Detective() {
@@ -87,8 +93,28 @@ public class Detective extends PlayerAgent {
     @Override
     public void setDayTimeBehavior() {
         // TODO: Post beliefs in chat
+        VisitReport lastReport = getLastNightReport();
 
-        this.addBehaviour(new ChatPoster(this, ChatMessageTemplate.RevealRole, ChatMessageTemplate.revealRole("Detective")));
+        if(lastReport.isSus)
+        {
+            boolean isLeader = false;
+            for(int i = 0; i < nightVisits.size() - 1; i++) {
+                if(lastReport.playerName.equals(nightVisits.get(i).playerName) && !nightVisits.get(i).isSus) {
+                    isLeader = true;
+                    this.setPlayerSusRate(lastReport.playerName, 1000);
+                    break;
+                }
+            }
+            if(isLeader)
+                this.addBehaviour(new ChatPoster(this, ChatMessageTemplate.DetectiveAcuseLeader,
+                        ChatMessageTemplate.detectiveAcuseLeader(lastReport.playerName)));
+            else
+                this.addBehaviour(new ChatPoster(this, ChatMessageTemplate.DetectiveMessageHasActivity,
+                    ChatMessageTemplate.detectiveMessageHasActivity(lastReport.playerName)));
+        }
+        else
+            this.addBehaviour(new ChatPoster(this, ChatMessageTemplate.DetectiveMessageHasNoActivity,
+                    ChatMessageTemplate.detectiveMessageHasNoActivity(lastReport.playerName)));
 
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.VoteTarget),
@@ -102,22 +128,6 @@ public class Detective extends PlayerAgent {
     public void setNightTimeBehaviour() {
         // Handles ability target requests
         this.addBehaviour(new InvestigationWaiter(this));
-    }
-
-    @Override
-    public ACLMessage handleDayVoteRequest(ACLMessage request, ACLMessage response) {
-        List<String> alivePlayers = this.getGameContext().getAlivePlayers();
-
-        Random r = new Random();
-        int playerIndex = r.nextInt(alivePlayers.size());
-
-        String playerForTrial = alivePlayers.get(playerIndex);
-
-        ACLMessage inform = request.createReply();
-        inform.setContent(playerForTrial);
-        inform.setPerformative(ACLMessage.INFORM);
-
-        return inform;
     }
 
     // Who will be visited / investigated during night

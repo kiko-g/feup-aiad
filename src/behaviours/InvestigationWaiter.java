@@ -51,6 +51,11 @@ public class InvestigationWaiter extends Behaviour {
                 boolean isSus = investigationResult.getContent().equals("Kinda sus");
                 this.detective.addVisit(this.targetMessage.getContent(), isSus);
 
+                if(!isSus)
+                    this.detective.setPlayerSusRate(this.targetMessage.getContent(), 0.8);
+                else
+                    this.detective.setPlayerSusRate(this.targetMessage.getContent(), 1.2);
+
                 this.currentStep = Steps.Done;
                 break;
             }

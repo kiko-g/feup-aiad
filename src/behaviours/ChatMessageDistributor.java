@@ -19,6 +19,8 @@ public class ChatMessageDistributor extends Behaviour {
     private GameMaster gameMaster;
     private long discussionBeginTime;
 
+    boolean firstRun = true;
+
     private final MessageTemplate mt = MessageTemplate.and(
             MessageTemplate.MatchProtocol(ProtocolNames.Chat),
             MessageTemplate.MatchPerformative(ACLMessage.REQUEST)
@@ -27,12 +29,15 @@ public class ChatMessageDistributor extends Behaviour {
     public ChatMessageDistributor(GameMaster gameMaster) {
         this.gameMaster = gameMaster;
         this.discussionBeginTime = System.currentTimeMillis();
-
-        System.out.println("\t======> Discussion Begins (" + GlobalVars.DISCUSSION_MAX_TIME_SECONDS + "s)");
     }
 
     @Override
     public void action() {
+        if(firstRun) {
+            System.out.println("\t======> Discussion Begins (" + GlobalVars.DISCUSSION_MAX_TIME_SECONDS + "s)");
+            firstRun = false;
+        }
+
         ACLMessage msg = this.gameMaster.receive(mt);
         if(msg != null) {
             // Received Message object content
