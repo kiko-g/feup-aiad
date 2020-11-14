@@ -1,8 +1,7 @@
 package gui;
-import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.geometry.Insets;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -21,10 +20,10 @@ public class AgentWindow {
 
         // TOP COMPONENT
         HBox[] topHBox = new HBox[4];
-        topHBox[0] = new HBox(new Label("Name:   \t"), new Label(playerName));
-        topHBox[1] = new HBox(new Label("Role:   \t"), new Label(role));
+        topHBox[0] = new HBox(new Label("Name:    \t"), new Label(playerName));
+        topHBox[1] = new HBox(new Label("Role:    \t"), new Label(role));
         topHBox[2] = new HBox(new Label("Trait:   \t"), new Label(result[0]));
-        topHBox[3] = new HBox(new Label("Status:   \t"), new Label(status));
+        topHBox[3] = new HBox(new Label("Status:  \t"), new Label(status));
         VBox vbox1 = new VBox(topHBox);
         vbox1.getStyleClass().add("top");
         vbox1.setPadding(new Insets(0, 0, 50, 0));
@@ -44,10 +43,10 @@ public class AgentWindow {
 
         // TABLE TITLE
         VBox vbox2 = new VBox();
-        Label l1 = new Label("NAME");
+        Label l1 = new Label("Name");
         l1.getStyleClass().clear();
         l1.getStyleClass().add("headers");
-        Label l2 = new Label("SUS RATE");
+        Label l2 = new Label("Sus Rate (%)");
         l2.getStyleClass().clear();
         l2.getStyleClass().add("headers");
         HBox hbox = new HBox(l1, l2);
@@ -55,6 +54,7 @@ public class AgentWindow {
         hbox.getStyleClass().add("table-title");
         vbox2.setAlignment(Pos.CENTER);
         vbox2.getStyleClass().add("table-title");
+        vbox2.setPadding(new Insets(30, 0, 0, 0));
         vbox2.getChildren().add(hbox);
 
         // TABLE BODY

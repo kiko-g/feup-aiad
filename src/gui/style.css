@@ -32,7 +32,7 @@ Button {
     -fx-font-weight: bolder;
     -fx-text-fill: linear-gradient(white, white);
 
-    -fx-background-color: #90EE9055;
+    -fx-background-color: #b5ffce70;
     -fx-background-radius: 5, 4, 3, 5;
     -fx-background-insets: 0, 1, 2, 0;
 
@@ -47,14 +47,14 @@ Button:hover {
 
     -fx-background-radius: 5,4,3,5;
     -fx-background-insets: 0,1,2,0;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6) , 5, 0.0, 0, 1);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 5, 0.0, 0, 1);
 
     -fx-padding: 4;
     -fx-text-fill: linear-gradient(white, rgb(233, 233, 233));
 }
 
 .root {
-    -fx-background-image: url("https://512pixels.net/downloads/macos-wallpapers-thumbs/10-14-Night-Thumb.jpg");
+    -fx-background-image: url("https://images.hdqwalls.com/wallpapers/macos-mojave-evening-mode-stock-l9.jpg");
     -fx-background-repeat: repeat;
     -fx-background-size: cover;
 }

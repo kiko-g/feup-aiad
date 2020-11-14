@@ -50,7 +50,7 @@ public abstract class PlayerAgent extends Agent {
 
     public void logMessage(String msg) {
         String senderID = this.getLocalName();
-        String finalMessage = "[" + senderID + "] " + msg;
+        String finalMessage = "[" + senderID + "]  \t" + msg;
         System.out.println(finalMessage);
     }
 
@@ -201,7 +201,7 @@ public abstract class PlayerAgent extends Agent {
 
         String susRates = "";
         for(Map.Entry<String, Double> currentPlayer : this.susRateMap.entrySet())
-            susRates += currentPlayer.getKey() + " " + currentPlayer.getValue() + " ; ";
+            susRates += currentPlayer.getKey() + " " + String.format("%.0f", currentPlayer.getValue()*100) + "% ; ";
 
         this.logMessage(susRates);
     }

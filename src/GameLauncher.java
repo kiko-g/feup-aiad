@@ -38,8 +38,7 @@ public class GameLauncher extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         launchGame();
-        Thread.sleep(2000);
-        stage.setTitle("Game Window");
+        stage.setTitle("MAFIA");
         stage.getIcons().add(new Image("/resources/icon.png"));
 
         int maxButtonsPerRow = 5;
@@ -91,7 +90,7 @@ public class GameLauncher extends Application {
 
 
     public void launchGame() throws Exception {
-        names = ConfigReader.importNames("src/resources/names.txt"); // Loads available names
+        names = ConfigReader.importNames("src/resources/names2.txt"); // Loads available names
         List<String> roles = ConfigReader.importRoles("src/resources/gamemodes/test.txt"); // Loads roles
 
         Profile p1 = new ProfileImpl(); // Create the main container
@@ -105,8 +104,8 @@ public class GameLauncher extends Application {
         gameMasterController.start();
 
         Thread.sleep(1000);
-
         launchAgents(roles, names, container);
+        Thread.sleep(1000);
     }
     public void launchAgent(String role, String name, ContainerController container) throws StaleProxyException {
         AgentController ac;
