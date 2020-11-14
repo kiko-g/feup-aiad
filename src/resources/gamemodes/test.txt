@@ -1,5 +1,6 @@
 Villager:8
 Detective:1
-Healer:2
+Healer:1
+Jester:1
 Killing:2
 Leader:1

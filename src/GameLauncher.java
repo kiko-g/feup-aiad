@@ -55,15 +55,15 @@ public class GameLauncher extends Application {
             Button[] rowButtons = new Button[buttonsPerRow];
             for(int j = 0; j < buttonsPerRow; j++) {
                 String currentName = namesArray[i*maxButtonsPerRow+j];
-                rowButtons[j] = new Button("" + currentName);
-                rowButtons[j].setMinWidth(100.0);
+                rowButtons[j] = new Button(currentName + ", the " +  gameMaster.getGameLobby().getPlayerRole(currentName));
+                rowButtons[j].setMinWidth(150.0);
                 rowButtons[j].setOnAction(e -> this.buttonAction(currentName));
             }
 
             HBoxes[i] = new HBox(rowButtons);
             HBoxes[i].setSpacing(10);
             HBoxes[i].setAlignment(Pos.CENTER);
-            HBoxes[i].setPadding(new Insets(10));
+            HBoxes[i].setPadding(new Insets(10, 5, 10, 5));
         }
 
         VBox vbox = new VBox(HBoxes);
@@ -75,7 +75,7 @@ public class GameLauncher extends Application {
         vbox.getStylesheets().add("https://fonts.googleapis.com/css?family=Open+Sans"); // Open Sans font
         vbox.applyCss();
 
-        stage.setScene(new Scene(vbox, 900, 600));
+        stage.setScene(new Scene(vbox, 1200, 600));
         stage.show();
     }
 
@@ -91,7 +91,7 @@ public class GameLauncher extends Application {
 
 
     public void launchGame() throws Exception {
-        names = ConfigReader.importNames("src/resources/names2.txt"); // Loads available names
+        names = ConfigReader.importNames("src/resources/names.txt"); // Loads available names
         List<String> roles = ConfigReader.importRoles("src/resources/gamemodes/test.txt"); // Loads roles
 
         Profile p1 = new ProfileImpl(); // Create the main container

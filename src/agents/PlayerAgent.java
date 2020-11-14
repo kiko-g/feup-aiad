@@ -13,10 +13,9 @@ import java.util.*;
 
 public abstract class PlayerAgent extends Agent {
 
-    HashMap<String, Double> susRateMap = new HashMap<>();
+    private HashMap<String, Double> susRateMap = new HashMap<>();
 
-    private Util.Trait playerTrait;
-
+    private final Util.Trait playerTrait;
 
     private enum TimeOfDay {
         Day,
@@ -213,49 +212,43 @@ public abstract class PlayerAgent extends Agent {
     }
 
     public void handleChatMsg(ChatMessage message) {
-        switch (message.getTemplateMessage()) {
-            case ChatMessageTemplate.SkipAccusation: {
+        switch(message.getTemplateMessage()) {
+            case ChatMessageTemplate.SkipAccusation -> {
                 setPlayerSusRate(message.getSenderName(), 1.1);
-                break;
             }
-            case ChatMessageTemplate.AccusePlayer: {
+            case ChatMessageTemplate.AccusePlayer -> {
                 String[] messageWords = message.getContent().split(" ");
                 String victim = messageWords[messageWords.length - 1];
 
                 setPlayerSusRate(victim, 1.4);
-                break;
             }
-            case ChatMessageTemplate.HealerMessage: {
+            case ChatMessageTemplate.HealerMessage -> {
                 String[] messageWords = message.getContent().split(" ");
                 String victim = messageWords[messageWords.length - 1];
 
                 setPlayerSusRate(message.getSenderName(), 0.6);
                 setPlayerSusRate(victim, 0.6);
-                break;
             }
-            case ChatMessageTemplate.DetectiveMessageHasActivity: {
+            case ChatMessageTemplate.DetectiveMessageHasActivity -> {
                 String[] messageWords = message.getContent().split(" ");
                 String victim = messageWords[0];
 
                 setPlayerSusRate(message.getSenderName(), 0.8);
                 setPlayerSusRate(victim, 1.1);
-                break;
             }
-            case ChatMessageTemplate.DetectiveMessageHasNoActivity: {
+            case ChatMessageTemplate.DetectiveMessageHasNoActivity -> {
                 String[] messageWords = message.getContent().split(" ");
                 String victim = messageWords[0];
 
                 setPlayerSusRate(message.getSenderName(), 0.8);
                 setPlayerSusRate(victim, 0.9);
-                break;
             }
-            case ChatMessageTemplate.DetectiveAcuseLeader: {
+            case ChatMessageTemplate.DetectiveAcuseLeader -> {
                 String[] messageWords = message.getContent().split(" ");
                 String leader = messageWords[0];
 
                 setPlayerSusRate(message.getSenderName(), 0.6);
                 setPlayerSusRate(leader, 10);
-                break;
             }
         }
     }
@@ -311,5 +304,12 @@ public abstract class PlayerAgent extends Agent {
                 susRates.append(currentPlayer.getKey()).append(" ").append(String.format("%.0f", currentPlayer.getValue()*100)).append("% ; ");
         this.logMessage(susRates.toString());
     }
-            
+
+    public Util.Trait getPlayerTrait() {
+        return playerTrait;
+    }
+
+    public HashMap<String, Double> getSusRateMap() {
+        return susRateMap;
+    }
 }

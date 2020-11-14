@@ -9,6 +9,9 @@ import utils.ChatMessageTemplate;
 import utils.ProtocolNames;
 import utils.Util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class GameStateListener extends CyclicBehaviour {
 
@@ -42,33 +45,27 @@ public class GameStateListener extends CyclicBehaviour {
     public void action() {
         ACLMessage msg = this.playerAgent.receive(MessageTemplate.or(mt, mt2));
         if (msg != null) {
-            switch (msg.getProtocol()) {
-                case ProtocolNames.PlayerDeath: {
+            switch(msg.getProtocol()) {
+                case ProtocolNames.PlayerDeath -> {
                     this.handlePlayerDeath(msg.getContent());
-                    break;
                 }
-                case ProtocolNames.PlayerSaved: {
+                case ProtocolNames.PlayerSaved -> {
                     String[] words = msg.getContent().split(" ");
                     String savedPlayer = words[words.length - 1];
 
                     if(this.playerAgent.getClass() == Healer.class) {
                         ((Healer) this.playerAgent).setPlayerSavedLastNight(savedPlayer);
                         this.playerAgent.addBehaviour(new ChatPoster(this.playerAgent, ChatMessageTemplate.HealerMessage, ChatMessageTemplate.healerMessage(savedPlayer)));
-
                     }
-                    break;
                 }
-                case ProtocolNames.TimeOfDay: {
+                case ProtocolNames.TimeOfDay -> {
                     this.handleTimeOfDay(msg.getContent());
-                    break;
                 }
-                case ProtocolNames.End: {
+                case ProtocolNames.End -> {
                     this.handleEndOfGame(msg.getContent());
-                    break;
                 }
-                case ProtocolNames.PlayerInfo: {
+                case ProtocolNames.PlayerInfo -> {
                     this.handleSendPlayerInfo(msg);
-                    break;
                 }
             }
         }
@@ -78,8 +75,14 @@ public class GameStateListener extends CyclicBehaviour {
         ACLMessage reply = msg.createReply();
         reply.setPerformative(ACLMessage.INFORM);
 
-        String info = "trait#AAAAAAAA:0.7#BBBBBBBB:0.5#CCCCCCCC:0.3#DDDDDDDD:0.8";
-        reply.setContent(info);
+        StringBuilder sb = new StringBuilder(String.valueOf(this.playerAgent.getPlayerTrait()));
+
+        HashMap<String, Double> susRateMap = this.playerAgent.getSusRateMap();
+        for(Map.Entry<String, Double> playerSusRate : susRateMap.entrySet()) {
+            sb.append("#").append(playerSusRate.getKey()).append(":").append(playerSusRate.getValue());
+        }
+
+        reply.setContent(sb.toString());
         this.playerAgent.send(reply);
     }
 

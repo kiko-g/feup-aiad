@@ -28,39 +28,46 @@ public class AgentWindow {
         vbox1.getStyleClass().add("top");
         vbox1.setPadding(new Insets(0, 0, 50, 0));
 
-        // TABLE
-        HBox[] tableHBox = new HBox[susRates.length];
-        for(int i = 0; i < susRates.length; ++i) {
-            String[] pair = susRates[i].split(":");
-
-            Label peer = new Label(pair[0]+"\t\t");
-            int percentage = (int) (Math.floor(Float.parseFloat(pair[1])*100));
-            Label peerSusRate = new Label(percentage + "%\t\t");
-
-            tableHBox[i] = new HBox(peer, peerSusRate);
-            tableHBox[i].setAlignment(Pos.CENTER);
-        }
 
         // TABLE TITLE
-        VBox vbox2 = new VBox();
-        Label l1 = new Label("Name");
-        l1.getStyleClass().clear();
-        l1.getStyleClass().add("headers");
-        Label l2 = new Label("Sus Rate (%)");
-        l2.getStyleClass().clear();
-        l2.getStyleClass().add("headers");
-        HBox hbox = new HBox(l1, l2);
+        Label label1 = new Label("Name");
+        label1.getStyleClass().clear();
+        label1.getStyleClass().add("headers");
+        Label label2 = new Label("Sus Rate (%)");
+        label2.getStyleClass().clear();
+        label2.getStyleClass().add("headers");
+
+        HBox hbox = new HBox(label1, label2);
         hbox.setAlignment(Pos.CENTER);
         hbox.getStyleClass().add("table-title");
+
+        VBox vbox2 = new VBox();
         vbox2.setAlignment(Pos.CENTER);
         vbox2.getStyleClass().add("table-title");
-        vbox2.setPadding(new Insets(30, 0, 0, 0));
         vbox2.getChildren().add(hbox);
 
+
+        // TABLE
+        VBox col1 = new VBox();
+        VBox col2 = new VBox();
+        for(String susRate : susRates) {
+            String[] pair = susRate.split(":");
+            int percentage = (int) (Math.floor(Float.parseFloat(pair[1])*100));
+
+            Label peer = new Label(pair[0]);
+            Label peerSusRate = new Label(percentage + "%");
+            peer.getStyleClass().add("table-body1");
+            peerSusRate.getStyleClass().add("table-body2");
+            col1.getChildren().add(peer);
+            col2.getChildren().add(peerSusRate);
+        }
+        col1.getStyleClass().add("no-bg");
+        col2.getStyleClass().add("no-bg");
+
         // TABLE BODY
-        VBox vbox3 = new VBox(tableHBox);
+        VBox vbox3 = new VBox(new HBox(col1, col2));
         vbox3.setAlignment(Pos.CENTER);
-        vbox3.getStyleClass().add("table-body");
+
 
 
         // CLOSE BUTTON
@@ -68,8 +75,11 @@ public class AgentWindow {
         closeButton.setText("Close");
         closeButton.setOnAction(e -> stage.close());
         VBox vbox4 = new VBox(closeButton);
-        vbox4.setPadding(new Insets(30, 0, 0, 0));
+        vbox4.setPadding(new Insets(10, 0, 10, 0));
         vbox4.setAlignment(Pos.CENTER);
+
+
+
 
         // Final layout
         stage = new Stage();
@@ -78,17 +88,14 @@ public class AgentWindow {
         layout.getChildren().add(vbox2);
         layout.getChildren().add(vbox3);
         layout.getChildren().add(vbox4);
+        layout.getStyleClass().add("ola");
         layout.getStylesheets().add("/gui/style.css");
         layout.getStylesheets().add("https://fonts.googleapis.com/css?family=Open+Sans");
-        layout.getStyleClass().add("agent-bg");
         layout.applyCss();
-
-        Scene scene = new Scene(layout, 600, 700);
+        Scene scene = new Scene(layout, 600, 225+24*susRates.length);
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.getIcons().add(new Image("/resources/icon.png"));
     }
-
-    public void display() {
-        stage.show();
-    }
+    public void display() { stage.show(); }
 }
