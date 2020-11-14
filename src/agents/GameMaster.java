@@ -9,6 +9,7 @@ import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import protocols.PlayerWaiter;
+import utils.ChatMessage;
 import utils.GameLobby;
 
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ public class GameMaster extends Agent {
 
     private List<String> nightDeaths; // Players that were attacked and not saved
 
+    private List<ChatMessage> chatLog;
+
     private String dayDeath;
     private boolean jesterDayDeath = false;
 
@@ -51,6 +54,8 @@ public class GameMaster extends Agent {
         this.actuallySavedPlayers = new ConcurrentHashMap<>();
         this.nightDeaths = new ArrayList<>();
         this.dayDeath = "";
+
+        this.chatLog = new ArrayList<>();
     }
 
     @Override
@@ -234,5 +239,9 @@ public class GameMaster extends Agent {
 
     public void addAttackedPlayer(String attackedPlayer) {
         this.attackedPlayers.add(attackedPlayer);
+    }
+
+    public void addToLog(ChatMessage cm) {
+        this.chatLog.add(cm);
     }
 }

@@ -48,6 +48,9 @@ public class ChatMessageDistributor extends Behaviour {
                 // Timestamps the reception time
                 cm.stampReceptionTime();
 
+                // Stores in log
+                this.gameMaster.addToLog(cm);
+
                 // Prints comment
                 System.out.println("\t" + cm);
 
