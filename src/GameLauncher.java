@@ -111,31 +111,40 @@ public class GameLauncher extends Application {
     public void launchAgent(String role, String name, ContainerController container) throws StaleProxyException {
         AgentController ac;
         switch(role) {
-            case "Villager" -> {
+            case "Villager" : {
                 ac = container.acceptNewAgent(name, new Villager());
                 ac.start();
+                break;
             }
-            case "Killing" -> {
+            case "Killing" : {
                 ac = container.acceptNewAgent(name, new Killing());
                 ac.start();
+                break;
             }
-            case "Leader" -> {
+            case "Leader" : {
                 ac = container.acceptNewAgent(name, new Leader());
                 ac.start();
+                break;
             }
-            case "Jester" -> {
+            case "Jester" : {
                 ac = container.acceptNewAgent(name, new Jester());
                 ac.start();
+                break;
             }
-            case "Healer" -> {
+            case "Healer" : {
                 ac = container.acceptNewAgent(name, new Healer());
                 ac.start();
+                break;
             }
-            case "Detective" -> {
+            case "Detective" : {
                 ac = container.acceptNewAgent(name, new Detective());
                 ac.start();
+                break;
             }
-            default -> System.out.println(role + " is still not implemented! Skipping...");
+            default : {
+                System.out.println(role + " is still not implemented! Skipping...");
+                break;
+            }
         }
     }
     public void launchAgents(List<String> roles, List<String> names, ContainerController container) throws StaleProxyException {

@@ -38,18 +38,22 @@ public class GameStateInformer extends OneShotBehaviour {
     public void action() {
 
         switch(this.typeInfo) {
-            case ProtocolNames.PlayerDeath -> {
+            case ProtocolNames.PlayerDeath : {
                 if(this.isDay) sendDeadPlayerNameDay();
                 else sendDeadPlayerNamesNight();
+                break;
             }
-            case ProtocolNames.PlayerSaved -> {
+            case ProtocolNames.PlayerSaved : {
                 sendSavedPlayerName();
+                break;
             }
-            case ProtocolNames.TimeOfDay -> {
+            case ProtocolNames.TimeOfDay : {
                 this.sendTimeOfDay();
+                break;
             }
-            case ProtocolNames.End -> {
+            case ProtocolNames.End : {
                 this.sendEndGameMessage();
+                break;
             }
         }
     }

@@ -46,10 +46,11 @@ public class GameStateListener extends CyclicBehaviour {
         ACLMessage msg = this.playerAgent.receive(MessageTemplate.or(mt, mt2));
         if (msg != null) {
             switch(msg.getProtocol()) {
-                case ProtocolNames.PlayerDeath -> {
+                case ProtocolNames.PlayerDeath : {
                     this.handlePlayerDeath(msg.getContent());
+                    break;
                 }
-                case ProtocolNames.PlayerSaved -> {
+                case ProtocolNames.PlayerSaved : {
                     String[] words = msg.getContent().split(" ");
                     String savedPlayer = words[words.length - 1];
 
@@ -57,15 +58,19 @@ public class GameStateListener extends CyclicBehaviour {
                         ((Healer) this.playerAgent).setPlayerSavedLastNight(savedPlayer);
                         this.playerAgent.addBehaviour(new ChatPoster(this.playerAgent, ChatMessageTemplate.HealerMessage, ChatMessageTemplate.healerMessage(savedPlayer)));
                     }
+                    break;
                 }
-                case ProtocolNames.TimeOfDay -> {
+                case ProtocolNames.TimeOfDay : {
                     this.handleTimeOfDay(msg.getContent());
+                    break;
                 }
-                case ProtocolNames.End -> {
+                case ProtocolNames.End : {
                     this.handleEndOfGame(msg.getContent());
+                    break;
                 }
-                case ProtocolNames.PlayerInfo -> {
+                case ProtocolNames.PlayerInfo : {
                     this.handleSendPlayerInfo(msg);
+                    break;
                 }
             }
         }
