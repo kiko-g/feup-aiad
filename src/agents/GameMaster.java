@@ -244,4 +244,8 @@ public class GameMaster extends Agent {
     public void addToLog(ChatMessage cm) {
         this.chatLog.add(cm);
     }
+
+    public List<ChatMessage> getChatLog() {
+        return this.chatLog;
+    }
 }
