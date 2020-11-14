@@ -17,6 +17,9 @@ public abstract class PlayerAgent extends Agent {
 
     private Util.Trait playerTrait;
 
+    private int playersKilledDuringNight;
+
+    private int playersSavedDuringNight;
 
     private enum TimeOfDay {
         Day,
@@ -144,14 +147,22 @@ public abstract class PlayerAgent extends Agent {
     public ACLMessage handleDayVoteRequest(ACLMessage request, ACLMessage response) {
         printSusRate();
         // -------------
-
+        List<String> alivePlayers = this.gameContext.getAlivePlayers();
         List<String> mostSusPlayers = this.getMostSuspectPlayers(GlobalVars.VOTE_MIN_SUS_VALUE);
         String content;
+        int minMafiaPlayersAlive = getPlayersKilledDuringNight() + getPlayersSavedDuringNight();
 
-        if(mostSusPlayers.size() < this.gameContext.getAlivePlayers().size() / 3) {
+        if(mostSusPlayers.size() > 0) {
             Random r = new Random();
             int playerIndex = r.nextInt(mostSusPlayers.size());
-            content = mostSusPlayers.get(playerIndex);
+            //content = mostSusPlayers.get(playerIndex);
+            content = getTheMostSuspect();
+        }
+        else if(alivePlayers.size() <= minMafiaPlayersAlive * 2 + 2) {
+            List<String> mostSusFinalPlayers = this.getMostSuspectPlayers(0.5);
+            Random r = new Random();
+            int playerIndex = r.nextInt(mostSusFinalPlayers.size());
+            content = mostSusFinalPlayers.get(playerIndex);
         }
         else
             content = "Skip";
@@ -229,35 +240,47 @@ public abstract class PlayerAgent extends Agent {
                 String[] messageWords = message.getContent().split(" ");
                 String victim = messageWords[messageWords.length - 1];
 
-                setPlayerSusRate(message.getSenderName(), 0.6);
-                setPlayerSusRate(victim, 0.6);
+                setPlayerSusRate(message.getSenderName(), 0.1);
+                setPlayerSusRate(victim, 0.1);
+
+                playersSavedDuringNight += 1;
                 break;
             }
             case ChatMessageTemplate.DetectiveMessageHasActivity: {
                 String[] messageWords = message.getContent().split(" ");
                 String victim = messageWords[0];
 
-                setPlayerSusRate(message.getSenderName(), 0.8);
-                setPlayerSusRate(victim, 1.1);
+                setPlayerSusRate(message.getSenderName(), 0.65);
+                setPlayerSusRate(victim, 1.5);
                 break;
             }
             case ChatMessageTemplate.DetectiveMessageHasNoActivity: {
                 String[] messageWords = message.getContent().split(" ");
                 String victim = messageWords[0];
 
-                setPlayerSusRate(message.getSenderName(), 0.8);
-                setPlayerSusRate(victim, 0.9);
+                setPlayerSusRate(message.getSenderName(), 0.65);
+                setPlayerSusRate(victim, 0.75);
                 break;
             }
             case ChatMessageTemplate.DetectiveAcuseLeader: {
                 String[] messageWords = message.getContent().split(" ");
                 String leader = messageWords[0];
 
-                setPlayerSusRate(message.getSenderName(), 0.6);
+                setPlayerSusRate(message.getSenderName(), 0.3);
                 setPlayerSusRate(leader, 10);
                 break;
             }
         }
+    }
+
+    public String getTheMostSuspect() {
+        List<String> players = getPlayerBySusOrder();
+
+        for(int i = players.size() - 1; i >= 0; i--) {
+            if(this.gameContext.getAlivePlayers().contains(players.get(i)))
+                return players.get(i);
+        }
+        return null;
     }
 
     public List<String> getMostSuspectPlayers(double minSus) {
@@ -310,5 +333,21 @@ public abstract class PlayerAgent extends Agent {
             if(this.getGameContext().getAlivePlayers().contains(currentPlayer.getKey()))
                 susRates.append(currentPlayer.getKey()).append(" ").append(currentPlayer.getValue()).append(" ; ");
         this.logMessage(susRates.toString());
+    }
+
+    public int getPlayersKilledDuringNight() {
+        return playersKilledDuringNight;
+    }
+
+    public void setPlayersKilledDuringNight(int playersKilledDuringNight) {
+        this.playersKilledDuringNight = playersKilledDuringNight;
+    }
+
+    public int getPlayersSavedDuringNight() {
+        return playersSavedDuringNight;
+    }
+
+    public void setPlayersSavedDuringNight(int playersSavedDuringNight) {
+        this.playersSavedDuringNight = playersSavedDuringNight;
     }
 }

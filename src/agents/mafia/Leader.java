@@ -109,6 +109,9 @@ public class Leader extends PlayerAgent {
             // Handles ability target requests
             this.addBehaviour(new DecisionInformer(this, tmp));
         }
+
+        this.setPlayersKilledDuringNight(0);
+        this.setPlayersSavedDuringNight(0);
     }
 
     @Override
@@ -147,11 +150,14 @@ public class Leader extends PlayerAgent {
 
         List<String> mostSusPlayersWithoutMafia = new ArrayList<>();
         List<String> mafiaPlayers = this.gameContext.getMafiaPlayerNames(true);
+        List<String> mostSusPlayers = getMostSuspectPlayers(GlobalVars.VOTE_MIN_SUS_VALUE);
         String content;
 
-        for(String playerName : getMostSuspectPlayers(GlobalVars.VOTE_MIN_SUS_VALUE)) {
-            if(!mafiaPlayers.contains(playerName)) {
-                mostSusPlayersWithoutMafia.add(playerName);
+        if(mostSusPlayers.size() > 0) {
+            for (String playerName : getMostSuspectPlayers(GlobalVars.VOTE_MIN_SUS_VALUE)) {
+                if (!mafiaPlayers.contains(playerName)) {
+                    mostSusPlayersWithoutMafia.add(playerName);
+                }
             }
         }
 
@@ -180,7 +186,7 @@ public class Leader extends PlayerAgent {
         // Tries to get a target, if it has already been chosen, tries to get another. Max 3 times
         for(int i = 0; i < 3; i++) {
             int r1 = new Random().nextInt(10);
-            if(r1 < 6) {
+            if(r1 < 3) {
                 do {
                     List<String> l = getLessSuspectPlayers();
                     playerToKill = getLessSuspectPlayers().get(new Random().nextInt(3));

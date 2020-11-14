@@ -91,6 +91,13 @@ public class Healer extends PlayerAgent {
 
         // Handles ability target requests
         this.addBehaviour(new DecisionInformer(this, tmp));
+
+        this.setPlayersKilledDuringNight(0);
+        this.setPlayersSavedDuringNight(0);
+
+        for(String playerName : this.gameContext.getAlivePlayers()) {
+            setPlayerSusRate(playerName, 1.05);
+        }
     }
 
     @Override
@@ -107,7 +114,7 @@ public class Healer extends PlayerAgent {
         String playerToSave;
 
         do {
-            playerToSave = getLessSuspectPlayers().get(new Random().nextInt(3));
+            playerToSave = getLessSuspectPlayers().get(new Random().nextInt(2));
         } while (!alivePlayers.contains(playerToSave));
 
         ACLMessage inform = request.createReply();

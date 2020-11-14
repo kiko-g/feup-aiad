@@ -95,6 +95,9 @@ public class Killing extends PlayerAgent {
             this.addBehaviour(new TargetKillingWithLeader(this));
         }
         else this.addBehaviour(new TargetKilling(this));
+
+        this.setPlayersKilledDuringNight(0);
+        this.setPlayersSavedDuringNight(0);
     }
 
     // Last proposal was rejected
@@ -119,7 +122,7 @@ public class Killing extends PlayerAgent {
 
         int playerIndex;
 
-        if(new Random().nextInt(10) < 6) {
+        if(new Random().nextInt(10) < 3) {
             do{
                 playerName = getLessSuspectPlayers().get(new Random().nextInt(3));
             } while (!killablePlayers.contains(playerName));
@@ -145,11 +148,14 @@ public class Killing extends PlayerAgent {
 
         List<String> mostSusPlayersWithoutMafia = new ArrayList<>();
         List<String> mafiaPlayers = this.gameContext.getMafiaPlayerNames(true);
+        List<String> mostSusPlayers = getMostSuspectPlayers(GlobalVars.VOTE_MIN_SUS_VALUE);
         String content;
 
-        for(String playerName : getMostSuspectPlayers(GlobalVars.VOTE_MIN_SUS_VALUE)) {
-            if(!mafiaPlayers.contains(playerName)) {
-                mostSusPlayersWithoutMafia.add(playerName);
+        if(mostSusPlayers.size() > 0) {
+            for (String playerName : getMostSuspectPlayers(GlobalVars.VOTE_MIN_SUS_VALUE)) {
+                if (!mafiaPlayers.contains(playerName)) {
+                    mostSusPlayersWithoutMafia.add(playerName);
+                }
             }
         }
 

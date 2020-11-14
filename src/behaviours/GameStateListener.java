@@ -49,8 +49,9 @@ public class GameStateListener extends CyclicBehaviour {
                     if(this.playerAgent.getClass() == Healer.class) {
                         ((Healer) this.playerAgent).setPlayerSavedLastNight(savedPlayer);
                         this.playerAgent.addBehaviour(new ChatPoster(this.playerAgent, ChatMessageTemplate.HealerMessage, ChatMessageTemplate.healerMessage(savedPlayer)));
-
+                        this.playerAgent.setPlayersSavedDuringNight(this.playerAgent.getPlayersSavedDuringNight() + 1);
                     }
+
                     break;
                 }
                 case ProtocolNames.TimeOfDay: {
@@ -103,6 +104,8 @@ public class GameStateListener extends CyclicBehaviour {
 
             // Updates GameContext a.k.a. personal player state
             this.playerAgent.buryPlayer(currentName);
+
+            this.playerAgent.setPlayersKilledDuringNight(this.playerAgent.getPlayersKilledDuringNight() + 1);
         }
     }
 }

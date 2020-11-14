@@ -128,17 +128,49 @@ public class Detective extends PlayerAgent {
     public void setNightTimeBehaviour() {
         // Handles ability target requests
         this.addBehaviour(new InvestigationWaiter(this));
+
+        this.setPlayersKilledDuringNight(0);
+        this.setPlayersSavedDuringNight(0);
+
+        for(String playerName : this.gameContext.getAlivePlayers()) {
+            setPlayerSusRate(playerName, 1.05);
+        }
     }
 
     // Who will be visited / investigated during night
     @Override
     public ACLMessage handleNightVoteRequest(ACLMessage request, ACLMessage response) {
         List<String> alivePlayers = this.getGameContext().getAlivePlayers();
+        alivePlayers.remove(this.getLocalName());
+        Random r;
+        int playerIndex = 0;
+        String playerForTrial;
 
-        Random r = new Random();
-        int playerIndex = r.nextInt(alivePlayers.size());
+        if(new Random().nextInt(10) < 7) {
+            List<String> nonVisitedPlayers = alivePlayers;
+            for(String playerVisited : getPlayersVisited()) {
+                nonVisitedPlayers.remove(playerVisited);
+            }
+            if(nonVisitedPlayers.size() == 0) {
+                r = new Random();
+                playerIndex = r.nextInt(alivePlayers.size());
+            }
+            else {
+                for(int i = getMostSuspectPlayers(0.0).size() - 1; i >= 0; i--) {
+                    if(nonVisitedPlayers.contains(getMostSuspectPlayers(0.0).get(i))) {
+                        playerForTrial = getMostSuspectPlayers(0.0).get(i);
+                        playerIndex = alivePlayers.indexOf(playerForTrial);
+                        break;
+                    }
+                }
+            }
+        }
+        else {
+            r = new Random();
+            playerIndex = r.nextInt(alivePlayers.size());
+        }
 
-        String playerForTrial = alivePlayers.get(playerIndex);
+        playerForTrial = alivePlayers.get(playerIndex);
 
         ACLMessage inform = request.createReply();
         inform.setContent(playerForTrial);
@@ -161,5 +193,14 @@ public class Detective extends PlayerAgent {
 
     public void addVisit(String visitedPlayer, boolean isSus) {
         this.nightVisits.add(new VisitReport(visitedPlayer, isSus));
+    }
+
+    private List<String> getPlayersVisited() {
+        List<String> players = new ArrayList<>();
+
+        for(int i = 0; i < nightVisits.size(); i++) {
+            players.add(nightVisits.get(i).playerName);
+        }
+        return players;
     }
 }

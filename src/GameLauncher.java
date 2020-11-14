@@ -24,32 +24,32 @@ public class GameLauncher {
 
         switch (role) {
             case "Villager": {
-                ac = container.acceptNewAgent(name, new Villager());
+                ac = container.acceptNewAgent(name, new Villager(Util.Trait.Mild));
                 ac.start();
                 break;
             }
             case "Killing": {
-                ac = container.acceptNewAgent(name, new Killing());
+                ac = container.acceptNewAgent(name, new Killing(Util.Trait.Mild));
                 ac.start();
                 break;
             }
             case "Leader": {
-                ac = container.acceptNewAgent(name, new Leader());
+                ac = container.acceptNewAgent(name, new Leader(Util.Trait.Mild));
                 ac.start();
                 break;
             }
             case "Jester": {
-                ac = container.acceptNewAgent(name, new Jester());
+                ac = container.acceptNewAgent(name, new Jester(Util.Trait.Mild));
                 ac.start();
                 break;
             }
             case "Healer": {
-                ac = container.acceptNewAgent(name, new Healer());
+                ac = container.acceptNewAgent(name, new Healer(Util.Trait.Mild));
                 ac.start();
                 break;
             }
             case "Detective": {
-                ac = container.acceptNewAgent(name, new Detective());
+                ac = container.acceptNewAgent(name, new Detective(Util.Trait.Mild));
                 ac.start();
                 break;
             }

@@ -24,7 +24,10 @@ public class TargetKillingOrchestrator extends Behaviour {
 
     private MessageTemplate proposalTemplate = MessageTemplate.and(
         MessageTemplate.MatchProtocol(ProtocolNames.TargetKilling),
-        MessageTemplate.MatchPerformative(ACLMessage.PROPOSE)
+            MessageTemplate.or(
+                    MessageTemplate.MatchPerformative(ACLMessage.PROPOSE),
+                    MessageTemplate.MatchPerformative(ACLMessage.INFORM)
+            )
     );
 
     public TargetKillingOrchestrator(GameMaster gameMaster) {
