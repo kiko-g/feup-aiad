@@ -153,7 +153,7 @@ public class Detective extends PlayerAgent {
             }
             if(nonVisitedPlayers.size() == 0) {
                 r = new Random();
-                playerIndex = r.nextInt(alivePlayers.size());
+                playerIndex = r.nextInt(2);
             }
             else {
                 for(int i = getMostSuspectPlayers(0.0).size() - 1; i >= 0; i--) {
