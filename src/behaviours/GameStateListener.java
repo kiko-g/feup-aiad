@@ -87,7 +87,9 @@ public class GameStateListener extends CyclicBehaviour {
 
         HashMap<String, Double> susRateMap = this.playerAgent.getSusRateMap();
         for(Map.Entry<String, Double> playerSusRate : susRateMap.entrySet()) {
-            sb.append("#").append(playerSusRate.getKey()).append(":").append(playerSusRate.getValue());
+            if(this.playerAgent.getGameContext().isPlayerAlive(playerSusRate.getKey())) {
+                sb.append("#").append(playerSusRate.getKey()).append(":").append(playerSusRate.getValue());
+            }
         }
 
         reply.setContent(sb.toString());
