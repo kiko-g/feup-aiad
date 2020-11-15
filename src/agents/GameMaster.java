@@ -85,11 +85,8 @@ public class GameMaster extends Agent {
 
     @Override
     public void takeDown() {
-        try {
-            DFService.deregister(this);
-        } catch (FIPAException e) {
-            e.printStackTrace();
-        }
+        super.takeDown();
+        this.doDelete();
     }
 
     public GameLobby getGameLobby() {

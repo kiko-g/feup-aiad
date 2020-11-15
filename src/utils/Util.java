@@ -61,9 +61,9 @@ public class Util {
     public static double getTraitMultiplier(Trait trait) {
         switch (trait) {
             case OverTheLine:
-                return 1.5;
-            case Agressive:
                 return 1.3;
+            case Agressive:
+                return 1.2;
             case Mild:
                 return 1.1;
             case Peaceful:

@@ -76,6 +76,11 @@ public class Jester extends PlayerAgent
 
     @Override
     public void setNightTimeBehaviour() {
-        // Nothing at all
+        this.setPlayersKilledDuringNight(0);
+        this.setPlayersSavedDuringNight(0);
+
+        for(String playerName : this.gameContext.getAlivePlayers()) {
+            setPlayerSusRate(playerName, 1.05);
+        }
     }
 }
