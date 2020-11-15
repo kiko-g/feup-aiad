@@ -43,7 +43,7 @@ public class ChatMessage implements Serializable {
                 TimeUnit.MILLISECONDS.toMinutes(timeReception) % TimeUnit.HOURS.toMinutes(1),
                 TimeUnit.MILLISECONDS.toSeconds(timeReception) % TimeUnit.MINUTES.toSeconds(1));
 
-        return "[" + time + "] " +
+        return "[" + time + "]  \t" +
                 senderName + ": " + content;
     }
 }

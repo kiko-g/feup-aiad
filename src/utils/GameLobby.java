@@ -11,14 +11,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GameLobby {
-
-    private class AgentInfo {
+    private static class AgentInfo {
         private final String role;
         private boolean isAlive;
+        private String information;
         private DFAgentDescription agentDesc;
 
         public AgentInfo(String role, DFAgentDescription agentDesc) {
             this.role = role;
+            this.information = "";
             this.agentDesc = agentDesc;
             this.isAlive = true;
         }
@@ -48,11 +49,11 @@ public class GameLobby {
         }
     }
 
-    private final int capacity;
 
     // key: Player name
     // value: AgentInfo
-    private HashMap<String, AgentInfo> lobby;
+    private final int capacity;
+    private final HashMap<String, AgentInfo> lobby;
 
     public GameLobby(int capacity) {
         this.capacity = capacity;
@@ -82,14 +83,21 @@ public class GameLobby {
         }
     }
 
+
+    public List<AID> getAllPlayers() {
+        List<AID> players = new ArrayList<>();
+        for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet())
+            players.add(currentPlayer.getValue().getAID());
+
+        return players;
+    }
+
     private List<AgentInfo> getPlayersByStatus(boolean isAlive) {
         List<AgentInfo> players = new ArrayList<>();
-
         for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet()) {
             if(currentPlayer.getValue().isAlive() == isAlive)
                 players.add(currentPlayer.getValue());
         }
-
         return players;
     }
 
@@ -111,13 +119,8 @@ public class GameLobby {
         return temp.stream().map(AgentInfo::getAID).collect(Collectors.toList());
     }
 
-    public List<AID> getAllPlayers() {
-        List<AID> players = new ArrayList<>();
-
-        for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet())
-            players.add(currentPlayer.getValue().getAID());
-
-        return players;
+    public boolean isAlive(String playerName) {
+        return lobby.get(playerName).isAlive();
     }
 
     private List<AgentInfo> getPlayersByRole(String role, boolean isAlive) {
@@ -201,7 +204,6 @@ public class GameLobby {
     }
 
     public int[] getNumberPlayersPerFactions() {
-
         // index 0: Town
         // index 1: Mafia
         // index 2: Neutral
@@ -210,16 +212,16 @@ public class GameLobby {
         for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet()) {
             AgentInfo currentPlayerInfo = currentPlayer.getValue();
             if(currentPlayerInfo.isAlive())
-                switch (Util.getFaction(currentPlayerInfo.getRole())) {
-                    case "Town": {
+                switch(Util.getFaction(currentPlayerInfo.getRole())) {
+                    case "Town" : {
                         faction[0]++;
                         break;
                     }
-                    case "Mafia": {
+                    case "Mafia" : {
                         faction[1]++;
                         break;
                     }
-                    case "Neutral": {
+                    case "Neutral" : {
                         faction[2]++;
                         break;
                     }
@@ -231,7 +233,6 @@ public class GameLobby {
 
     private List<String> getPlayerNames(boolean isAlive) {
         List<String> playerNames = new ArrayList<>();
-
         for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet()) {
             if(currentPlayer.getValue().isAlive() == isAlive)
                 playerNames.add(currentPlayer.getKey());
@@ -277,6 +278,15 @@ public class GameLobby {
         return playerNames;
     }
 
+    public List<String> getAllNames() {
+        List<String> playerNames = new ArrayList<>();
+
+        for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet()) {
+            playerNames.add(currentPlayer.getKey());
+        }
+        return playerNames;
+    }
+
     public List<String> getPlayerNamesFaction(String faction) {
         List<String> playerNames = new ArrayList<>();
 
@@ -309,5 +319,18 @@ public class GameLobby {
 
     public String getPlayerRole(String playerName) {
         return lobby.get(playerName).getRole();
+    }
+
+    public AID getAIDByName(String playerName) {
+        return ! this.lobby.containsKey(playerName) ? null : this.lobby.get(playerName).getAID();
+    }
+
+    public String getRoleByName(String playerName) {
+        return ! this.lobby.containsKey(playerName) ? null : this.lobby.get(playerName).getRole();
+    }
+
+    public String[] getAllPlayerNames() {
+        List<String> players = new ArrayList<>(lobby.keySet());
+        return players.toArray(new String[0]);
     }
 }

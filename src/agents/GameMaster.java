@@ -11,6 +11,7 @@ import jade.lang.acl.MessageTemplate;
 import protocols.PlayerWaiter;
 import utils.ChatMessage;
 import utils.GameLobby;
+import utils.ProtocolNames;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,11 +85,8 @@ public class GameMaster extends Agent {
 
     @Override
     public void takeDown() {
-        try {
-            DFService.deregister(this);
-        } catch (FIPAException e) {
-            e.printStackTrace();
-        }
+        super.takeDown();
+        this.doDelete();
     }
 
     public GameLobby getGameLobby() {
@@ -241,6 +239,25 @@ public class GameMaster extends Agent {
         this.attackedPlayers.add(attackedPlayer);
     }
 
+    public String requestPlayerPersonalInformation(String playerName) {
+        ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+        request.setProtocol(ProtocolNames.PlayerInfo);
+
+        AID receiver = gameLobby.getAIDByName(playerName);
+        if(receiver == null) return "null receiver";
+        request.addReceiver(receiver);
+
+        this.send(request);
+
+        MessageTemplate mt = MessageTemplate.and(
+            MessageTemplate.MatchProtocol(ProtocolNames.PlayerInfo),
+            MessageTemplate.MatchPerformative(ACLMessage.INFORM)
+        );
+        ACLMessage response = this.blockingReceive(mt);
+
+        return response.getContent();
+    }
+    
     public void addToLog(ChatMessage cm) {
         this.chatLog.add(cm);
     }

@@ -13,9 +13,9 @@ import java.util.*;
 
 public abstract class PlayerAgent extends Agent {
 
-    HashMap<String, Double> susRateMap = new HashMap<>();
+    private HashMap<String, Double> susRateMap = new HashMap<>();
 
-    private Util.Trait playerTrait;
+    private final Util.Trait playerTrait;
 
     private int playersKilledDuringNight;
 
@@ -58,7 +58,7 @@ public abstract class PlayerAgent extends Agent {
 
     public void logMessage(String msg) {
         String senderID = this.getLocalName();
-        String finalMessage = "[" + senderID + "] " + msg;
+        String finalMessage = "[" + senderID + "]  \t" + msg;
         System.out.println(finalMessage);
     }
 
@@ -128,9 +128,8 @@ public abstract class PlayerAgent extends Agent {
 
     @Override
     public void takeDown() {
-        this.deregisterAgent();
-//        System.out.println(this.getRole() + " shutdown");
         super.takeDown();
+        this.doDelete();
     }
 
     public abstract String getRole();
@@ -224,19 +223,19 @@ public abstract class PlayerAgent extends Agent {
     }
 
     public void handleChatMsg(ChatMessage message) {
-        switch (message.getTemplateMessage()) {
-            case ChatMessageTemplate.SkipAccusation: {
+        switch(message.getTemplateMessage()) {
+            case ChatMessageTemplate.SkipAccusation : {
                 setPlayerSusRate(message.getSenderName(), 1.1);
                 break;
             }
-            case ChatMessageTemplate.AccusePlayer: {
+            case ChatMessageTemplate.AccusePlayer : {
                 String[] messageWords = message.getContent().split(" ");
                 String victim = messageWords[messageWords.length - 1];
 
                 setPlayerSusRate(victim, 1.4);
                 break;
             }
-            case ChatMessageTemplate.HealerMessage: {
+            case ChatMessageTemplate.HealerMessage : {
                 String[] messageWords = message.getContent().split(" ");
                 String victim = messageWords[messageWords.length - 1];
 
@@ -246,7 +245,7 @@ public abstract class PlayerAgent extends Agent {
                 playersSavedDuringNight += 1;
                 break;
             }
-            case ChatMessageTemplate.DetectiveMessageHasActivity: {
+            case ChatMessageTemplate.DetectiveMessageHasActivity : {
                 String[] messageWords = message.getContent().split(" ");
                 String victim = messageWords[0];
 
@@ -254,7 +253,7 @@ public abstract class PlayerAgent extends Agent {
                 setPlayerSusRate(victim, 1.5);
                 break;
             }
-            case ChatMessageTemplate.DetectiveMessageHasNoActivity: {
+            case ChatMessageTemplate.DetectiveMessageHasNoActivity : {
                 String[] messageWords = message.getContent().split(" ");
                 String victim = messageWords[0];
 
@@ -262,7 +261,7 @@ public abstract class PlayerAgent extends Agent {
                 setPlayerSusRate(victim, 0.75);
                 break;
             }
-            case ChatMessageTemplate.DetectiveAcuseLeader: {
+            case ChatMessageTemplate.DetectiveAcuseLeader : {
                 String[] messageWords = message.getContent().split(" ");
                 String leader = messageWords[0];
 
@@ -331,10 +330,18 @@ public abstract class PlayerAgent extends Agent {
         StringBuilder susRates = new StringBuilder();
         for(Map.Entry<String, Double> currentPlayer : this.susRateMap.entrySet())
             if(this.getGameContext().getAlivePlayers().contains(currentPlayer.getKey()))
-                susRates.append(currentPlayer.getKey()).append(" ").append(currentPlayer.getValue()).append(" ; ");
+                susRates.append(currentPlayer.getKey()).append(" ").append(String.format("%.0f", currentPlayer.getValue()*100)).append("% ; ");
         this.logMessage(susRates.toString());
     }
 
+    public Util.Trait getPlayerTrait() {
+        return playerTrait;
+    }
+
+    public HashMap<String, Double> getSusRateMap() {
+        return susRateMap;
+    }
+    
     public int getPlayersKilledDuringNight() {
         return playersKilledDuringNight;
     }

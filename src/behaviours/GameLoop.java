@@ -49,7 +49,7 @@ public class GameLoop extends Behaviour {
         // Finishes to complete the GameLobby info
         try {
             this.gameMaster.updateAgentInfo();
-            System.out.println("Information successfully updated!");
+            System.out.println("Information successfully updated!\n");
 
             // Handles sending the player names and informing mafia members of their team
             this.gameMaster.addBehaviour(new ReadyBehaviour(this.gameMaster));

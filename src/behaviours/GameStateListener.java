@@ -9,6 +9,9 @@ import utils.ChatMessageTemplate;
 import utils.ProtocolNames;
 import utils.Util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class GameStateListener extends CyclicBehaviour {
 
@@ -33,16 +36,21 @@ public class GameStateListener extends CyclicBehaviour {
             )
     );
 
+    MessageTemplate mt2 = MessageTemplate.and(
+        MessageTemplate.MatchProtocol(ProtocolNames.PlayerInfo),
+        MessageTemplate.MatchPerformative(ACLMessage.REQUEST)
+    );
+
     @Override
     public void action() {
-        ACLMessage msg = this.playerAgent.receive(mt);
+        ACLMessage msg = this.playerAgent.receive(MessageTemplate.or(mt, mt2));
         if (msg != null) {
-            switch (msg.getProtocol()) {
-                case ProtocolNames.PlayerDeath: {
+            switch(msg.getProtocol()) {
+                case ProtocolNames.PlayerDeath : {
                     this.handlePlayerDeath(msg.getContent());
                     break;
                 }
-                case ProtocolNames.PlayerSaved: {
+                case ProtocolNames.PlayerSaved : {
                     String[] words = msg.getContent().split(" ");
                     String savedPlayer = words[words.length - 1];
 
@@ -54,17 +62,36 @@ public class GameStateListener extends CyclicBehaviour {
 
                     break;
                 }
-                case ProtocolNames.TimeOfDay: {
+                case ProtocolNames.TimeOfDay : {
                     this.handleTimeOfDay(msg.getContent());
                     break;
                 }
-                case ProtocolNames.End: {
+                case ProtocolNames.End : {
                     this.handleEndOfGame(msg.getContent());
+                    break;
+                }
+                case ProtocolNames.PlayerInfo : {
+                    this.handleSendPlayerInfo(msg);
                     break;
                 }
             }
         }
         else block(700);
+    }
+
+    private void handleSendPlayerInfo(ACLMessage msg) {
+        ACLMessage reply = msg.createReply();
+        reply.setPerformative(ACLMessage.INFORM);
+
+        StringBuilder sb = new StringBuilder(String.valueOf(this.playerAgent.getPlayerTrait()));
+
+        HashMap<String, Double> susRateMap = this.playerAgent.getSusRateMap();
+        for(Map.Entry<String, Double> playerSusRate : susRateMap.entrySet()) {
+            sb.append("#").append(playerSusRate.getKey()).append(":").append(playerSusRate.getValue());
+        }
+
+        reply.setContent(sb.toString());
+        this.playerAgent.send(reply);
     }
 
     private void handleEndOfGame(String content) {
