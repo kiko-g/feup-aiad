@@ -147,13 +147,13 @@ public class Detective extends PlayerAgent {
         String playerForTrial;
 
         if(new Random().nextInt(10) < 7) {
-            List<String> nonVisitedPlayers = alivePlayers;
+            List<String> nonVisitedPlayers = new ArrayList<>(alivePlayers);
             for(String playerVisited : getPlayersVisited()) {
                 nonVisitedPlayers.remove(playerVisited);
             }
             if(nonVisitedPlayers.size() == 0) {
                 r = new Random();
-                playerIndex = r.nextInt(2);
+                playerIndex = r.nextInt(alivePlayers.size());
             }
             else {
                 for(int i = getMostSuspectPlayers(0.0).size() - 1; i >= 0; i--) {

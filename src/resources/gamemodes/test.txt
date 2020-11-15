@@ -1,4 +1,4 @@
-Villager:7
+Villager:12
 Detective:1
 Healer:3
 Jester:1
