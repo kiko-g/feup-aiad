@@ -327,6 +327,8 @@ public abstract class PlayerAgent extends Agent {
     }
 
     public void printSusRate() {
+        if(!GlobalVars.VERBOSE) return;
+
         StringBuilder susRates = new StringBuilder();
         for(Map.Entry<String, Double> currentPlayer : this.susRateMap.entrySet())
             if(this.getGameContext().getAlivePlayers().contains(currentPlayer.getKey()))

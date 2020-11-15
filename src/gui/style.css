@@ -46,7 +46,7 @@ Button {
     -fx-font-weight: bolder;
     -fx-text-fill: linear-gradient(white, white);
 
-    -fx-background-color: rgba(50, 116, 157, 0.6);
+    -fx-background-color: rgba(50, 157, 132, 0.5);
     -fx-background-radius: 5, 4, 3, 5;
     -fx-background-insets: 0, 1, 2, 0;
 
