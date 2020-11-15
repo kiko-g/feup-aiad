@@ -59,11 +59,16 @@ public class Util {
     }
 
     public static double getTraitMultiplier(Trait trait) {
-        return switch(trait) {
-            case OverTheLine -> 1.3;
-            case Agressive -> 1.2;
-            case Mild -> 1.1;
-            default -> 1;
-        };
+        switch (trait) {
+            case OverTheLine:
+                return 1.3;
+            case Agressive:
+                return 1.2;
+            case Mild:
+                return 1.1;
+            case Peaceful:
+            default:
+                return 1;
+        }
     }
 }

@@ -213,9 +213,18 @@ public class GameLobby {
             AgentInfo currentPlayerInfo = currentPlayer.getValue();
             if(currentPlayerInfo.isAlive())
                 switch(Util.getFaction(currentPlayerInfo.getRole())) {
-                    case "Town" -> faction[0]++;
-                    case "Mafia" -> faction[1]++;
-                    case "Neutral" -> faction[2]++;
+                    case "Town" : {
+                        faction[0]++;
+                        break;
+                    }
+                    case "Mafia" : {
+                        faction[1]++;
+                        break;
+                    }
+                    case "Neutral" : {
+                        faction[2]++;
+                        break;
+                    }
                 }
         }
 
