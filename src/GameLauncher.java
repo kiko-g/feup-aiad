@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -23,9 +24,20 @@ import sajas.wrapper.ContainerController;
 import uchicago.src.sim.engine.SimInit;
 import utils.ConfigReader;
 
-public class MyLauncher extends Repast3Launcher {
+public class GameLauncher extends Repast3Launcher {
 
 	private ContainerController mainContainer;
+
+
+	private List<String> names;
+	private List<String> roles;
+
+	GameLauncher() {
+		try {
+			this.names = ConfigReader.importNames("src/resources/names.txt"); // Loads available names
+			this.roles = ConfigReader.importRoles("src/resources/gamemodes/test.txt"); // Loads roles
+		} catch (IOException e) { e.printStackTrace(); }
+	}
 
 	@Override
 	public String[] getInitParam() {
@@ -50,11 +62,6 @@ public class MyLauncher extends Repast3Launcher {
 	private void launchAgents() {
 
 		try {
-
-			// Try to move to constructor to improve performance
-			List<String> names = ConfigReader.importNames("src/resources/names.txt"); // Loads available names
-			List<String> roles = ConfigReader.importRoles("src/resources/gamemodes/test.txt"); // Loads roles
-
 			// Launch GM
 			mainContainer.acceptNewAgent("GameMaster", new GameMaster(roles.size())).start();
 
@@ -146,8 +153,8 @@ public class MyLauncher extends Repast3Launcher {
 	public static void main(String[] args) {
 		boolean BATCH_MODE = true;
 		SimInit init = new SimInit();
-		init.setNumRuns(1); // works only in batch mode
-		init.loadModel(new MyLauncher(), null, BATCH_MODE);
+		init.setNumRuns(2); // works only in batch mode
+		init.loadModel(new GameLauncher(), null, BATCH_MODE);
 	}
 
 }
