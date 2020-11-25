@@ -33,8 +33,8 @@ public class Killing extends PlayerAgent {
     }
 
     @Override
-    protected void setup() {
-        super.setup();
+    protected void postSetup() {
+        super.postSetup();
 
         MessageTemplate mafiaNamesTemplate = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.MafiaPlayers),

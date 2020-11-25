@@ -3,6 +3,7 @@ package agents;
 import behaviours.ChatListener;
 import behaviours.GameStateListener;
 import jade.core.AID;
+import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.lang.acl.MessageTemplate;
 import protocols.ContextWaiter;
 import protocols.PlayerInformer;
@@ -12,6 +13,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
+import sajas.proto.SubscriptionInitiator;
 import utils.*;
 
 import java.util.*;
@@ -55,12 +57,10 @@ public abstract class PlayerAgent extends Agent {
 
     @Override
     protected void setup() {
-        // Searches for GameMaster and saves to game_master_desc
-        if (!this.findGameMaster()) {
-            this.takeDown();
-            return;
-        }
+        waitForGameMaster();
+    }
 
+    protected void postSetup() {
         // Agent Registration
         try {
             this.registerAgent(this.getRole());
@@ -95,37 +95,33 @@ public abstract class PlayerAgent extends Agent {
         System.out.println(finalMessage);
     }
 
-    public boolean findGameMaster() {
-        // Searches for GameMaster
+    private void waitForGameMaster() {
+        // Build the description used as template for the subscription
         DFAgentDescription template = new DFAgentDescription();
-        ServiceDescription sd = new ServiceDescription();
-        sd.setName("AgentType");
-        sd.setType("GameMaster");
-        template.addServices(sd);
+        ServiceDescription templateSd = new ServiceDescription();
+        templateSd.setName("AgentType");
+        templateSd.setType("GameMaster");
+        template.addServices(templateSd);
 
-        // Search results handling
-        try {
-            DFAgentDescription[] search_results = DFService.search(this, template);
-            System.out.println(search_results.length);
-            
-            int maxTries = 5;
-            for(int i = 0; i < maxTries; i++) {
-            	System.out.println(i);
-            	search_results = DFService.search(this, template);
+        SearchConstraints sc = new SearchConstraints();
+        // We want to receive 1 result at most
+        sc.setMaxResults((long) 1);
+
+        addBehaviour(new SubscriptionInitiator(this, DFService.createSubscriptionMessage(this, getDefaultDF(), template, sc)) {
+            protected void handleInform(ACLMessage inform) {
+                try {
+                    DFAgentDescription[] results = DFService.decodeNotification(inform.getContent());
+                    if (results.length > 0) {
+                        DFAgentDescription dfd = results[0];
+                        game_master_desc = dfd;
+                        postSetup();
+                    }
+                }
+                catch (FIPAException fe) {
+                    fe.printStackTrace();
+                }
             }
-            
-            if (search_results.length != 1) {
-                this.logMessage("Error finding the GameMaster!");
-                return false;
-            }
-            else {
-                this.game_master_desc = search_results[0];
-                return true;
-            }
-        } catch (FIPAException e) {
-            e.printStackTrace();
-            return false;
-        }
+        } );
     }
 
     private String buildPresentationString(String role) {

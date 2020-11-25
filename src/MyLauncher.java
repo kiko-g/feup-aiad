@@ -58,8 +58,6 @@ public class MyLauncher extends Repast3Launcher {
 			// Launch GM
 			mainContainer.acceptNewAgent("GameMaster", new GameMaster(roles.size())).start();
 
-			Thread.sleep(1000);
-
 			// Launch player agents
 
 			// Role handling
@@ -81,8 +79,6 @@ public class MyLauncher extends Repast3Launcher {
 					launchAgent(role, name, mainContainer);
 				}
 			}
-
-			// TODO...
 
 		} catch (Exception e) {
 			e.printStackTrace();
