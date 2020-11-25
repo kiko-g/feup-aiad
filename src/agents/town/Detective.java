@@ -60,7 +60,6 @@ public class Detective extends PlayerAgent {
 
     @Override
     public void setDayTimeBehavior() {
-        // TODO: Post beliefs in chat
         VisitReport lastReport = getLastNightReport();
 
         if(lastReport.isSus)

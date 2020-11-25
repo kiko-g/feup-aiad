@@ -39,14 +39,29 @@ public class TargetKillingWithLeader extends Behaviour {
 
     @Override
     public void action() {
-        ACLMessage msg = this.killingAgent.receive(
-                MessageTemplate.or(gmRequestTemplate, leaderOrderTemplate));
+//        ACLMessage msg = this.killingAgent.receive(
+//                MessageTemplate.or(gmRequestTemplate, leaderOrderTemplate));
+//
+//        if (msg == null)
+//            block();
+//        else {
+//            if(step == Steps.Presentation)
+//                handlePresentation(msg);
+//            else
+//                handleExecution(msg);
+//        }
 
-        if (msg != null) {
-            if(step == Steps.Presentation)
+        if(step == Steps.Presentation) {
+            ACLMessage msg = this.killingAgent.receive(gmRequestTemplate);
+            if(msg != null)
                 handlePresentation(msg);
             else
+                block();
+        } else {
+            ACLMessage msg = this.killingAgent.receive(leaderOrderTemplate);
+            if(msg != null)
                 handleExecution(msg);
+            else block();
         }
     }
 

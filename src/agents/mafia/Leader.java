@@ -51,8 +51,6 @@ public class Leader extends PlayerAgent {
 
     @Override
     public void setDayTimeBehavior() {
-        // TODO: Post beliefs in chat
-
         // Resets killOrders backlog
         this.killOrdersGiven = new ArrayList<>();
 

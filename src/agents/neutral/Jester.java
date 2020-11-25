@@ -32,8 +32,6 @@ public class Jester extends PlayerAgent
 
     @Override
     public void setDayTimeBehavior() {
-        // TODO: Post beliefs in chat
-
         MessageTemplate tmp = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.VoteTarget),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST));

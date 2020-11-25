@@ -45,7 +45,6 @@ public class NightBehaviour extends SequentialBehaviour {
 
         this.addSubBehaviour(new DecisionRequester(gameMaster, msgHealer));
 
-
         this.addSubBehaviour(new NightResultsCalculator(this.gameMaster));
     }
 

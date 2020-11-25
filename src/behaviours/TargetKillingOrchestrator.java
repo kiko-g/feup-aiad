@@ -81,7 +81,7 @@ public class TargetKillingOrchestrator extends Behaviour {
                     this.gameMaster.addAttackedPlayer(proposal.getContent());
                     this.nRequestsResolved++;
                 }
-            }
+            } else block();
         }
     }
 
