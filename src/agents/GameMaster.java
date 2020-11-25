@@ -240,32 +240,8 @@ public class GameMaster extends Agent {
     public void addAttackedPlayer(String attackedPlayer) {
         this.attackedPlayers.add(attackedPlayer);
     }
-
-    // Only used by JavaFX GUI
-    public String requestPlayerPersonalInformation(String playerName) {
-        ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
-        request.setProtocol(ProtocolNames.PlayerInfo);
-
-        AID receiver = gameLobby.getAIDByName(playerName);
-        if(receiver == null) return "null receiver";
-        request.addReceiver(receiver);
-
-        this.send(request);
-
-        MessageTemplate mt = MessageTemplate.and(
-            MessageTemplate.MatchProtocol(ProtocolNames.PlayerInfo),
-            MessageTemplate.MatchPerformative(ACLMessage.INFORM)
-        );
-        ACLMessage response = this.blockingReceive(mt);
-
-        return response.getContent();
-    }
     
     public void addToLog(ChatMessage cm) {
         this.chatLog.add(cm);
-    }
-
-    public List<ChatMessage> getChatLog() {
-        return this.chatLog;
     }
 }
