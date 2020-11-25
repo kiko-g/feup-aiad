@@ -57,7 +57,7 @@ public class GameLoop extends Behaviour {
 
         } catch (FIPAException e) {
             System.out.println("Error finding and updating all players desc");
-            this.gameMaster.takeDown();
+            this.gameMaster.doDelete();
         }
     }
 

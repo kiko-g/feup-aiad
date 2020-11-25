@@ -110,7 +110,7 @@ public class GameStateListener extends CyclicBehaviour {
             this.playerAgent.logMessage("Congratulations " + winnerFaction + "!");
         }
 
-        this.playerAgent.takeDown();
+        this.playerAgent.doDelete();
     }
 
     private void handleTimeOfDay(String messageContent) {

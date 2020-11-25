@@ -16,7 +16,7 @@ public class PlayerInformer extends AchieveREInitiator {
     @Override
     protected void handleRefuse(ACLMessage refuse) {
         this.agent.logMessage("Agent "+refuse.getSender().getName()+" refused to perform the requested action");
-        this.agent.takeDown();
+        this.agent.doDelete();
     }
 
     @Override

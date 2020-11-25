@@ -3,6 +3,7 @@ package agents;
 import behaviours.GameLoop;
 import jade.core.AID;
 import sajas.core.Agent;
+import sajas.core.Runtime;
 import sajas.domain.DFService;
 import jade.domain.FIPAAgentManagement.*;
 import jade.domain.FIPAException;
@@ -87,8 +88,16 @@ public class GameMaster extends Agent {
 
     @Override
     public void takeDown() {
+        deregisterAgent();
         super.takeDown();
-        this.doDelete();
+    }
+
+    protected void deregisterAgent() {
+        try {
+            DFService.deregister(this);
+        } catch (FIPAException e) {
+            e.printStackTrace();
+        }
     }
 
     public GameLobby getGameLobby() {

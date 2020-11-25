@@ -165,8 +165,8 @@ public abstract class PlayerAgent extends Agent {
 
     @Override
     public void takeDown() {
+        deregisterAgent();
         super.takeDown();
-        this.doDelete();
     }
 
     public abstract String getRole();
