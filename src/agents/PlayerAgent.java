@@ -1,6 +1,11 @@
 package agents;
 
+import behaviours.ChatListener;
+import behaviours.GameStateListener;
 import jade.core.AID;
+import jade.lang.acl.MessageTemplate;
+import protocols.ContextWaiter;
+import protocols.PlayerInformer;
 import sajas.core.Agent;
 import sajas.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -53,7 +58,35 @@ public abstract class PlayerAgent extends Agent {
         // Searches for GameMaster and saves to game_master_desc
         if (!this.findGameMaster()) {
             this.takeDown();
+            return;
         }
+
+        // Agent Registration
+        try {
+            this.registerAgent(this.getRole());
+        } catch (FIPAException e) {
+            e.printStackTrace();
+        }
+
+        // Agent tries to join the game's lobby
+        ACLMessage msg = this.buildJoinMessage(this.getRole());
+
+        // Handlers here
+        this.addBehaviour(new PlayerInformer(this, msg));
+
+        MessageTemplate playerNamesTemplate = MessageTemplate.and(
+                MessageTemplate.MatchProtocol(ProtocolNames.PlayerNames),
+                MessageTemplate.MatchPerformative(ACLMessage.INFORM)
+        );
+
+        // Builds context
+        this.addBehaviour(new ContextWaiter(this, playerNamesTemplate));
+
+        // Reads and handles game state updates (Day/Night, PlayerDeaths...)
+        this.addBehaviour(new GameStateListener(this));
+
+        // Reads and stores messages posted by other agents
+        this.addBehaviour(new ChatListener(this));
     }
 
     public void logMessage(String msg) {

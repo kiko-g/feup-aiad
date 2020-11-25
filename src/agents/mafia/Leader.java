@@ -40,28 +40,6 @@ public class Leader extends PlayerAgent {
     protected void setup() {
         super.setup();
 
-        // Agent Registration
-        try {
-            this.registerAgent(this.getRole());
-        } catch (FIPAException e) {
-            e.printStackTrace();
-        }
-
-        // Agent tries to join the game's lobby
-        ACLMessage msg = this.buildJoinMessage(this.getRole());
-
-        // Reports role to gameMaster
-        this.addBehaviour(new PlayerInformer(this, msg));
-
-        MessageTemplate playerNamesTemplate = MessageTemplate.and(
-                MessageTemplate.MatchProtocol(ProtocolNames.PlayerNames),
-                MessageTemplate.MatchPerformative(ACLMessage.INFORM)
-        );
-
-        // Builds context
-        this.addBehaviour(new ContextWaiter(this, playerNamesTemplate));
-
-
         MessageTemplate mafiaNamesTemplate = MessageTemplate.and(
                 MessageTemplate.MatchProtocol(ProtocolNames.MafiaPlayers),
                 MessageTemplate.MatchPerformative(ACLMessage.INFORM)
@@ -69,12 +47,6 @@ public class Leader extends PlayerAgent {
 
         // Stores the mafia team
         this.addBehaviour(new MafiaWaiter(this, mafiaNamesTemplate));
-
-        // Reads and handles game state updates (Day/Night, PlayerDeaths...)
-        this.addBehaviour(new GameStateListener(this));
-
-        // Reads and stores messages posted by other agents
-        this.addBehaviour(new ChatListener(this));
     }
 
     @Override

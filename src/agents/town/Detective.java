@@ -59,38 +59,6 @@ public class Detective extends PlayerAgent {
     }
 
     @Override
-    protected void setup() {
-        super.setup();
-
-        // Agent Registration
-        try {
-            this.registerAgent(this.getRole());
-        } catch (FIPAException e) {
-            e.printStackTrace();
-        }
-
-        // Agent tries to join the game's lobby
-        ACLMessage msg = this.buildJoinMessage(this.getRole());
-
-        // Handlers here
-        this.addBehaviour(new PlayerInformer(this, msg));
-
-        MessageTemplate playerNamesTemplate = MessageTemplate.and(
-                MessageTemplate.MatchProtocol(ProtocolNames.PlayerNames),
-                MessageTemplate.MatchPerformative(ACLMessage.INFORM)
-        );
-
-        // Builds context
-        this.addBehaviour(new ContextWaiter(this, playerNamesTemplate));
-
-        // Reads and handles game state updates (Day/Night, PlayerDeaths...)
-        this.addBehaviour(new GameStateListener(this));
-
-        // Reads and stores messages posted by other agents
-        this.addBehaviour(new ChatListener(this));
-    }
-
-    @Override
     public void setDayTimeBehavior() {
         // TODO: Post beliefs in chat
         VisitReport lastReport = getLastNightReport();
