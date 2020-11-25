@@ -94,7 +94,7 @@ public class Killing extends PlayerAgent {
 
         if(new Random().nextInt(10) < 3) {
             do{
-                playerName = getLessSuspectPlayers().get(new Random().nextInt(3));
+                playerName = getLessSuspectPlayers().get(new Random().nextInt(getLessSuspectPlayers().size()));
             } while (!killablePlayers.contains(playerName));
             playerIndex = killablePlayers.indexOf(playerName);
         }

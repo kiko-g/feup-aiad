@@ -128,4 +128,12 @@ public class GameStateInformer extends OneShotBehaviour {
 
         this.gameMaster.setActuallySavedPlayers(new ConcurrentHashMap<>());
     }
+
+    @Override
+    public int onEnd() {
+        if(this.typeInfo.equals(ProtocolNames.End))
+            this.gameMaster.doDelete();
+
+        return super.onEnd();
+    }
 }

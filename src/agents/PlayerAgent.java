@@ -8,6 +8,7 @@ import jade.lang.acl.MessageTemplate;
 import protocols.ContextWaiter;
 import protocols.PlayerInformer;
 import sajas.core.Agent;
+import sajas.core.behaviours.Behaviour;
 import sajas.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -45,6 +46,9 @@ public abstract class PlayerAgent extends Agent {
     // All chat messages received up until now
     private ChatLog chatLog;
 
+    // All behaviours once added to the agent
+    private List<Behaviour> allBehaviours;
+
     public PlayerAgent(Util.Trait playerTrait){
         this.chatLog = new ChatLog();
         this.playerTrait = playerTrait;
@@ -53,11 +57,18 @@ public abstract class PlayerAgent extends Agent {
     public PlayerAgent() {
         this.chatLog = new ChatLog();
         this.playerTrait = Util.Trait.getRandomTrait();
+        this.allBehaviours = new ArrayList<>();
     }
 
     @Override
     protected void setup() {
         waitForGameMaster();
+    }
+
+    @Override
+    public void addBehaviour(Behaviour b) {
+        super.addBehaviour(b);
+        this.allBehaviours.add(b);
     }
 
     protected void postSetup() {
@@ -153,20 +164,6 @@ public abstract class PlayerAgent extends Agent {
         dfad.addServices(sd2);
 
         DFService.register(this, dfad);
-    }
-
-    protected void deregisterAgent() {
-        try {
-            DFService.deregister(this);
-        } catch (FIPAException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void takeDown() {
-        deregisterAgent();
-        super.takeDown();
     }
 
     public abstract String getRole();
@@ -395,5 +392,26 @@ public abstract class PlayerAgent extends Agent {
 
     public void setPlayersSavedDuringNight(int playersSavedDuringNight) {
         this.playersSavedDuringNight = playersSavedDuringNight;
+    }
+
+    public void removeAllBehaviours() {
+        for(Behaviour b : this.allBehaviours)
+            if(!b.done())
+                this.removeBehaviour(b);
+    }
+
+    protected void deregisterAgent() {
+        try {
+            DFService.deregister(this);
+        } catch (FIPAException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void takeDown() {
+        deregisterAgent();
+//        removeAllBehaviours();
+        super.takeDown();
     }
 }

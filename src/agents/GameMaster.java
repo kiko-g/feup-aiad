@@ -4,6 +4,7 @@ import behaviours.GameLoop;
 import jade.core.AID;
 import sajas.core.Agent;
 import sajas.core.Runtime;
+import sajas.core.behaviours.Behaviour;
 import sajas.domain.DFService;
 import jade.domain.FIPAAgentManagement.*;
 import jade.domain.FIPAException;
@@ -47,6 +48,8 @@ public class GameMaster extends Agent {
     private String dayDeath;
     private boolean jesterDayDeath = false;
 
+    private List<Behaviour> allBehaviours;
+
     public GameMaster(int numberPlayers) {
         this.gameLobby = new GameLobby(numberPlayers);
         this.gameState = GameStates.WAITING_FOR_PLAYERS;
@@ -58,6 +61,8 @@ public class GameMaster extends Agent {
         this.dayDeath = "";
 
         this.chatLog = new ArrayList<>();
+
+        this.allBehaviours = new ArrayList<>();
     }
 
     @Override
@@ -84,12 +89,6 @@ public class GameMaster extends Agent {
 
         this.addBehaviour(new PlayerWaiter(this, template));
         this.addBehaviour(new GameLoop(this));
-    }
-
-    @Override
-    public void takeDown() {
-        deregisterAgent();
-        super.takeDown();
     }
 
     protected void deregisterAgent() {
@@ -252,5 +251,24 @@ public class GameMaster extends Agent {
     
     public void addToLog(ChatMessage cm) {
         this.chatLog.add(cm);
+    }
+
+    @Override
+    public void takeDown() {
+        deregisterAgent();
+//        this.removeAllBehaviours();
+        super.takeDown();
+    }
+
+    @Override
+    public void addBehaviour(Behaviour b) {
+        super.addBehaviour(b);
+        this.allBehaviours.add(b);
+    }
+
+    public void removeAllBehaviours() {
+        for(Behaviour b : this.allBehaviours)
+            if(!b.done())
+                this.removeBehaviour(b);
     }
 }

@@ -94,7 +94,7 @@ public class Leader extends PlayerAgent {
 
         if(new Random().nextInt(10) < 6) {
             do {
-                playerName = getLessSuspectPlayers().get(new Random().nextInt(3));
+                playerName = getLessSuspectPlayers().get(new Random().nextInt(getLessSuspectPlayers().size()));
             } while (mafiaPlayers.contains(playerName) || !killablePlayers.contains(playerName));
             playerIndex = killablePlayers.indexOf(playerName);
         }

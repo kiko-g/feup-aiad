@@ -57,7 +57,6 @@ public class GameLoop extends Behaviour {
 
         } catch (FIPAException e) {
             System.out.println("Error finding and updating all players desc");
-            this.gameMaster.doDelete();
         }
     }
 
@@ -94,5 +93,10 @@ public class GameLoop extends Behaviour {
     @Override
     public boolean done() {
         return this.endLoop;
+    }
+
+    @Override
+    public int onEnd() {
+        return super.onEnd();
     }
 }
