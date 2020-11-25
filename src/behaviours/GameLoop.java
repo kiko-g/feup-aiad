@@ -1,7 +1,7 @@
 package behaviours;
 
 import agents.GameMaster;
-import jade.core.behaviours.Behaviour;
+import sajas.core.behaviours.Behaviour;
 import jade.domain.FIPAException;
 import utils.ProtocolNames;
 

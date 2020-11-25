@@ -2,8 +2,8 @@ package agents;
 
 import behaviours.GameLoop;
 import jade.core.AID;
-import jade.core.Agent;
-import jade.domain.DFService;
+import sajas.core.Agent;
+import sajas.domain.DFService;
 import jade.domain.FIPAAgentManagement.*;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
@@ -61,6 +61,8 @@ public class GameMaster extends Agent {
 
     @Override
     protected void setup() {
+    	super.setup();
+    	
         // DF
         DFAgentDescription dfad = new DFAgentDescription();
         dfad.setName(getAID());
@@ -239,6 +241,7 @@ public class GameMaster extends Agent {
         this.attackedPlayers.add(attackedPlayer);
     }
 
+    // Only used by JavaFX GUI
     public String requestPlayerPersonalInformation(String playerName) {
         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
         request.setProtocol(ProtocolNames.PlayerInfo);

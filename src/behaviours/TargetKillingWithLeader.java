@@ -1,8 +1,8 @@
 package behaviours;
 
 import agents.mafia.Killing;
-import jade.core.behaviours.Behaviour;
-import jade.domain.DFService;
+import sajas.core.behaviours.Behaviour;
+import sajas.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;

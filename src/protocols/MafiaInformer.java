@@ -1,9 +1,9 @@
 package protocols;
 
 import agents.GameMaster;
-import jade.core.Agent;
+import sajas.core.Agent;
 import jade.lang.acl.ACLMessage;
-import jade.proto.AchieveREInitiator;
+import sajas.proto.AchieveREInitiator;
 
 public class MafiaInformer extends AchieveREInitiator {
 

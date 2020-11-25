@@ -5,7 +5,7 @@ import agents.mafia.Killing;
 import agents.mafia.Leader;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.proto.AchieveREResponder;
+import sajas.proto.AchieveREResponder;
 
 public class MafiaWaiter extends AchieveREResponder {
 

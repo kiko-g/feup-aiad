@@ -2,7 +2,7 @@ package protocols;
 
 import agents.PlayerAgent;
 import jade.lang.acl.ACLMessage;
-import jade.proto.AchieveREInitiator;
+import sajas.proto.AchieveREInitiator;
 
 public class PlayerInformer extends AchieveREInitiator {
 

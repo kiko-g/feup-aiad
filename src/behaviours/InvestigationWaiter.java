@@ -1,7 +1,7 @@
 package behaviours;
 
 import agents.town.Detective;
-import jade.core.behaviours.Behaviour;
+import sajas.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import utils.ProtocolNames;
@@ -18,7 +18,17 @@ public class InvestigationWaiter extends Behaviour {
     private Steps currentStep;
 
     private ACLMessage targetMessage;
+    
+    private MessageTemplate requestTemplate = MessageTemplate.and(
+            MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
+            MessageTemplate.MatchProtocol(ProtocolNames.Investigate)
+    );
 
+    private MessageTemplate resultTemplate = MessageTemplate.and(
+            MessageTemplate.MatchPerformative(ACLMessage.INFORM),
+            MessageTemplate.MatchProtocol(ProtocolNames.Investigate)
+    );
+    
     public InvestigationWaiter(Detective detective) {
         this.detective = detective;
         this.currentStep = Steps.Init;
@@ -29,34 +39,32 @@ public class InvestigationWaiter extends Behaviour {
 
         switch (this.currentStep) {
             case Init: {
-                MessageTemplate requestTemplate = MessageTemplate.and(
-                        MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
-                        MessageTemplate.MatchProtocol(ProtocolNames.Investigate)
-                );
+                ACLMessage requestMessage = this.detective.receive(this.requestTemplate);
 
-                ACLMessage requestMessage = this.detective.blockingReceive(requestTemplate);
-                targetMessage = this.detective.handleNightVoteRequest(requestMessage, null);
-                this.detective.send(targetMessage);
+                if(requestMessage != null) {
+                	targetMessage = this.detective.handleNightVoteRequest(requestMessage, null);
+                    this.detective.send(targetMessage);
 
-                this.currentStep = Steps.WaitingResponse;
+                    this.currentStep = Steps.WaitingResponse;
+                }
+                else block();
+                
                 break;
             }
             case WaitingResponse: {
-                MessageTemplate resultTemplate = MessageTemplate.and(
-                        MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-                        MessageTemplate.MatchProtocol(ProtocolNames.Investigate)
-                );
+                ACLMessage investigationResult = this.detective.receive(this.resultTemplate);
+                if(investigationResult != null) {
+                	boolean isSus = investigationResult.getContent().equals("Kinda sus");
+                    this.detective.addVisit(this.targetMessage.getContent(), isSus);
 
-                ACLMessage investigationResult = this.detective.blockingReceive(resultTemplate);
-                boolean isSus = investigationResult.getContent().equals("Kinda sus");
-                this.detective.addVisit(this.targetMessage.getContent(), isSus);
+                    if(!isSus)
+                        this.detective.setPlayerSusRate(this.targetMessage.getContent(), 0.8);
+                    else
+                        this.detective.setPlayerSusRate(this.targetMessage.getContent(), 1.2);
 
-                if(!isSus)
-                    this.detective.setPlayerSusRate(this.targetMessage.getContent(), 0.8);
-                else
-                    this.detective.setPlayerSusRate(this.targetMessage.getContent(), 1.2);
-
-                this.currentStep = Steps.Done;
+                    this.currentStep = Steps.Done;
+                } else block();
+                
                 break;
             }
         }

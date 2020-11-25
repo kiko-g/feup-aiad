@@ -2,7 +2,7 @@ package behaviours;
 
 
 import agents.GameMaster;
-import jade.core.behaviours.OneShotBehaviour;
+import sajas.core.behaviours.OneShotBehaviour;
 
 import java.util.ArrayList;
 import java.util.List;

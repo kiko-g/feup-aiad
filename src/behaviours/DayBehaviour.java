@@ -1,7 +1,7 @@
 package behaviours;
 
 import agents.GameMaster;
-import jade.core.behaviours.SequentialBehaviour;
+import sajas.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
 import protocols.DecisionRequester;
 import utils.ProtocolNames;

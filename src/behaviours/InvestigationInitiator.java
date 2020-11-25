@@ -1,7 +1,7 @@
 package behaviours;
 
 import agents.GameMaster;
-import jade.core.behaviours.Behaviour;
+import sajas.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import utils.ProtocolNames;
@@ -23,6 +23,11 @@ public class InvestigationInitiator extends Behaviour {
         this.gameMaster = gameMaster;
         this.currentStep = Steps.Init;
     }
+    
+    private MessageTemplate responseMessageTemplate = MessageTemplate.and(
+            MessageTemplate.MatchProtocol(ProtocolNames.Investigate),
+            MessageTemplate.MatchPerformative(ACLMessage.INFORM)
+    );
 
     private ACLMessage buildRequestMessage() {
         ACLMessage messageRequest = new ACLMessage(ACLMessage.REQUEST);
@@ -65,26 +70,24 @@ public class InvestigationInitiator extends Behaviour {
                 break;
             }
             case WaitingTarget: {
-                MessageTemplate responseMessageTemplate = MessageTemplate.and(
-                            MessageTemplate.MatchProtocol(ProtocolNames.Investigate),
-                            MessageTemplate.MatchPerformative(ACLMessage.INFORM)
-                );
+                ACLMessage msg = this.gameMaster.receive(this.responseMessageTemplate);
+                if(msg != null) {
+                	boolean isSus = handleMessage(msg);
 
-                ACLMessage msg = this.gameMaster.blockingReceive(responseMessageTemplate);
-                boolean isSus = handleMessage(msg);
+                    ACLMessage response = msg.createReply();
+                    if (isSus) {
+                        response.setContent("Kinda sus");
+                        System.out.println(msg.getSender().getLocalName() + " chose to investigate " + msg.getContent() + ": Kinda sus");
+                    }
+                    else {
+                        response.setContent("Not sus");
+                        System.out.println(msg.getSender().getLocalName() + " chose to investigate " + msg.getContent() + ": Not sus!");
+                    }
 
-                ACLMessage response = msg.createReply();
-                if (isSus) {
-                    response.setContent("Kinda sus");
-                    System.out.println(msg.getSender().getLocalName() + " chose to investigate " + msg.getContent() + ": Kinda sus");
-                }
-                else {
-                    response.setContent("Not sus");
-                    System.out.println(msg.getSender().getLocalName() + " chose to investigate " + msg.getContent() + ": Not sus!");
-                }
-
-                this.gameMaster.send(response);
-                this.currentStep = Steps.Done;
+                    this.gameMaster.send(response);
+                    this.currentStep = Steps.Done;
+                } else block();
+                
                 break;
             }
         }

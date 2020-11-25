@@ -2,7 +2,7 @@ package behaviours;
 
 import agents.PlayerAgent;
 import agents.town.Healer;
-import jade.core.behaviours.CyclicBehaviour;
+import sajas.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import utils.ChatMessageTemplate;

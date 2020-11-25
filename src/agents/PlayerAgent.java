@@ -1,8 +1,8 @@
 package agents;
 
 import jade.core.AID;
-import jade.core.Agent;
-import jade.domain.DFService;
+import sajas.core.Agent;
+import sajas.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
@@ -73,6 +73,14 @@ public abstract class PlayerAgent extends Agent {
         // Search results handling
         try {
             DFAgentDescription[] search_results = DFService.search(this, template);
+            System.out.println(search_results.length);
+            
+            int maxTries = 5;
+            for(int i = 0; i < maxTries; i++) {
+            	System.out.println(i);
+            	search_results = DFService.search(this, template);
+            }
+            
             if (search_results.length != 1) {
                 this.logMessage("Error finding the GameMaster!");
                 return false;

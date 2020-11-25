@@ -2,7 +2,7 @@ package protocols;
 
 import agents.GameMaster;
 import jade.lang.acl.ACLMessage;
-import jade.proto.AchieveREInitiator;
+import sajas.proto.AchieveREInitiator;
 public class ContextInformer extends AchieveREInitiator {
 
     GameMaster gameMaster;

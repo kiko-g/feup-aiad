@@ -6,7 +6,7 @@ import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.proto.AchieveREResponder;
+import sajas.proto.AchieveREResponder;
 import utils.GameContext;
 
 import java.util.ArrayList;

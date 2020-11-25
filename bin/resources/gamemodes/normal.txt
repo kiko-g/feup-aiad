@@ -1,0 +1,6 @@
+Villager:9
+Healer:1
+Detective:1
+Jester:1
+Leader:1
+Killing:3

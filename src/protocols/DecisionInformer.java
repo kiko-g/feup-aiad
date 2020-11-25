@@ -3,7 +3,7 @@ package protocols;
 import agents.PlayerAgent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.proto.AchieveREResponder;
+import sajas.proto.AchieveREResponder;
 
 public class DecisionInformer extends AchieveREResponder {
 

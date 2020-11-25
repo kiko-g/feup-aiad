@@ -1,7 +1,7 @@
 package behaviours;
 
 import agents.PlayerAgent;
-import jade.core.behaviours.CyclicBehaviour;
+import sajas.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;

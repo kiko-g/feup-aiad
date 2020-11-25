@@ -1,7 +1,7 @@
 package behaviours;
 
 import agents.PlayerAgent;
-import jade.core.behaviours.OneShotBehaviour;
+import sajas.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import utils.ChatMessage;
 import utils.ProtocolNames;
