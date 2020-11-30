@@ -159,7 +159,7 @@ public class Leader extends PlayerAgent {
             if(r1 < 3) {
                 do {
                     List<String> l = getLessSuspectPlayers();
-                    playerToKill = getLessSuspectPlayers().get(new Random().nextInt(3));
+                    playerToKill = l.get(new Random().nextInt(l.size()));
                 } while(mafiaPlayers.contains(playerToKill) || !killablePlayers.contains(playerToKill));
             }
             else {
