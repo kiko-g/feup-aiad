@@ -132,7 +132,7 @@ public class GameStateInformer extends OneShotBehaviour {
     @Override
     public int onEnd() {
         if(this.typeInfo.equals(ProtocolNames.End))
-            this.gameMaster.doDelete();
+            this.gameMaster.addBehaviour(new EndGame(this.gameMaster));
 
         return super.onEnd();
     }

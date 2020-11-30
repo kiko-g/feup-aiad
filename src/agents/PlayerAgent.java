@@ -411,7 +411,6 @@ public abstract class PlayerAgent extends Agent {
     @Override
     public void takeDown() {
         deregisterAgent();
-//        removeAllBehaviours();
         super.takeDown();
     }
 }

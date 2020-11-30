@@ -2,6 +2,8 @@ package agents;
 
 import behaviours.GameLoop;
 import jade.core.AID;
+import jade.wrapper.ControllerException;
+import jade.wrapper.StaleProxyException;
 import sajas.core.Agent;
 import sajas.core.Runtime;
 import sajas.core.behaviours.Behaviour;
@@ -111,7 +113,7 @@ public class GameMaster extends Agent {
         this.gameState = gameState;
     }
 
-    private DFAgentDescription[] findAllPLayerDescriptions() throws FIPAException {
+    public DFAgentDescription[] findAllPLayerDescriptions() throws FIPAException {
         // Searches for registered players
         DFAgentDescription template = new DFAgentDescription();
         ServiceDescription sd = new ServiceDescription();
@@ -256,8 +258,15 @@ public class GameMaster extends Agent {
     @Override
     public void takeDown() {
         deregisterAgent();
-//        this.removeAllBehaviours();
         super.takeDown();
+
+        // Container kill
+        try {
+            this.getContainerController().kill();
+            this.getContainerController().getPlatformController().kill();
+        } catch (ControllerException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
