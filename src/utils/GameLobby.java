@@ -333,4 +333,57 @@ public class GameLobby {
         List<String> players = new ArrayList<>(lobby.keySet());
         return players.toArray(new String[0]);
     }
+
+    // Format: #Vilagers,#Healers,#Detectives,#Jesters,#Killings,#Leaders\n
+    public String getNumberAlivePerRole() {
+        StringBuilder gameState = new StringBuilder();
+        int nVillagers = 0;
+        int nHealers = 0;
+        int nDetectives = 0;
+        int nJesters = 0;
+        int nKillings = 0;
+        int nLeaders = 0;
+
+        // Counts number "players" alive from each role
+        for(Map.Entry<String, AgentInfo> currentPlayer : lobby.entrySet()) {
+            AgentInfo currentPlayerInfo = currentPlayer.getValue();
+            if(currentPlayerInfo.isAlive) {
+                switch (currentPlayerInfo.getRole()) {
+                    case "Villager" : {
+                        nVillagers++;
+                        break;
+                    }
+                    case "Healer" : {
+                        nHealers++;
+                        break;
+                    }
+                    case "Detective" : {
+                        nDetectives++;
+                        break;
+                    }
+                    case "Leader" : {
+                        nLeaders++;
+                        break;
+                    }
+                    case "Killing" : {
+                        nKillings++;
+                        break;
+                    }
+                    case "Jester" : {
+                        nJesters++;
+                        break;
+                    }
+                }
+            }
+        }
+
+        gameState.append(nVillagers).append(",");
+        gameState.append(nHealers).append(",");
+        gameState.append(nDetectives).append(",");
+        gameState.append(nJesters).append(",");
+        gameState.append(nKillings).append(",");
+        gameState.append(nLeaders);
+
+        return gameState.toString();
+    }
 }

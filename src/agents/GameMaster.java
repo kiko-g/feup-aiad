@@ -280,4 +280,19 @@ public class GameMaster extends Agent {
             if(!b.done())
                 this.removeBehaviour(b);
     }
+
+    // Format: <Who won the game>,#Vilagers,#Healers,#Detectives,#Jesters,#Killings,#Leaders\n
+    public String getGameStateExport() {
+        StringBuilder result = new StringBuilder();
+
+        // Format: #Vilagers,#Healers,#Detectives,#Jesters,#Killings,#Leaders
+        String nPlayerRole = this.gameLobby.getNumberAlivePerRole();
+        String winner = this.getWinnerFaction();
+
+        // String building
+        result.append(winner).append(",");
+        result.append(nPlayerRole);
+
+        return result.toString();
+    }
 }

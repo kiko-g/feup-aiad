@@ -21,18 +21,30 @@ import sajas.sim.repast3.Repast3Launcher;
 import sajas.wrapper.AgentController;
 import sajas.wrapper.ContainerController;
 
+import uchicago.src.sim.analysis.DataRecorder;
+import uchicago.src.sim.analysis.DataSource;
+import uchicago.src.sim.analysis.Recorder;
+import uchicago.src.sim.engine.BasicAction;
+import uchicago.src.sim.engine.Schedule;
 import uchicago.src.sim.engine.SimInit;
 import utils.ConfigReader;
 
 public class GameLauncher extends Repast3Launcher {
 
+	private static final boolean BATCH_MODE = true;
+
 	private ContainerController mainContainer;
+	private GameMaster gameMaster;
 
 
 	private List<String> names;
 	private List<String> roles;
 
-	GameLauncher() {
+	private boolean runInBatchMode;
+
+	GameLauncher(boolean batchMode) {
+		this.runInBatchMode = batchMode;
+
 		try {
 			this.names = ConfigReader.importNames("src/resources/names.txt"); // Loads available names
 			this.roles = ConfigReader.importRoles("src/resources/gamemodes/test.txt"); // Loads roles
@@ -63,7 +75,8 @@ public class GameLauncher extends Repast3Launcher {
 
 		try {
 			// Launch GM
-			mainContainer.acceptNewAgent("GameMaster", new GameMaster(roles.size())).start();
+			this.gameMaster = new GameMaster(roles.size());
+			mainContainer.acceptNewAgent("GameMaster", this.gameMaster).start();
 
 			// Launch player agents
 
@@ -143,18 +156,45 @@ public class GameLauncher extends Repast3Launcher {
 
 	@Override
 	public void begin() {
+		buildModel();
+
 		super.begin();
+
+		// Record Data if in batchMode only
+		if(this.runInBatchMode) {
+			getSchedule().scheduleActionAtEnd(new BasicAction() {
+				@Override
+				public void execute() {
+					recorder.record();
+					recorder.writeToFile();
+				}
+			});
+		}
 
 		// display surfaces, spaces, displays, plots, ...
 		// ...
 	}
 
+	private DataRecorder recorder;
+
+	class GameOutcomeSource implements DataSource {
+		@Override
+		public String execute() {
+			return gameMaster.getGameStateExport();
+		}
+	}
+
+	private void buildModel() {
+		this.recorder = new DataRecorder("./gameOutcomes.csv", this);
+		recorder.addObjectDataSource("gameOutcome", new GameOutcomeSource());
+	}
+
 
 	public static void main(String[] args) {
-		boolean BATCH_MODE = true;
+		boolean runMode = BATCH_MODE;
 		SimInit init = new SimInit();
-		init.setNumRuns(2); // works only in batch mode
-		init.loadModel(new GameLauncher(), null, BATCH_MODE);
+		init.setNumRuns(10); // works only in batch mode
+		init.loadModel(new GameLauncher(runMode), null, runMode);
 	}
 
 }
