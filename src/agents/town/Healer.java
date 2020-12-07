@@ -80,7 +80,7 @@ public class Healer extends PlayerAgent {
         String playerToSave;
 
         do {
-            playerToSave = getLessSuspectPlayers().get(new Random().nextInt(2));
+            playerToSave = getLessSuspectPlayers().get(new Random().nextInt(getLessSuspectPlayers().size()));
         } while (!alivePlayers.contains(playerToSave));
 
         ACLMessage inform = request.createReply();
