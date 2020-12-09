@@ -293,6 +293,7 @@ public class GameLauncher extends Repast3Launcher {
 			DefaultDrawableNode deadPlayerNode = nodes.get(nodeIndex);
 			deadPlayerNode.setColor(Color.BLACK);
 			deadPlayerNode.setLabelColor(Color.BLACK);
+			deadPlayerNode.setY(1000);
 		}
 	}
 
