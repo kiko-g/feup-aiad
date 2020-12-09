@@ -91,7 +91,26 @@ public class TargetKillingOrchestrator extends Behaviour {
                     }
 
                     this.gameMaster.send(response);
-                } else {
+                } else { // #Leaders == 1
+                    // Updates Network graph
+                    DefaultDrawableNode killingNode = GameLauncher.getNodeByAgentName(proposal.getSender().getLocalName());
+                    DefaultDrawableNode targetNode = GameLauncher.getNodeByAgentName(proposal.getContent());
+
+                    List<AID> leaderAID = this.gameMaster.getGameLobby().getPlayersAIDRole("Leader", true);
+                    DefaultDrawableNode leaderNode = GameLauncher.getNodeByAgentName(leaderAID.get(0).getLocalName());
+
+                    if(killingNode != null) {
+                        GameLauncher.removeOutEdges(killingNode);
+
+                        Edge edgeLeader = new Edge(leaderNode, killingNode, "Order");
+                        edgeLeader.setColor(Color.YELLOW);
+                        leaderNode.addOutEdge(edgeLeader);
+
+                        Edge edgeKilling = new Edge(killingNode, targetNode, "Attack");
+                        edgeKilling.setColor(Color.RED);
+                        killingNode.addOutEdge(edgeKilling);
+                    }
+
                     System.out.println(proposal.getSender().getLocalName() + " decided to attack " + proposal.getContent());
                     this.gameMaster.addAttackedPlayer(proposal.getContent());
                     this.nRequestsResolved++;

@@ -3,4 +3,4 @@ Detective:1
 Healer:3
 Jester:1
 Killing:2
-Leader:0
+Leader:1
