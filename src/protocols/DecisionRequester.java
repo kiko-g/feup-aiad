@@ -2,9 +2,13 @@ package protocols;
 
 import agents.GameMaster;
 import jade.lang.acl.ACLMessage;
+import launcher.GameLauncher;
 import sajas.proto.AchieveREInitiator;
+import uchicago.src.sim.network.DefaultDrawableNode;
+import utils.Edge;
 import utils.ProtocolNames;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,6 +51,18 @@ public class DecisionRequester extends AchieveREInitiator {
                 break;
             }
             case ProtocolNames.TargetHealing: {
+
+                DefaultDrawableNode healerNode = GameLauncher.getNodeByAgentName(inform.getSender().getLocalName());
+                DefaultDrawableNode targetNode = GameLauncher.getNodeByAgentName(inform.getContent());
+
+                if(healerNode != null) {
+                    GameLauncher.removeOutEdges(healerNode);
+
+                    Edge edgeHealer = new Edge(healerNode, targetNode, "Heal");
+                    edgeHealer.setColor(Color.GREEN);
+                    healerNode.addOutEdge(edgeHealer);
+                }
+
                 System.out.println(inform.getSender().getLocalName()+" has decided to visit " + inform.getContent());
 
                 // Stores the saved player and its savior
