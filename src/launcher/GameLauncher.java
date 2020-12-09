@@ -318,9 +318,8 @@ public class GameLauncher extends Repast3Launcher {
 	}
 
 	public static void removeInEdges(DefaultDrawableNode originNode) {
-		List<Edge> inEdges = new ArrayList<>(originNode.getInEdges());
-		for(Edge curr : inEdges) {
-			originNode.removeInEdge(curr);
+		for(DefaultDrawableNode curr : nodes) {
+			curr.removeEdgesTo(originNode);
 		}
 	}
 

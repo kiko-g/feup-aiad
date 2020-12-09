@@ -1,10 +1,17 @@
 package behaviours;
 
 import agents.GameMaster;
+import jade.core.AID;
+import launcher.GameLauncher;
 import sajas.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import uchicago.src.sim.network.DefaultDrawableNode;
+import utils.Edge;
 import utils.ProtocolNames;
+
+import java.awt.*;
+import java.util.List;
 
 public class InvestigationInitiator extends Behaviour {
 
@@ -72,6 +79,18 @@ public class InvestigationInitiator extends Behaviour {
             case WaitingTarget: {
                 ACLMessage msg = this.gameMaster.receive(this.responseMessageTemplate);
                 if(msg != null) {
+                    // Updates Network graph
+                    DefaultDrawableNode investigatorNode = GameLauncher.getNodeByAgentName(msg.getSender().getLocalName());
+                    DefaultDrawableNode targetNode = GameLauncher.getNodeByAgentName(msg.getContent());
+
+                    if(investigatorNode != null) {
+                        GameLauncher.removeOutEdges(investigatorNode);
+
+                        Edge edgeInve = new Edge(investigatorNode, targetNode, "Investigate");
+                        edgeInve.setColor(Color.BLUE);
+                        investigatorNode.addOutEdge(edgeInve);
+                    }
+
                 	boolean isSus = handleMessage(msg);
 
                     ACLMessage response = msg.createReply();

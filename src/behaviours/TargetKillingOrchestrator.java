@@ -74,7 +74,7 @@ public class TargetKillingOrchestrator extends Behaviour {
                         DefaultDrawableNode originNode = GameLauncher.getNodeByAgentName(proposal.getSender().getLocalName());
                         DefaultDrawableNode destinationNode = GameLauncher.getNodeByAgentName(proposal.getContent());
                         if(originNode != null) {
-                            GameLauncher.removeOutEdges(originNode);
+                            GameLauncher.removeAllNodeEdges(originNode);
 
                             Edge edge = new Edge(originNode, destinationNode, "Attack");
                             edge.setColor(Color.RED);
@@ -100,7 +100,7 @@ public class TargetKillingOrchestrator extends Behaviour {
                     DefaultDrawableNode leaderNode = GameLauncher.getNodeByAgentName(leaderAID.get(0).getLocalName());
 
                     if(killingNode != null) {
-                        GameLauncher.removeOutEdges(killingNode);
+                        GameLauncher.removeAllNodeEdges(killingNode);
 
                         Edge edgeLeader = new Edge(leaderNode, killingNode, "Order");
                         edgeLeader.setColor(Color.YELLOW);
