@@ -2,6 +2,7 @@ package behaviours;
 
 import agents.GameMaster;
 import jade.core.AID;
+import launcher.GameLauncher;
 import sajas.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import utils.ProtocolNames;
@@ -81,11 +82,15 @@ public class GameStateInformer extends OneShotBehaviour {
         List<String> deadPlayerNames = this.gameMaster.getNightDeaths();
 
         if(deadPlayerNames.size() > 0) {
+
             ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
             msg.setProtocol(ProtocolNames.PlayerDeath);
 
             StringBuilder messageContent = new StringBuilder();
             for(String currName : deadPlayerNames) {
+                // Update Network Graph
+                GameLauncher.paintNodeBlackByAgentName(currName);
+
                 messageContent.append(currName).append("\n");
                 System.out.println("\t" + currName + " was attacked last night, and died in the morning...");
             }
@@ -98,6 +103,8 @@ public class GameStateInformer extends OneShotBehaviour {
 
     private void sendDeadPlayerNameDay() {
         if(!this.gameMaster.getDayDeath().equals("")) {
+            // Update Network Graph
+            GameLauncher.paintNodeBlackByAgentName(this.gameMaster.getDayDeath());
 
             ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
             msg.setProtocol(ProtocolNames.PlayerDeath);

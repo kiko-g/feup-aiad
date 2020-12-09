@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Random;
 
 import agents.GameMaster;
 import agents.mafia.Killing;
@@ -35,6 +34,7 @@ import uchicago.src.sim.gui.Network2DDisplay;
 import uchicago.src.sim.gui.OvalNetworkItem;
 import uchicago.src.sim.network.DefaultDrawableNode;
 import utils.ConfigReader;
+import utils.Util;
 
 public class GameLauncher extends Repast3Launcher {
 
@@ -120,8 +120,10 @@ public class GameLauncher extends Repast3Launcher {
 		OvalNetworkItem oval = new OvalNetworkItem(x,y);
 		oval.allowResizing(false);
 		oval.setHeight(60);
-		oval.setWidth(60);
+		oval.setWidth(90);
 		oval.setLabelColor(Color.BLACK);
+
+
 
 		DefaultDrawableNode node = new DefaultDrawableNode(label, oval);
 		node.setColor(color);
@@ -131,7 +133,6 @@ public class GameLauncher extends Repast3Launcher {
 
 	public void launchAgent(String role, String name, ContainerController container, int agentNumber) throws StaleProxyException {
 		AgentController ac;
-		Random random = new Random(System.currentTimeMillis());
 		double agentAnglePos = (2 * Math.PI / roles.size());
 
 		switch (role) {
@@ -140,7 +141,7 @@ public class GameLauncher extends Repast3Launcher {
 				ac = container.acceptNewAgent(name, villager);
 				ac.start();
 				DefaultDrawableNode node =
-						generateNode("Villager", Color.GREEN,
+						generateNode(Util.buildNodeLabel(name, "Villager"), Color.GREEN,
 								(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 				nodes.add(node);
 				break;
@@ -149,7 +150,7 @@ public class GameLauncher extends Repast3Launcher {
 				ac = container.acceptNewAgent(name, new Killing());
 				ac.start();
 				DefaultDrawableNode node =
-						generateNode("Killing", Color.RED,
+						generateNode(Util.buildNodeLabel(name, "Killing"), Color.RED,
 								(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 				nodes.add(node);
 				break;
@@ -158,7 +159,7 @@ public class GameLauncher extends Repast3Launcher {
 				ac = container.acceptNewAgent(name, new Leader());
 				ac.start();
 				DefaultDrawableNode node =
-						generateNode("Leader", Color.RED,
+						generateNode(Util.buildNodeLabel(name, "Leader"), Color.RED,
 								(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 				nodes.add(node);
 				break;
@@ -167,7 +168,7 @@ public class GameLauncher extends Repast3Launcher {
 				ac = container.acceptNewAgent(name, new Jester());
 				ac.start();
 				DefaultDrawableNode node =
-						generateNode("Jester", Color.WHITE,
+						generateNode(Util.buildNodeLabel(name, "Jester"), Color.WHITE,
 								(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 				nodes.add(node);
 				break;
@@ -176,7 +177,7 @@ public class GameLauncher extends Repast3Launcher {
 				ac = container.acceptNewAgent(name, new Healer());
 				ac.start();
 				DefaultDrawableNode node =
-						generateNode("Healer", Color.GREEN,
+						generateNode(Util.buildNodeLabel(name, "Healer"), Color.GREEN,
 								(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 				nodes.add(node);
 				break;
@@ -185,7 +186,7 @@ public class GameLauncher extends Repast3Launcher {
 				ac = container.acceptNewAgent(name, new Detective());
 				ac.start();
 				DefaultDrawableNode node =
-						generateNode("Detective", Color.GREEN,
+						generateNode(Util.buildNodeLabel(name, "Detective"), Color.GREEN,
 								(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 				nodes.add(node);
 				break;
@@ -272,5 +273,29 @@ public class GameLauncher extends Repast3Launcher {
 			}
 		}
 		return null;
+	}
+
+	public static DefaultDrawableNode getNodeByAgentName(String agentName) {
+		for(DefaultDrawableNode node : nodes) {
+			String currLabel = node.getNodeLabel();
+			if(currLabel.substring(0, currLabel.indexOf(",")).equals(agentName)) {
+				return node;
+			}
+		}
+		return null;
+	}
+
+	public static void paintNodeBlack(DefaultDrawableNode node) {
+		int nodeIndex = nodes.indexOf(node);
+
+		if(nodeIndex != -1) {
+			DefaultDrawableNode deadPlayerNode = nodes.get(nodeIndex);
+			deadPlayerNode.setColor(Color.BLACK);
+			deadPlayerNode.setLabelColor(Color.BLACK);
+		}
+	}
+
+	public static void paintNodeBlackByAgentName(String agentName) {
+		paintNodeBlack(getNodeByAgentName(agentName));
 	}
 }
