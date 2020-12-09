@@ -56,6 +56,7 @@ public class TargetKilling extends Behaviour {
 
                     this.currStep = Steps.Negotiation;
                 }
+
                 break;
             }
             case Negotiation: {
@@ -66,8 +67,8 @@ public class TargetKilling extends Behaviour {
                     if(proposalResponse.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
                         this.rejectedTargets.add(lastProposal.getContent());
 
-                        ACLMessage newProposal = this.killing.handleNightVoteRequestRejected(this.requestReceived, this.rejectedTargets);
-                        this.killing.send(newProposal);
+                        lastProposal = this.killing.handleNightVoteRequestRejected(this.requestReceived, this.rejectedTargets);
+                        this.killing.send(lastProposal);
                     }
                     else this.currStep = Steps.End;
                 }

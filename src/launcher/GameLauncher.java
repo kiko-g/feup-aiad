@@ -1,3 +1,5 @@
+package launcher;
+
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +27,6 @@ import sajas.wrapper.ContainerController;
 
 import uchicago.src.sim.analysis.DataRecorder;
 import uchicago.src.sim.analysis.DataSource;
-import uchicago.src.sim.analysis.Recorder;
 import uchicago.src.sim.engine.BasicAction;
 import uchicago.src.sim.engine.Schedule;
 import uchicago.src.sim.engine.SimInit;
@@ -117,7 +118,7 @@ public class GameLauncher extends Repast3Launcher {
 
 	private DefaultDrawableNode generateNode(String label, Color color, int x, int y) {
 		OvalNetworkItem oval = new OvalNetworkItem(x,y);
-		oval.allowResizing(false);
+		oval.allowResizing(true);
 		oval.setHeight(5);
 		oval.setWidth(5);
 
@@ -133,65 +134,76 @@ public class GameLauncher extends Repast3Launcher {
 		double agentAnglePos = (2 * Math.PI / roles.size());
 
 		switch (role) {
-		case "Villager": {
-			Villager villager = new Villager();
-			ac = container.acceptNewAgent(name, villager);
-			ac.start();
-			DefaultDrawableNode node =
-					generateNode("Villager", Color.GREEN,
-							(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
-			nodes.add(node);
-			break;
-		}
-		case "Killing": {
-			ac = container.acceptNewAgent(name, new Killing());
-			ac.start();
-			DefaultDrawableNode node =
-					generateNode("Killing", Color.RED,
-							(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
-			nodes.add(node);
-			break;
-		}
-		case "Leader": {
-			ac = container.acceptNewAgent(name, new Leader());
-			ac.start();
-			DefaultDrawableNode node =
-					generateNode("Leader", Color.RED,
-							(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
-			nodes.add(node);
-			break;
-		}
-		case "Jester": {
-			ac = container.acceptNewAgent(name, new Jester());
-			ac.start();
-			DefaultDrawableNode node =
-					generateNode("Jester", Color.WHITE,
-							(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
-			nodes.add(node);
-			break;
-		}
-		case "Healer": {
-			ac = container.acceptNewAgent(name, new Healer());
-			ac.start();
-			DefaultDrawableNode node =
-					generateNode("Healer", Color.GREEN,
-							(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
-			nodes.add(node);
-			break;
-		}
-		case "Detective": {
-			ac = container.acceptNewAgent(name, new Detective());
-			ac.start();
-			DefaultDrawableNode node =
-					generateNode("Detective", Color.GREEN,
-							(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
-			nodes.add(node);
-			break;
-		}
-		default: {
-			System.out.println(role + " is still not implemented! Skipping...");
-			break;
-		}
+			case "Villager": {
+				Villager villager = new Villager();
+				ac = container.acceptNewAgent(name, villager);
+				ac.start();
+				DefaultDrawableNode node =
+						generateNode(villager.getLocalName(), Color.GREEN,
+								(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+				nodes.add(node);
+				villager.setNode(node);
+				break;
+			}
+			case "Killing": {
+				Killing killing = new Killing();
+				ac = container.acceptNewAgent(name, killing);
+				ac.start();
+				DefaultDrawableNode node =
+						generateNode(killing.getLocalName(), Color.RED,
+								(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+				nodes.add(node);
+				killing.setNode(node);
+				break;
+			}
+			case "Leader": {
+				Leader leader = new Leader();
+				ac = container.acceptNewAgent(name, leader);
+				ac.start();
+				DefaultDrawableNode node =
+						generateNode(leader.getLocalName(), Color.RED,
+								(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+				nodes.add(node);
+				leader.setNode(node);
+				break;
+			}
+			case "Jester": {
+				Jester jester = new Jester();
+				ac = container.acceptNewAgent(name, jester);
+				ac.start();
+				DefaultDrawableNode node =
+						generateNode(jester.getLocalName(), Color.WHITE,
+								(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+				nodes.add(node);
+				jester.setNode(node);
+				break;
+			}
+			case "Healer": {
+				Healer healer = new Healer();
+				ac = container.acceptNewAgent(name, healer);
+				ac.start();
+				DefaultDrawableNode node =
+						generateNode(healer.getLocalName(), Color.GREEN,
+								(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+				nodes.add(node);
+				healer.setNode(node);
+				break;
+			}
+			case "Detective": {
+				Detective detective = new Detective();
+				ac = container.acceptNewAgent(name, detective);
+				ac.start();
+				DefaultDrawableNode node =
+						generateNode(detective.getLocalName(), Color.GREEN,
+								(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+				nodes.add(node);
+				detective.setNode(node);
+				break;
+			}
+			default: {
+				System.out.println(role + " is still not implemented! Skipping...");
+				break;
+			}
 		}
 	}
 
@@ -238,7 +250,7 @@ public class GameLauncher extends Repast3Launcher {
 		addSimEventListener(dsurf);
 		dsurf.display();
 
-		//getSchedule().scheduleActionAtInterval(1, dsurf, "updateDisplay", Schedule.LAST);
+		getSchedule().scheduleActionAtInterval(1, dsurf, "updateDisplay", Schedule.LAST);
 	}
 
 	private DataRecorder recorder;
@@ -263,4 +275,12 @@ public class GameLauncher extends Repast3Launcher {
 		init.loadModel(new GameLauncher(runMode), null, runMode);
 	}
 
+	public static DefaultDrawableNode getNode(String localName) {
+		for(DefaultDrawableNode node : nodes) {
+			if(node.getNodeLabel().equals(localName)) {
+				return node;
+			}
+		}
+		return null;
+	}
 }

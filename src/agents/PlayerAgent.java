@@ -15,6 +15,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import sajas.proto.SubscriptionInitiator;
+import uchicago.src.sim.network.DefaultDrawableNode;
 import utils.*;
 
 import java.util.*;
@@ -48,6 +49,8 @@ public abstract class PlayerAgent extends Agent {
 
     // All behaviours once added to the agent
     private List<Behaviour> allBehaviours;
+
+    private DefaultDrawableNode node;
 
     public PlayerAgent(Util.Trait playerTrait){
         this.chatLog = new ChatLog();
@@ -412,5 +415,17 @@ public abstract class PlayerAgent extends Agent {
     public void takeDown() {
         deregisterAgent();
         super.takeDown();
+    }
+
+    public void setNode(DefaultDrawableNode node) {
+        this.node = node;
+    }
+
+    public String getNodeLabel() {
+        return getLocalName() + ", the " + getRole();
+    }
+
+    public DefaultDrawableNode getNode() {
+        return this.node;
     }
 }

@@ -71,4 +71,8 @@ public class Util {
                 return 1;
         }
     }
+
+    public static String buildNodeLabel(String name, String role) {
+        return name + ", the " + role;
+    }
 }

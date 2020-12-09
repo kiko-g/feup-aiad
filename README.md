@@ -12,7 +12,7 @@ AI course project using JADE
         - Example: `C:\Programs\JavaFX11.0.2\lib\`
     - After that, on the top right of your main window, edit your configuration
     and add `--module-path <YOUR_PATH_TO_JAVA_FX> --add-modules javafx.controls,javafx.fxml`
-    to the VM Options. Your main class should be `GameLauncher`
+    to the VM Options. Your main class should be `launcher.GameLauncher`
 - Now you're ready to run the project, by pressing the play button next to the configuration
     
     
