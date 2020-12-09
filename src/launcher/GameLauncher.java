@@ -34,6 +34,7 @@ import uchicago.src.sim.gui.Network2DDisplay;
 import uchicago.src.sim.gui.OvalNetworkItem;
 import uchicago.src.sim.network.DefaultDrawableNode;
 import utils.ConfigReader;
+import utils.Edge;
 import utils.Util;
 
 public class GameLauncher extends Repast3Launcher {
@@ -61,7 +62,7 @@ public class GameLauncher extends Repast3Launcher {
 		} catch (IOException e) { e.printStackTrace(); }
 	}
 
-	@Override
+    @Override
 	public String[] getInitParam() {
 		return new String[0];
 	}
@@ -297,5 +298,33 @@ public class GameLauncher extends Repast3Launcher {
 
 	public static void paintNodeBlackByAgentName(String agentName) {
 		paintNodeBlack(getNodeByAgentName(agentName));
+	}
+
+	public static void removeNodeByAgentName(String agentName) {
+		DefaultDrawableNode node = getNodeByAgentName(agentName);
+		nodes.remove(node);
+	}
+
+	public static void removeAllNodeEdges(DefaultDrawableNode originNode) {
+		removeOutEdges(originNode);
+		removeInEdges(originNode);
+	}
+
+	public static void removeOutEdges(DefaultDrawableNode originNode) {
+		List<Edge> outEdges = new ArrayList<>(originNode.getOutEdges());
+		for(Edge curr : outEdges) {
+			originNode.removeOutEdge(curr);
+		}
+	}
+
+	public static void removeInEdges(DefaultDrawableNode originNode) {
+		List<Edge> inEdges = new ArrayList<>(originNode.getInEdges());
+		for(Edge curr : inEdges) {
+			originNode.removeInEdge(curr);
+		}
+	}
+
+	public static void removeAllNodeEdgesByAgentName(String agentName) {
+		removeAllNodeEdges(getNodeByAgentName(agentName));
 	}
 }

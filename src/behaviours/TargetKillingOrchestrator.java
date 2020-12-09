@@ -2,11 +2,15 @@ package behaviours;
 
 import agents.GameMaster;
 import jade.core.AID;
+import launcher.GameLauncher;
 import sajas.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import uchicago.src.sim.network.DefaultDrawableNode;
+import utils.Edge;
 import utils.ProtocolNames;
 
+import java.awt.*;
 import java.util.List;
 
 public class TargetKillingOrchestrator extends Behaviour {
@@ -66,6 +70,17 @@ public class TargetKillingOrchestrator extends Behaviour {
                         response.setProtocol(ProtocolNames.TargetKilling);
                         response.setContent("Target already selected!");
                     } else {
+                        // Updates Network graph
+                        DefaultDrawableNode originNode = GameLauncher.getNodeByAgentName(proposal.getSender().getLocalName());
+                        DefaultDrawableNode destinationNode = GameLauncher.getNodeByAgentName(proposal.getContent());
+                        if(originNode != null) {
+                            GameLauncher.removeOutEdges(originNode);
+
+                            Edge edge = new Edge(originNode, destinationNode, "Attack");
+                            edge.setColor(Color.RED);
+                            originNode.addOutEdge(edge);
+                        }
+
                         response.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                         response.setProtocol(ProtocolNames.TargetKilling);
                         response.setContent("OK");
