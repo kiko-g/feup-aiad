@@ -118,8 +118,9 @@ public class GameLauncher extends Repast3Launcher {
 	private DefaultDrawableNode generateNode(String label, Color color, int x, int y) {
 		OvalNetworkItem oval = new OvalNetworkItem(x,y);
 		oval.allowResizing(false);
-		oval.setHeight(5);
-		oval.setWidth(5);
+		oval.setHeight(60);
+		oval.setWidth(60);
+		oval.setLabelColor(Color.BLACK);
 
 		DefaultDrawableNode node = new DefaultDrawableNode(label, oval);
 		node.setColor(color);
@@ -139,7 +140,7 @@ public class GameLauncher extends Repast3Launcher {
 			ac.start();
 			DefaultDrawableNode node =
 					generateNode("Villager", Color.GREEN,
-							(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+							(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 			nodes.add(node);
 			break;
 		}
@@ -148,7 +149,7 @@ public class GameLauncher extends Repast3Launcher {
 			ac.start();
 			DefaultDrawableNode node =
 					generateNode("Killing", Color.RED,
-							(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+							(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 			nodes.add(node);
 			break;
 		}
@@ -157,7 +158,7 @@ public class GameLauncher extends Repast3Launcher {
 			ac.start();
 			DefaultDrawableNode node =
 					generateNode("Leader", Color.RED,
-							(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+							(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 			nodes.add(node);
 			break;
 		}
@@ -166,7 +167,7 @@ public class GameLauncher extends Repast3Launcher {
 			ac.start();
 			DefaultDrawableNode node =
 					generateNode("Jester", Color.WHITE,
-							(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+							(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 			nodes.add(node);
 			break;
 		}
@@ -175,7 +176,7 @@ public class GameLauncher extends Repast3Launcher {
 			ac.start();
 			DefaultDrawableNode node =
 					generateNode("Healer", Color.GREEN,
-							(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+							(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 			nodes.add(node);
 			break;
 		}
@@ -184,7 +185,7 @@ public class GameLauncher extends Repast3Launcher {
 			ac.start();
 			DefaultDrawableNode node =
 					generateNode("Detective", Color.GREEN,
-							(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+							(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 			nodes.add(node);
 			break;
 		}
@@ -225,7 +226,7 @@ public class GameLauncher extends Repast3Launcher {
 	}
 
 	private DisplaySurface dsurf;
-	private int WIDTH = 500, HEIGHT = 500;
+	private int WIDTH = 800, HEIGHT = 750;
 
 	private void buildAndScheduleDisplay() {
 		// display surface
