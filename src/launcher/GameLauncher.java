@@ -118,9 +118,10 @@ public class GameLauncher extends Repast3Launcher {
 
 	private DefaultDrawableNode generateNode(String label, Color color, int x, int y) {
 		OvalNetworkItem oval = new OvalNetworkItem(x,y);
-		oval.allowResizing(true);
-		oval.setHeight(5);
-		oval.setWidth(5);
+		oval.allowResizing(false);
+		oval.setHeight(60);
+		oval.setWidth(60);
+		oval.setLabelColor(Color.BLACK);
 
 		DefaultDrawableNode node = new DefaultDrawableNode(label, oval);
 		node.setColor(color);
@@ -139,65 +140,54 @@ public class GameLauncher extends Repast3Launcher {
 				ac = container.acceptNewAgent(name, villager);
 				ac.start();
 				DefaultDrawableNode node =
-						generateNode(villager.getLocalName(), Color.GREEN,
-								(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+						generateNode("Villager", Color.GREEN,
+								(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 				nodes.add(node);
-				villager.setNode(node);
 				break;
 			}
 			case "Killing": {
-				Killing killing = new Killing();
-				ac = container.acceptNewAgent(name, killing);
+				ac = container.acceptNewAgent(name, new Killing());
 				ac.start();
 				DefaultDrawableNode node =
-						generateNode(killing.getLocalName(), Color.RED,
-								(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+						generateNode("Killing", Color.RED,
+								(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 				nodes.add(node);
-				killing.setNode(node);
 				break;
 			}
 			case "Leader": {
-				Leader leader = new Leader();
-				ac = container.acceptNewAgent(name, leader);
+				ac = container.acceptNewAgent(name, new Leader());
 				ac.start();
 				DefaultDrawableNode node =
-						generateNode(leader.getLocalName(), Color.RED,
-								(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+						generateNode("Leader", Color.RED,
+								(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 				nodes.add(node);
-				leader.setNode(node);
 				break;
 			}
 			case "Jester": {
-				Jester jester = new Jester();
-				ac = container.acceptNewAgent(name, jester);
+				ac = container.acceptNewAgent(name, new Jester());
 				ac.start();
 				DefaultDrawableNode node =
-						generateNode(jester.getLocalName(), Color.WHITE,
-								(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+						generateNode("Jester", Color.WHITE,
+								(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 				nodes.add(node);
-				jester.setNode(node);
 				break;
 			}
 			case "Healer": {
-				Healer healer = new Healer();
-				ac = container.acceptNewAgent(name, healer);
+				ac = container.acceptNewAgent(name, new Healer());
 				ac.start();
 				DefaultDrawableNode node =
-						generateNode(healer.getLocalName(), Color.GREEN,
-								(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+						generateNode("Healer", Color.GREEN,
+								(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 				nodes.add(node);
-				healer.setNode(node);
 				break;
 			}
 			case "Detective": {
-				Detective detective = new Detective();
-				ac = container.acceptNewAgent(name, detective);
+				ac = container.acceptNewAgent(name, new Detective());
 				ac.start();
 				DefaultDrawableNode node =
-						generateNode(detective.getLocalName(), Color.GREEN,
-								(int) (Math.cos(agentAnglePos * agentNumber) * 80) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 80) + HEIGHT/2);
+						generateNode("Detective", Color.GREEN,
+								(int) (Math.cos(agentAnglePos * agentNumber) * 250) + WIDTH/2, (int) (Math.sin(agentAnglePos * agentNumber) * 250) + HEIGHT/2);
 				nodes.add(node);
-				detective.setNode(node);
 				break;
 			}
 			default: {
@@ -237,7 +227,7 @@ public class GameLauncher extends Repast3Launcher {
 	}
 
 	private DisplaySurface dsurf;
-	private int WIDTH = 500, HEIGHT = 500;
+	private int WIDTH = 800, HEIGHT = 750;
 
 	private void buildAndScheduleDisplay() {
 		// display surface
