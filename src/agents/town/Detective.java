@@ -50,6 +50,7 @@ public class Detective extends PlayerAgent {
     }
 
     public Detective() {
+        super();
         this.nightVisits = new ArrayList<>();
     }
 
