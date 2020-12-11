@@ -52,9 +52,10 @@ public abstract class PlayerAgent extends Agent {
 
     private DefaultDrawableNode node;
 
-    public PlayerAgent(Util.Trait playerTrait){
+    public PlayerAgent(Util.Trait playerTrait) {
         this.chatLog = new ChatLog();
         this.playerTrait = playerTrait;
+        this.allBehaviours = new ArrayList<>();
     }
 
     public PlayerAgent() {

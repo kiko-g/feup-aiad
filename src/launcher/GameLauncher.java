@@ -54,7 +54,7 @@ public class GameLauncher extends Repast3Launcher {
 
 	GameLauncher(boolean batchMode) {
 		this.runInBatchMode = batchMode;
-		nodes = new ArrayList<DefaultDrawableNode>();
+		nodes = new ArrayList<>();
 
 		try {
 			this.names = ConfigReader.importNames("src/resources/names.txt"); // Loads available names
@@ -164,8 +164,6 @@ public class GameLauncher extends Repast3Launcher {
 		oval.setWidth(90);
 		oval.setLabelColor(Color.BLACK);
 
-
-
 		DefaultDrawableNode node = new DefaultDrawableNode(label, oval);
 		node.setColor(color);
 
@@ -180,7 +178,11 @@ public class GameLauncher extends Repast3Launcher {
 
 		switch (role) {
 			case "Villager": {
-				Villager villager = new Villager();
+				Villager villager;
+
+				if(isTraitRandom) villager = new Villager();
+				else villager = new Villager(playerTrait);
+
 				ac = container.acceptNewAgent(name, villager);
 				ac.start();
 				DefaultDrawableNode node =
@@ -190,7 +192,12 @@ public class GameLauncher extends Repast3Launcher {
 				break;
 			}
 			case "Killing": {
-				ac = container.acceptNewAgent(name, new Killing());
+				Killing killing;
+
+				if(isTraitRandom) killing = new Killing();
+				else killing = new Killing(playerTrait);
+
+				ac = container.acceptNewAgent(name, killing);
 				ac.start();
 				DefaultDrawableNode node =
 						generateNode(Util.buildNodeLabel(name, "Killing"), Color.RED,
@@ -199,7 +206,12 @@ public class GameLauncher extends Repast3Launcher {
 				break;
 			}
 			case "Leader": {
-				ac = container.acceptNewAgent(name, new Leader());
+				Leader leader;
+
+				if(isTraitRandom) leader = new Leader();
+				else leader = new Leader(playerTrait);
+
+				ac = container.acceptNewAgent(name, leader);
 				ac.start();
 				DefaultDrawableNode node =
 						generateNode(Util.buildNodeLabel(name, "Leader"), Color.RED,
@@ -208,7 +220,12 @@ public class GameLauncher extends Repast3Launcher {
 				break;
 			}
 			case "Jester": {
-				ac = container.acceptNewAgent(name, new Jester());
+				Jester jester;
+
+				if(isTraitRandom) jester = new Jester();
+				else jester = new Jester(playerTrait);
+
+				ac = container.acceptNewAgent(name, jester);
 				ac.start();
 				DefaultDrawableNode node =
 						generateNode(Util.buildNodeLabel(name, "Jester"), Color.WHITE,
@@ -217,7 +234,12 @@ public class GameLauncher extends Repast3Launcher {
 				break;
 			}
 			case "Healer": {
-				ac = container.acceptNewAgent(name, new Healer());
+				Healer healer;
+
+				if(isTraitRandom) healer = new Healer();
+				else healer = new Healer(playerTrait);
+
+				ac = container.acceptNewAgent(name, healer);
 				ac.start();
 				DefaultDrawableNode node =
 						generateNode(Util.buildNodeLabel(name, "Healer"), Color.GREEN,
@@ -226,7 +248,12 @@ public class GameLauncher extends Repast3Launcher {
 				break;
 			}
 			case "Detective": {
-				ac = container.acceptNewAgent(name, new Detective());
+				Detective detective;
+
+				if(isTraitRandom) detective = new Detective();
+				else detective = new Detective(playerTrait);
+
+				ac = container.acceptNewAgent(name, detective);
 				ac.start();
 				DefaultDrawableNode node =
 						generateNode(Util.buildNodeLabel(name, "Detective"), Color.GREEN,
@@ -244,9 +271,6 @@ public class GameLauncher extends Repast3Launcher {
 	@Override
 	public void setup() {
 		super.setup();
-
-		// property descriptors
-		// ...
 	}
 
 	@Override
@@ -341,11 +365,6 @@ public class GameLauncher extends Repast3Launcher {
 
 	public static void paintNodeBlackByAgentName(String agentName) {
 		paintNodeBlack(getNodeByAgentName(agentName));
-	}
-
-	public static void removeNodeByAgentName(String agentName) {
-		DefaultDrawableNode node = getNodeByAgentName(agentName);
-		nodes.remove(node);
 	}
 
 	public static void removeAllNodeEdges(DefaultDrawableNode originNode) {
