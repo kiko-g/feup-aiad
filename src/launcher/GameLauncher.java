@@ -55,17 +55,115 @@ public class GameLauncher extends Repast3Launcher {
 
 	GameLauncher(boolean batchMode) {
 		this.runInBatchMode = batchMode;
-		nodes = new ArrayList<DefaultDrawableNode>();
+		nodes = new ArrayList<>();
 
 		try {
 			this.names = ConfigReader.importNames("src/resources/names.txt"); // Loads available names
-			this.roles = ConfigReader.importRoles("src/resources/gamemodes/test.txt"); // Loads roles
 		} catch (IOException e) { e.printStackTrace(); }
+
+		this.roles = new ArrayList<>();
+	}
+
+	private Util.Trait playerTrait = Util.Trait.Mild;
+	private boolean isTraitRandom = false;
+
+	private boolean spawnLeader = true;
+	private boolean spawnDetective = true;
+	private boolean spawnJester = true;
+
+	private int numberVillagers = 10;
+	private int numberKillings = 2;
+	private int numberHealers = 2;
+
+	public String getPlayerTrait() {
+		return playerTrait.toString();
+	}
+
+	public void setPlayerTrait(String playerTrait) {
+		switch (playerTrait.toLowerCase()) {
+			case "overtheline": {
+				this.playerTrait = Util.Trait.OverTheLine;
+				break;
+			}
+			case "agressive": {
+				this.playerTrait = Util.Trait.Agressive;
+				break;
+			}
+			case "mild": {
+				this.playerTrait = Util.Trait.Mild;
+				break;
+			}
+			case "peaceful": {
+				this.playerTrait = Util.Trait.Peaceful;
+				break;
+			}
+			default: {
+
+				break;
+			}
+		}
+	}
+
+	public boolean getIsTraitRandom() {
+		return isTraitRandom;
+	}
+
+	public void setIsTraitRandom(boolean traitRandom) {
+		isTraitRandom = traitRandom;
+	}
+
+	public boolean isSpawnLeader() {
+		return spawnLeader;
+	}
+
+	public void setSpawnLeader(boolean spawnLeader) {
+		this.spawnLeader = spawnLeader;
+	}
+
+	public boolean isSpawnDetective() {
+		return spawnDetective;
+	}
+
+	public void setSpawnDetective(boolean spawnDetective) {
+		this.spawnDetective = spawnDetective;
+	}
+
+	public boolean isSpawnJester() {
+		return spawnJester;
+	}
+
+	public void setSpawnJester(boolean spawnJester) {
+		this.spawnJester = spawnJester;
+	}
+
+	public int getNumberVillagers() {
+		return numberVillagers;
+	}
+
+	public void setNumberVillagers(int numberVillagers) {
+		this.numberVillagers = Math.min(numberVillagers, 13);
+	}
+
+	public int getNumberKillings() {
+		return numberKillings;
+	}
+
+	public void setNumberKillings(int numberKillings) {
+		this.numberKillings = Math.min(numberKillings, 4);
+	}
+
+	public int getNumberHealers() {
+		return numberHealers;
+	}
+
+	public void setNumberHealers(int numberHealers) {
+		this.numberHealers = Math.min(numberHealers, 4);
 	}
 
     @Override
 	public String[] getInitParam() {
-		return new String[0];
+		return new String[] {"playerTrait", "isTraitRandom", "spawnLeader",
+				"spawnDetective", "spawnJester", "numberVillagers", "numberKillings", "numberHealers"};
 	}
 
 	@Override
@@ -86,6 +184,20 @@ public class GameLauncher extends Repast3Launcher {
 	private void launchAgents() {
 
 		try {
+			// Builds roles list
+			if(spawnDetective) this.roles.add("Detective");
+			if(spawnJester) this.roles.add("Jester");
+			if(spawnLeader) this.roles.add("Leader");
+
+			for(int v = 0; v < numberVillagers; v++)
+				this.roles.add("Villager");
+
+			for(int h = 0; h < numberHealers; h++)
+				this.roles.add("Healer");
+
+			for(int k = 0; k < numberKillings; k++)
+				this.roles.add("Killing");
+
 			// Launch GM
 			this.gameMaster = new GameMaster(roles.size());
 			mainContainer.acceptNewAgent("GameMaster", this.gameMaster).start();
@@ -125,8 +237,6 @@ public class GameLauncher extends Repast3Launcher {
 		oval.setWidth(90);
 		oval.setLabelColor(Color.BLACK);
 
-
-
 		DefaultDrawableNode node = new DefaultDrawableNode(label, oval);
 		node.setColor(color);
 
@@ -141,7 +251,11 @@ public class GameLauncher extends Repast3Launcher {
 
 		switch (role) {
 			case "Villager": {
-				Villager villager = new Villager();
+				Villager villager;
+
+				if(isTraitRandom) villager = new Villager();
+				else villager = new Villager(playerTrait);
+
 				ac = container.acceptNewAgent(name, villager);
 				ac.start();
 				DefaultDrawableNode node =
@@ -151,7 +265,12 @@ public class GameLauncher extends Repast3Launcher {
 				break;
 			}
 			case "Killing": {
-				ac = container.acceptNewAgent(name, new Killing());
+				Killing killing;
+
+				if(isTraitRandom) killing = new Killing();
+				else killing = new Killing(playerTrait);
+
+				ac = container.acceptNewAgent(name, killing);
 				ac.start();
 				DefaultDrawableNode node =
 						generateNode(Util.buildNodeLabel(name, "Killing"), Color.RED,
@@ -160,7 +279,12 @@ public class GameLauncher extends Repast3Launcher {
 				break;
 			}
 			case "Leader": {
-				ac = container.acceptNewAgent(name, new Leader());
+				Leader leader;
+
+				if(isTraitRandom) leader = new Leader();
+				else leader = new Leader(playerTrait);
+
+				ac = container.acceptNewAgent(name, leader);
 				ac.start();
 				DefaultDrawableNode node =
 						generateNode(Util.buildNodeLabel(name, "Leader"), Color.RED,
@@ -169,7 +293,12 @@ public class GameLauncher extends Repast3Launcher {
 				break;
 			}
 			case "Jester": {
-				ac = container.acceptNewAgent(name, new Jester());
+				Jester jester;
+
+				if(isTraitRandom) jester = new Jester();
+				else jester = new Jester(playerTrait);
+
+				ac = container.acceptNewAgent(name, jester);
 				ac.start();
 				DefaultDrawableNode node =
 						generateNode(Util.buildNodeLabel(name, "Jester"), Color.WHITE,
@@ -178,7 +307,12 @@ public class GameLauncher extends Repast3Launcher {
 				break;
 			}
 			case "Healer": {
-				ac = container.acceptNewAgent(name, new Healer());
+				Healer healer;
+
+				if(isTraitRandom) healer = new Healer();
+				else healer = new Healer(playerTrait);
+
+				ac = container.acceptNewAgent(name, healer);
 				ac.start();
 				DefaultDrawableNode node =
 						generateNode(Util.buildNodeLabel(name, "Healer"), Color.GREEN,
@@ -187,7 +321,12 @@ public class GameLauncher extends Repast3Launcher {
 				break;
 			}
 			case "Detective": {
-				ac = container.acceptNewAgent(name, new Detective());
+				Detective detective;
+
+				if(isTraitRandom) detective = new Detective();
+				else detective = new Detective(playerTrait);
+
+				ac = container.acceptNewAgent(name, detective);
 				ac.start();
 				DefaultDrawableNode node =
 						generateNode(Util.buildNodeLabel(name, "Detective"), Color.GREEN,
@@ -205,9 +344,6 @@ public class GameLauncher extends Repast3Launcher {
 	@Override
 	public void setup() {
 		super.setup();
-
-		// property descriptors
-		// ...
 	}
 
 	@Override
@@ -325,11 +461,6 @@ public class GameLauncher extends Repast3Launcher {
 
 	public static void paintNodeBlackByAgentName(String agentName) {
 		paintNodeBlack(getNodeByAgentName(agentName));
-	}
-
-	public static void removeNodeByAgentName(String agentName) {
-		DefaultDrawableNode node = getNodeByAgentName(agentName);
-		nodes.remove(node);
 	}
 
 	public static void removeAllNodeEdges(DefaultDrawableNode originNode) {
