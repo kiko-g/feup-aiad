@@ -62,9 +62,49 @@ public class GameLauncher extends Repast3Launcher {
 		} catch (IOException e) { e.printStackTrace(); }
 	}
 
+	private Util.Trait playerTrait = Util.Trait.Mild;
+	private boolean isTraitRandom = false;
+
+	public String getPlayerTrait() {
+		return playerTrait.toString();
+	}
+
+	public void setPlayerTrait(String playerTrait) {
+		switch (playerTrait.toLowerCase()) {
+			case "overtheline": {
+				this.playerTrait = Util.Trait.OverTheLine;
+				break;
+			}
+			case "agressive": {
+				this.playerTrait = Util.Trait.Agressive;
+				break;
+			}
+			case "mild": {
+				this.playerTrait = Util.Trait.Mild;
+				break;
+			}
+			case "peaceful": {
+				this.playerTrait = Util.Trait.Peaceful;
+				break;
+			}
+			default: {
+
+				break;
+			}
+		}
+	}
+
+	public boolean getIsTraitRandom() {
+		return isTraitRandom;
+	}
+
+	public void setIsTraitRandom(boolean traitRandom) {
+		isTraitRandom = traitRandom;
+	}
+
     @Override
 	public String[] getInitParam() {
-		return new String[0];
+		return new String[] {"playerTrait", "isTraitRandom"};
 	}
 
 	@Override
