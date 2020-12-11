@@ -184,6 +184,8 @@ public class GameLauncher extends Repast3Launcher {
 	private void launchAgents() {
 
 		try {
+			this.roles = new ArrayList<>();
+
 			// Builds roles list
 			if(spawnDetective) this.roles.add("Detective");
 			if(spawnJester) this.roles.add("Jester");
@@ -423,9 +425,9 @@ public class GameLauncher extends Repast3Launcher {
 
 
 	public static void main(String[] args) {
-		boolean runMode = !BATCH_MODE;
+		boolean runMode = BATCH_MODE;
 		SimInit init = new SimInit();
-		init.setNumRuns(10); // works only in batch mode
+		init.setNumRuns(2); // works only in batch mode
 		init.loadModel(new GameLauncher(runMode), null, runMode);
 	}
 
