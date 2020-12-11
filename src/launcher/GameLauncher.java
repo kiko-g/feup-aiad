@@ -58,12 +58,21 @@ public class GameLauncher extends Repast3Launcher {
 
 		try {
 			this.names = ConfigReader.importNames("src/resources/names.txt"); // Loads available names
-			this.roles = ConfigReader.importRoles("src/resources/gamemodes/test.txt"); // Loads roles
 		} catch (IOException e) { e.printStackTrace(); }
+
+		this.roles = new ArrayList<>();
 	}
 
 	private Util.Trait playerTrait = Util.Trait.Mild;
 	private boolean isTraitRandom = false;
+
+	private boolean spawnLeader = true;
+	private boolean spawnDetective = true;
+	private boolean spawnJester = true;
+
+	private int numberVillagers = 10;
+	private int numberKillings = 2;
+	private int numberHealers = 2;
 
 	public String getPlayerTrait() {
 		return playerTrait.toString();
@@ -102,9 +111,58 @@ public class GameLauncher extends Repast3Launcher {
 		isTraitRandom = traitRandom;
 	}
 
+	public boolean isSpawnLeader() {
+		return spawnLeader;
+	}
+
+	public void setSpawnLeader(boolean spawnLeader) {
+		this.spawnLeader = spawnLeader;
+	}
+
+	public boolean isSpawnDetective() {
+		return spawnDetective;
+	}
+
+	public void setSpawnDetective(boolean spawnDetective) {
+		this.spawnDetective = spawnDetective;
+	}
+
+	public boolean isSpawnJester() {
+		return spawnJester;
+	}
+
+	public void setSpawnJester(boolean spawnJester) {
+		this.spawnJester = spawnJester;
+	}
+
+	public int getNumberVillagers() {
+		return numberVillagers;
+	}
+
+	public void setNumberVillagers(int numberVillagers) {
+		this.numberVillagers = numberVillagers;
+	}
+
+	public int getNumberKillings() {
+		return numberKillings;
+	}
+
+	public void setNumberKillings(int numberKillings) {
+		this.numberKillings = numberKillings;
+	}
+
+	public int getNumberHealers() {
+		return numberHealers;
+	}
+
+	public void setNumberHealers(int numberHealers) {
+		this.numberHealers = numberHealers;
+	}
+
     @Override
 	public String[] getInitParam() {
-		return new String[] {"playerTrait", "isTraitRandom"};
+		return new String[] {"playerTrait", "isTraitRandom", "spawnLeader",
+				"spawnDetective", "spawnJester", "numberVillagers", "numberKillings", "numberHealers"};
 	}
 
 	@Override
@@ -125,6 +183,20 @@ public class GameLauncher extends Repast3Launcher {
 	private void launchAgents() {
 
 		try {
+			// Builds roles list
+			if(spawnDetective) this.roles.add("Detective");
+			if(spawnJester) this.roles.add("Jester");
+			if(spawnLeader) this.roles.add("Leader");
+
+			for(int v = 0; v < numberVillagers; v++)
+				this.roles.add("Villager");
+
+			for(int h = 0; h < numberHealers; h++)
+				this.roles.add("Healer");
+
+			for(int k = 0; k < numberKillings; k++)
+				this.roles.add("Killing");
+
 			// Launch GM
 			this.gameMaster = new GameMaster(roles.size());
 			mainContainer.acceptNewAgent("GameMaster", this.gameMaster).start();
