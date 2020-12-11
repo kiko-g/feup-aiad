@@ -11,13 +11,14 @@ import utils.ProtocolNames;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DecisionRequester extends AchieveREInitiator {
     GameMaster gameMaster;
     String protocolName;
 
     // Day time voting register
-    HashMap<String, Integer> votingResults;
+    //HashMap<String, Integer> votingResults;
 
     public DecisionRequester(GameMaster gameMaster, ACLMessage msg) {
         super(gameMaster, msg);
@@ -25,7 +26,7 @@ public class DecisionRequester extends AchieveREInitiator {
         this.protocolName = msg.getProtocol();
 
         if(msg.getProtocol().equals(ProtocolNames.VoteTarget)) {
-            this.votingResults = new HashMap<>();
+            this.gameMaster.setVotingResults(new ConcurrentHashMap<>());
         }
     }
 
@@ -43,10 +44,10 @@ public class DecisionRequester extends AchieveREInitiator {
                 String playerName = inform.getContent();
 
                 // If exists, increments
-                if (this.votingResults.containsKey(playerName))
-                    this.votingResults.replace(playerName, this.votingResults.get(playerName) + 1);
+                if (this.gameMaster.getVotingResults().containsKey(playerName))
+                    this.gameMaster.getVotingResults().replace(playerName, this.gameMaster.getVotingResults().get(playerName) + 1);
                 else
-                    this.votingResults.put(playerName, 1); // If not, adds; Skips go here too!
+                    this.gameMaster.getVotingResults().put(playerName, 1); // If not, adds; Skips go here too!
 
                 break;
             }
@@ -80,7 +81,7 @@ public class DecisionRequester extends AchieveREInitiator {
             boolean duplicateFound = false;
             String playerName = "";
             int max = 0;
-            for(Map.Entry<String, Integer> currPlayer : this.votingResults.entrySet()) {
+            for(Map.Entry<String, Integer> currPlayer : this.gameMaster.getVotingResults().entrySet()) {
                 if(currPlayer.getValue() > max) {
                     max = currPlayer.getValue();
                     playerName = currPlayer.getKey();

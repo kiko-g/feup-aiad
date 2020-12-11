@@ -7,8 +7,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 
 import agents.GameMaster;
+import agents.PlayerAgent;
 import agents.mafia.Killing;
 import agents.mafia.Leader;
 import agents.neutral.Jester;
@@ -24,8 +26,7 @@ import sajas.sim.repast3.Repast3Launcher;
 import sajas.wrapper.AgentController;
 import sajas.wrapper.ContainerController;
 
-import uchicago.src.sim.analysis.DataRecorder;
-import uchicago.src.sim.analysis.DataSource;
+import uchicago.src.sim.analysis.*;
 import uchicago.src.sim.engine.BasicAction;
 import uchicago.src.sim.engine.Schedule;
 import uchicago.src.sim.engine.SimInit;
@@ -232,19 +233,42 @@ public class GameLauncher extends Repast3Launcher {
 
 	private DisplaySurface dsurf;
 	private int WIDTH = 1000, HEIGHT = 750;
+	private OpenSequenceGraph plot;
 
 	private void buildAndScheduleDisplay() {
 		// display surface
 		if (dsurf != null) dsurf.dispose();
-		dsurf = new DisplaySurface(this, "Service Consumer/Provider Display");
-		registerDisplaySurface("Service Consumer/Provider Display", dsurf);
+		dsurf = new DisplaySurface(this, "Night interactions");
+		registerDisplaySurface("Night interactions", dsurf);
 		Network2DDisplay display = new Network2DDisplay(nodes,WIDTH,HEIGHT);
-		dsurf.addDisplayableProbeable(display, "Network Display");
+		dsurf.addDisplayableProbeable(display, "Night interactions");
 		dsurf.addZoomable(display);
 		addSimEventListener(dsurf);
 		dsurf.display();
 
+		// graph
+		if (plot != null) plot.dispose();
+		plot = new OpenSequenceGraph("Day votes", this);
+		plot.setAxisTitles("time", "Number of votes");
+
+		for(int i = 0; i < names.size(); i++) {
+			int finalI = i;
+			plot.addSequence(names.get(i), new Sequence() {
+				public double getSValue() {
+					return gameMaster.getVotingResults().getOrDefault(names.get(finalI), 0);
+				}
+			});
+		}
+		plot.addSequence("Skip", new Sequence() {
+			public double getSValue() {
+				return gameMaster.getVotingResults().getOrDefault("Skip", 0);
+			}
+		});
+
+		plot.display();
+
 		getSchedule().scheduleActionAtInterval(1, dsurf, "updateDisplay", Schedule.LAST);
+		getSchedule().scheduleActionAtInterval(10, plot, "step", Schedule.LAST);
 	}
 
 	private DataRecorder recorder;

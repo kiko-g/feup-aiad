@@ -47,6 +47,9 @@ public class GameMaster extends Agent {
 
     private List<ChatMessage> chatLog;
 
+    // Day time voting register
+    private ConcurrentHashMap<String, Integer> votingResults;
+
     private String dayDeath;
     private boolean jesterDayDeath = false;
 
@@ -61,6 +64,7 @@ public class GameMaster extends Agent {
         this.actuallySavedPlayers = new ConcurrentHashMap<>();
         this.nightDeaths = new ArrayList<>();
         this.dayDeath = "";
+        this.votingResults = new ConcurrentHashMap<>();
 
         this.chatLog = new ArrayList<>();
 
@@ -111,6 +115,14 @@ public class GameMaster extends Agent {
 
     public void setGameState(GameStates gameState) {
         this.gameState = gameState;
+    }
+
+    public ConcurrentHashMap<String, Integer> getVotingResults() {
+        return votingResults;
+    }
+
+    public void setVotingResults(ConcurrentHashMap<String, Integer> votingResults) {
+        this.votingResults = votingResults;
     }
 
     public DFAgentDescription[] findAllPLayerDescriptions() throws FIPAException {
