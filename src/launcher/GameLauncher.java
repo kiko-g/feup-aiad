@@ -140,7 +140,7 @@ public class GameLauncher extends Repast3Launcher {
 	}
 
 	public void setNumberVillagers(int numberVillagers) {
-		this.numberVillagers = numberVillagers;
+		this.numberVillagers = Math.min(numberVillagers, 13);
 	}
 
 	public int getNumberKillings() {
@@ -148,7 +148,7 @@ public class GameLauncher extends Repast3Launcher {
 	}
 
 	public void setNumberKillings(int numberKillings) {
-		this.numberKillings = numberKillings;
+		this.numberKillings = Math.min(numberKillings, 4);
 	}
 
 	public int getNumberHealers() {
@@ -156,7 +156,7 @@ public class GameLauncher extends Repast3Launcher {
 	}
 
 	public void setNumberHealers(int numberHealers) {
-		this.numberHealers = numberHealers;
+		this.numberHealers = Math.min(numberHealers, 4);
 	}
 
     @Override
