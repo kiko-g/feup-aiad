@@ -7,7 +7,8 @@ AI course project using JADE, Repast3, SaJas and JavaFX.
 - Launch **IntelliJ IDEA** and open this folder (on this level) as a project
 - Make sure you have both **JavaFX** and **JADE** in your machine
 - Go to project structure `(Ctrl + Alt + Shift + S)` 
-    - Under `Project` select a language level above 8 (Lambda Expressions)
+    - Under `Project` select SDK 11
+    - Under `Project` select a language level >= 11
     - Then on the `Libraries` tab add **JADE** and **Java FX**
         - Example: `C:\Programs\JADE\lib\jade.jar`
         - Example: `C:\Programs\JavaFX11.0.2\lib\`
@@ -21,7 +22,8 @@ AI course project using JADE, Repast3, SaJas and JavaFX.
 - Launch **IntelliJ IDEA** and open this folder (on this level) as a project
 - Make sure you have **JADE**, **SaJas** and **Repast3** in your machine
 - Go to project structure `(Ctrl + Alt + Shift + S)` 
-    - Under `Project` select a language level above 8 (Lambda Expressions)
+    - Under `Project` select SDK 11
+    - Under `Project` select a language level >= 11
     - Then on the `Libraries` tab add **JADE**, **SaJas** and **Repast**
         - Example: `C:\Programs\JADE\lib\jade.jar`
         - Example: `C:\SAJaS/lib/SAJaS.jar`
